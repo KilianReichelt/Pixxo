@@ -1,0 +1,186 @@
+Pixxo – Prüfbericht
+Stand: 7. Oktober 2026
+
+Ausführung: lokaler Chromium-Testbrowser, eigener isolierter Spielstand.
+Der geöffnete Firefox war über die bereitgestellte Browseranbindung nicht erreichbar.
+
+Geprüft:
+– Gemeinsame Welt mit 22 Inseln, verschiedenen Größen und Küstenformen.
+– Höchstens drei nutzbare Strandabschnitte je Insel, mit Verbindung zum offenen Meer.
+– Gemeinsame Gelände-, Straßen-, Gebäude- und Belegungsdaten aller Inseln.
+– Separate Warenbestände; Handelsrouten übertragen Ladung zwischen den Inseln.
+– Seewege verlaufen durch Wasser und umgehen Landflächen.
+– Schiffbau ausschließlich im Werftfenster; Schiffsdetails, Umbenennung und Flottenleiste.
+– Bau- und Flottenleiste jeweils 86 CSS-Pixel hoch.
+– Minikarte unterstützt Klick, Ziehen und eigenen Zoom; ausgewählte Schiffe zeigen ihre Route.
+– Gebäude verschieben ohne Geld- oder Warenverlust; belegte Ziele werden abgewiesen.
+– Häuser zurückstufen und Bevölkerung auf die niedrigere Kapazität begrenzen.
+– Kontorausbau von 75 auf 150 t je Ware.
+– Feste, anklickbare Abbauplätze am Gebirgsrand, außerhalb von Felsflächen.
+– Bergwerke und Steinbrüche haben keinen Umgebungseinfluss; Personalmangel reduziert die Effizienz.
+– Ladung bleibt bei vollen Ziellagern erhalten; nach Freigabe wird korrekt entladen.
+– Pausierte Routen beenden die Entladung und laden anschließend nicht neu.
+– Aufträge und Bevölkerungsstufen schalten sich schrittweise frei.
+– Nicht relevante Gebäude bleiben verborgen; fehlende Voraussetzungen deaktivieren Baukarten.
+– Speichern und Laden der gemeinsamen Welt einschließlich Flotte, Routen und Waren.
+– Übernahme alter Spielstände.
+– Vollständige Gebäudekarten oberhalb der Kategorienleiste, ohne vertikales Abschneiden.
+– Einheitliche obere Schaltflächenhöhe von 44 CSS-Pixeln.
+– LowresPixel-Schrift geladen und eingebettet; sichtbare UI-Texte 16 CSS-Pixel groß.
+– Layoutprüfungen bei 1920, 1440, 768, 390 und 320 CSS-Pixeln Breite.
+– Tastaturbedienung mit Eingabetaste, Pfeiltasten und Escape; sichtbare Fokusmarkierung.
+– Keine unbeschrifteten sichtbaren Schaltflächen oder Bedienflächen unter 44 × 44 CSS-Pixeln
+  in den geprüften Zuständen. Die kleinen Zoomsymbole besitzen größere Bedienflächen.
+– Keine JavaScript-Fehler in den abschließenden Tests.
+
+Wirtschaftssimulation:
+20 vollständig versorgte Siedlerhäuser mit Fischerei, Holzfäller, Sägewerk und Markt:
+rund +50 Gold/Min. Zehn zusätzliche, unversorgte Schmieden: rund −450 Gold/Min.
+Diese Werte beziehen sich auf einen kontrollierten Simulationszustand.
+
+Barrierefreiheit:
+Geprüft wurden Schriftgrößen, Bedienflächen, zugängliche Schaltflächennamen, Tastaturaktionen,
+Fokusmarkierung und Reflow. Die Kartenansicht bietet eine angekündigte Feldauswahl sowie
+Gebäude- und Bauplatzlisten. Eine vollständige Prüfung mit einem laufenden Screenreader
+und aller WCAG-2.2-AA-Erfolgskriterien wurde nicht durchgeführt. Vollständige Konformität
+wird daher nicht behauptet. Sehr kleine Kartenobjekte werden über Tastatur und Listen bedient.
+
+Spielmodell:
+Produktionszeiten orientieren sich an den entsprechenden Anno-1800-Ketten; vorhandene
+Waren und Bevölkerungsstufen des Spiels wurden beibehalten. Kosten und Steuern sind
+für dieses Spiel angepasst, keine vollständige Nachbildung der Anno-1800-Wirtschaft.
+Wiki-Grundlagen:
+https://anno1800.fandom.com/wiki/Production
+https://anno1800.fandom.com/wiki/Production_buildings
+https://anno1800.fandom.com/wiki/Trade_routes
+https://anno1800.fandom.com/wiki/Trading_Post
+
+
+Aktuelle Erweiterungsprüfung (test_pixxo_expansion.py):
+– Weltfläche 896 × 672 Felder, viermal so groß wie zuvor.
+– 22 Inseln, darunter acht sehr kleine und zwei zusätzliche große Inseln.
+– Zufällige Positionen ohne Raster; drei unterschiedliche Welt-Startwerte geprüft.
+– Mindestens zwei Fruchtbarkeiten je Insel; höchstens drei Strandabschnitte.
+– Zufällige geeignete Startinsel mit Kontor, Vorräten und schrittweisem Tutorial.
+– Unbesiedelte Inseln bleiben namenlos; unentdeckte Inseln bleiben verborgen.
+– Schiffe können beladen, frei gefahren und am Strand zum Kontorbau eingesetzt werden.
+– Gründung verbraucht 800 Gold sowie 10 Bretter und 8 Werkzeug aus der Schiffsladung.
+– Entdeckungsnebel mit 896 × 672 Zellen, weichen Rändern, Inselanimation und festem Weltrand.
+– Entdeckung, Inselpositionen, Flotte und gemeinsame Welt werden gespeichert und geladen.
+– Acht unterschiedliche Schiffssprites je Schiffstyp und korrekte Kurswinkel geprüft.
+– Baukarten 156 px hoch und an Inhalt angepasste Auswahlbreite; zentrierte Beschriftung.
+– Größere Minimap, bündige Inselübersicht, separate Zoom-Buttons links unten.
+– Arbeitskräfte je Insel und Stufe, anteilige Besetzung, Freigabe durch Pausieren.
+– Vier Arbeitskräfte bei sechs Arbeitsplätzen ergeben 66,7 % Besetzung.
+– 50 % Besetzung ergibt die halbe Produktionsgeschwindigkeit; 0 % stoppt die Produktion.
+– Fehlende Arbeitskräfte verhindern den Bau nicht. Personalbedarf steht neben Unterhalt.
+– Zoom-Buttons auf Benutzerwunsch 28 × 28 px; Inselübersicht mindestens 30 px hoch.
+– Zellcursor wird bei Mausbedienung ausgeblendet und bei Tastaturbedienung eingeblendet.
+– Keine JavaScript-Laufzeitfehler in der aktuellen Erweiterungsprüfung.
+
+Die übrigen Testskripte dokumentieren frühere Prüfstände; ihre Fixtures stammen noch
+aus der kleineren Welt und sind keine aktuelle vollständige Regressionstestsuite.
+Arbeitskräfte-Grundlage: https://anno1800.fandom.com/wiki/Workforce
+Die Arbeitskräftezahlen wurden an die kleineren Bevölkerungszahlen dieses Spiels angepasst.
+
+Letzte Benutzeranpassungen: reine Maussteuerung der Karte und Spielwerkzeuge; kein Zellcursor.
+Texteingaben bleiben verfügbar. Warenleisten-Schaltfläche zeigt nur +.
+Inselübersicht 30 px Mindesthöhe; barToggle bottom: calc(var(--barH,80px) / 2 - 35px).
+Die Tastatur- und Screenreader-orientierte Kartenbedienung wurde auf ausdrücklichen
+Benutzerwunsch entfernt; eine vollständige WCAG-AA-Konformität liegt damit nicht vor.
+Aktuelle UI-Abschlussprüfung:
+– Linke Seitenleiste mit getrennten Abschnitten für Aufträge und Ereignisse.
+– Ein Tempo-Button wechselt per Klick zwischen 0×, 1×, 2× und 4×.
+– Mausrad-Zoom: 120 Delta-Einheiten ändern den Faktor um rund 12,75 %.
+– Zoompunkt bleibt exakt unter dem Mauszeiger; Unter- und Obergrenze geprüft.
+– Aktuelle Skripte test_pixxo_expansion.py und test_pixxo_zoom.py erfolgreich, keine Laufzeitfehler.
+
+Stand 07.10.2026 – Ton, Spielstart, Zoom und Gebäudesprites
+
+Lokaler Chrome-Browsertest: test_pixxo_audio_start_rotation.py, test_pixxo_sprites.py, test_pixxo_zoom.py, test_pixxo_upgrades.py und test_pixxo_expansion.py bestanden. Keine JavaScript-Fehler.
+Ton: AudioContext startet nach Benutzerinteraktion. Ein tatsächliches Audiosignal wurde gemessen (RMS > 0). Getrennte Musik-/Effektregler und Stummschaltung speichern ihre Werte lokal. Bau, Straßen, Ausbau, Abriss, Handel, Schiffe, Brände und Meldungen haben eigene Klangsignale. Keine externen Audiodateien oder Downloads. Klangqualität wurde nicht durch menschliches Anhören bewertet.
+Spielstart: genau 20 Bretter, alle anderen Waren 0. Kein Kolonistenschiff. Bestehende Kolonistenschiffe werden ohne zusätzliche Vorratslieferung entfernt. Händlerintervalle 300–600 Spielsekunden, auch beim ersten Besuch und nach Kontorverschiebung.
+Baukosten: Häuser 2 Bretter; Holzfäller/Sägewerk je 100 Gold ohne Baumaterial. Markt/Lager je 500 Gold + 10 Bretter. Fischer/Schäferei 100 Gold + 2 Bretter. Weberei 400 Gold + 2 Bretter. Getreide-/Hopfenfarm 500 Gold + 4 Bretter. Mühle/Bäckerei/Schmelze 500 Gold + 4 Bretter + 5 Stein. Eisenmine 800 Gold + 4 Bretter + 5 Stein. Feuerwehr 500 Gold + 4 Bretter; Kapelle 500 Gold + 10 Bretter; Kirche 2500 Gold + 20 Bretter + 25 Stein. Werft 10000 Gold + 20 Bretter + 25 Stein. Weingut 8000 Gold + 10 Bretter.
+Abweichungen: Stein übernimmt die Rolle von Anno-Ziegeln, Werkzeug die Rolle von Stahlträgern. Steinbruch, Werkzeugschmiede, Kelterei und Gewürzplantage sind eigene Gebäudetypen; deren Kosten wurden passend zur bestehenden Warenkette festgelegt. Baugrößen, Einwohnerstufen, Arbeitskräfte und Unterhalt sind weiterhin auf dieses Spiel abgestimmt. Kein vollständiger Nachbau sämtlicher Anno-Werte.
+Quellen: https://anno1800.fandom.com/wiki/Buildings ; https://anno1800.fandom.com/wiki/Warehouse ; https://anno1800.fandom.com/wiki/Grain_Farm ; https://anno1800.fandom.com/wiki/Flour_Mill ; https://anno1800.fandom.com/wiki/Iron_Mine ; https://anno1800.fandom.com/wiki/Furnace ; https://anno1800.fandom.com/wiki/Church ; https://anno1800.fandom.com/wiki/Chapel ; https://anno1800.fandom.com/wiki/Fire_Station ; https://anno1800.fandom.com/wiki/Sailing_Shipyard ; https://anno1800.fandom.com/wiki/Vineyard
+Herauszoomen bis 10 %, danach begrenzt. Feine Mausradstufen und stabiler Mausanker geprüft.
+R dreht beim Platzieren/Versetzen um 90 Grad; rechteckige Grundfläche wird mitgedreht. Gespeicherte Ausrichtung und Flächenbelegung geprüft.
+Spriteprüfung: 30 Gebäudedarstellungen inklusive aller Haus- und Kontorstufen; keine identischen Bilddaten. Eigene Werft, Gewürzplantage und Kontorstufen. Visuelle Sichtprüfung der Übersicht pixxo-building-sprites.png.
+Vollständige WCAG-AA-Konformität wurde nicht geprüft und wird nicht behauptet. Die Spielkarte besitzt keine vollständige Tastaturbedienung.
+
+Freischaltung und Abriss: test_pixxo_locks_demolition.py bestanden. Werft vor Bürgerstufe unsichtbar und auch intern gesperrt; nach Stufenaufstieg bis 150 Bürger ausgegraut. Die übrigen Gebäude höherer Stufen prüfen ebenfalls ihre Stufe und den Einwohnerbedarf. Abriss von Gebäuden öffnet eine Bestätigung, zeigt die bestehende Rückerstattung (50 % der Goldbaukosten, kein Baumaterial) und verändert bis zur Bestätigung weder Gebäude noch Kasse. Abbrechen, bestätigter Abriss, freie Grundfläche und Speicherung geprüft. Straßen bleiben unmittelbar entfernbar. Keine JavaScript-Fehler.
+
+Isometrische Kopie, 07.10.2026
+Separater Speicherplatz; gesicherter Firefox-Spielstand eingebettet. 30 unterschiedliche Gebäudedarstellungen, vier aufrechte Orientierungen je Gebäude, 16 unterschiedliche Schiffssprites. Eigene isometrische Minimap mit inverser Mausprojektion, Kamerazug und Zoom um den Mausanker. Bauen, R-Drehung, Verschieben, Gebäudeauswahl, Abrissabbruch und erneutes Laden im Browser geprüft. Neue rückwärtige Stollenansicht in beiden Versionen, insgesamt 20 Stollenframes. Musik und Simulation bleiben erhalten. Keine externe Laufzeitabhängigkeit für die Grafik. Die Änderung an der 2D-Datei beschränkt sich auf die zusätzliche Stollenansicht und die Übernahme des Spielstands am neuen Dateipfad.
+
+Desktop-Umzug: Dateien nach C:\Users\k.reichelt\Desktop\Pixxo verschoben. Die HTML-Dateien enthalten jeweils eine eigene Startkopie des Firefox-Spielstands, damit der Fortschritt am neuen Dateipfad erhalten bleibt. Die Kopie der isometrischen Partie enthält 8 Gebäude und 5864,35 Spielsekunden; die 2D-Partie enthält 8 Gebäude und 5867,56 Spielsekunden. Isometrische Weltübersicht mit vollständig aufgedeckter Welt: 23,5–25,5 ms je Renderdurchlauf im lokalen Chrome-Test. Projektionsfehler unter 0,00001; 8 unterschiedliche Mühlenanimationsframes und 5 rückwärtige Stollenframes bestätigt. test_pixxo_iso_world.py und test_pixxo_audio_start_rotation.py bestanden. Die Vollständigkeit der Tastaturbedienung/WCAG-AA wurde nicht geprüft und wird nicht behauptet.
+
+Direktlieferungen: Produktionsketten beliefern erreichbare, aktive Betriebe über kürzeste Straßenwege. Pro Eingangsware bis zu fünf Einheiten Betriebsvorrat (bei größeren Rezepten mindestens zwei Chargen). Eingehende Lieferungen zählen bei der Zuteilung mit. Überschüsse gehen ins Insellager. Betriebsvorräte und Lieferungen werden gespeichert; Abriss oder unterbrochene Wege verlieren keine Waren. Bestehende Lagerlieferungen bleiben verfügbar.
+Browserprüfung: Beide Versionen in Chrome, 13 Prüfungen einschließlich Weiterverarbeitung, vollem Lager, pausierten Betrieben, Straßenabriss, Gebäudeabriss und Speichern/Laden; keine JavaScript-Fehler.
+Bauernhof: ein Getreide in 60 Spielsekunden bei 100 % Effizienz; geringere Besetzung bzw. ungeeignete Umgebung verlängert den Zyklus.
+Abschließende Prüfung: 18 Prüfungen je Version bestanden. Bauernhof mit 100 % Effizienz nach genau 60 Spielsekunden ein Getreide; mit 50 % nach 120 Spielsekunden. Keine JavaScript-Fehler.
+Aktuelle 2D-Version: Verbrauch aller Bedarfswaren als laufende Mengen statt ganzer Tonnen in langen Abständen. Verbrauch und Einkommenswirkung jeder Ware auf allen drei Hausstufen sowie fehlende Marktversorgung im Browser geprüft. Zusätzliche Versorgung der nächsten Stufe blockiert weder Wachstum noch Aufstieg. Brotbonus 0,25 Gold je Einwohner und Spielminute; andere zusätzliche Waren 0,125. Personalbedarf sämtlicher bisher personalgebundener Betriebe verdoppelt: Holzfäller/Sägewerk/Fischer 4, Bauernhof 8, Bäckerei 10. Unterbesetzung verlangsamt weiterhin proportional; Pausieren gibt Personal frei. Isometrische Variante verworfen und unter Sicherung/Isometrie_verworfen archiviert; ältere Isometrie-Prüfungen bleiben historische Nachweise. Keine JavaScript-Fehler im aktuellen Verbrauchstest.
+
+Verbrauch abschließend geprüft: jede einzelne Ware senkt den Bestand und verbessert bei erfüllter Versorgung das Hauseinkommen. Siedler: Fisch, zusätzlich Brot/Tuch. Bürger: Fisch/Brot/Tuch, zusätzlich Bier/Wein/Gewürze. Patrizier: Brot/Tuch/Bier/Wein/Gewürze. Direktlieferungen und Bauernhofzyklus nach diesen Änderungen unverändert bestanden (18 Prüfungen).
+Spritepflege: 17 Produktionsgebäude und Werft mit jeweils acht Arbeitsphasen, werkstattspezifischen Werkzeugen, Warenstapeln, Arbeitern, Mechanik, Rauch und Feuer. Gemeinsame vorhandene Materialpalette und Pixelraster. Windmühlenflügel gerastert, acht Ansichten. Animation läuft bei tatsächlicher Produktion, einschließlich Teilbesetzung; Stillstand/Pause/fehlende Rohstoffe stoppen sie. Spielpause friert die Phasen ein; reduzierte Bewegung zeigt ruhende Sprites. Mine und Steinbruch aktivieren Stollenflackern nur während Produktion. 30 verschiedene Gebäudesprites ohne Doppelungen, vier Rotationen je Arbeitsphase geprüft. Metadaten und Rauch-/Flügelgrenzen geprüft. Browserbilder mit 1440 und 1000 Pixeln Breite visuell geprüft. Bauernhof: Grundzyklus 60 Sekunden und ein Getreide, aktuelle Dauer abhängig von Effizienz, 360 Sekunden bei 1/6. Stillstand hat keine künstliche Sekundenangabe. Direktlieferungsprüfung (18 Prüfungen) und alle Verbrauchswaren erneut bestanden. Keine JavaScript-Fehler. Quelltext der eingebetteten Spritepflege: pixxo_2d_sprites.js.
+Hausaufstieg und Zusatzboni: Die pauschale Mindestmenge von drei Einheiten je Verbrauchsware wurde durch dieselbe Prüfung der tatsächlichen Versorgung ersetzt, die das Hausfenster verwendet. Aufstieg mit 0,75 Tuch und laufender Versorgung im Browser erfolgreich; Patrizierbedingungen mit kleinen Vorräten geprüft. Fehlende Versorgung, fehlender Markt und fehlender Straßenanschluss bleiben unerfüllt. Einnahmen aus zusätzlichen Waren um 150 % erhöht (Faktor 2,5): Brot 0,625 Gold je Einwohner/Minute, andere Zusatzwaren 0,3125. Beispiel Siedlerhaus mit vier Einwohnern und Brot/Tuch: Zusatzbonus 1,5 → 3,75 Gold/Minute. Bürgerhaus mit acht Einwohnern und allen Zusatzwaren: 5 → 12,5 Gold/Minute. Alle Verbrauchsprüfungen erneut bestanden; keine JavaScript-Fehler.
+
+
+Balancing-Prüfung vom 7. Oktober 2026
+
+Drei Aufbaupartien mit unterschiedlichen Startinseln erreichen die höchste
+Bevölkerungsstufe, mindestens 500 Einwohner und eine zusätzliche besiedelte
+Insel mit aktiver Handelsroute. Keine Partie endet im Konkurs.
+
+Änderungen:
+• Zusatzversorgung verbraucht 25 % des regulären Bedarfs der nächsten Stufe.
+  Der gewünschte Einkommensbonus von +150 % bleibt erhalten.
+• Die Kelterei benötigt eine Tonne Trauben pro Tonne Wein statt zwei.
+• Das Weingut kostet 1.500 statt 8.000 Gold; der Materialbedarf bleibt gleich.
+• Volle Ziellager blockieren Handelsrouten standardmäßig nicht mehr.
+  Restladung bleibt an Bord und fährt zurück. Andere ankommende Lieferungen
+  werden bei der Beladung berücksichtigt. Optional kann eine Route warten.
+• Das Routenformular zeigt nur die Frachträume des gewählten Schiffes.
+
+Ergebnisse (Spielminuten bei normaler Geschwindigkeit):
+Start 1234: Bürger 23.1, erstes Schiff 117.0, Kolonie 120.3, 30 Patrizier 176.5, Ende 186.5 Minuten.
+  Niedrigster Geldbestand: 116.8 Gold. Negative laufende Bilanz in 6 von 38 Stichproben.
+Start 3074: Bürger 23.1, erstes Schiff 141.0, Kolonie 148.2, 30 Patrizier 238.5, Ende 248.5 Minuten.
+  Niedrigster Geldbestand: 21.9 Gold. Negative laufende Bilanz in 7 von 50 Stichproben.
+Start 55172: Bürger 23.1, erstes Schiff 125.0, Kolonie 132.0, 30 Patrizier 187.3, Ende 197.4 Minuten.
+  Niedrigster Geldbestand: 111.4 Gold. Negative laufende Bilanz in 8 von 40 Stichproben.
+
+Mit derselben Aufbaufolge scheitern die drei gesicherten Vorher-Versionen
+nach 41,9 Spielminuten am Geldmangel. Das belegt den Engpass dieser
+Aufbaufolge; daraus folgt nicht, dass jede andere Spielweise scheitert.
+
+Methode und Grenzen:
+Isolierter Chrome-Browser über Playwright, frische Spielstände. Die
+Simulation verwendet die echten Kosten, Produktionszyklen, Bedürfnisse,
+Arbeitskräfte, Aufstiegsbedingungen, Händler, Schiffe und Routen.
+Es werden nach dem Spielstart keine kostenlosen Waren, Einwohner oder
+Geldbeträge hinzugefügt. Bauplätze, Straßen und Dienstabdeckung sind
+idealisiert; Brände sind deaktiviert. Dies ist eine Wirtschaftssimulation
+und kein vollständiger manueller Durchlauf in Firefox.
+Der Aufbaucontroller verkauft Überschüsse, pausiert volle Produktionsketten
+und erhält Arbeitskräfte beim Aufstieg. Ungeplanter Ausbau kann weiterhin
+zu Defiziten führen. Die frühe Geldreserve ist knapp: 22–117 Gold.
+Die simulierte Spielzeit ist keine Vorhersage für jede menschliche Partie.
+
+Zusätzliche Prüfungen:
+Routentests: Warenbilanz, Restladung, volle Lager, ankommende Schiffe,
+Frachtraumgrenzen, Warteoption und Speicherung.
+Acht zufällige Startinseln besitzen grundlegende Bauplätze. Steinabbau
+liegt teilweise außerhalb des anfänglichen Kontor-Baugebiets und benötigt
+eine Erweiterung durch Lagerhäuser. Die Prüfung baut kein vollständiges
+Straßennetz und keine komplette Siedlung auf.
+Bestanden: Verbrauch, Direktlieferungen, Hausaufstieg und Bonus,
+Produktionssprites sowie Inselwelt, Gründung, Nebel, Bedienung und Personal.
+Keine JavaScript-Laufzeitfehler in diesen Prüfungen.
+
+Reproduzieren:
+python run_balance.py 1234 3074 55172
+python run_balance.py --baseline 1234 3074 55172
+Ausführen aus diesem Prüfunterordner; Python, Playwright und Chrome nötig.
+Die JSON-Dateien enthalten Messpunkte, Ereignisse, Flotte und Routen.
+balancing-verlauf.png zeigt Geldbestand und Bevölkerungsentwicklung.

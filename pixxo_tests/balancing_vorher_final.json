@@ -1,0 +1,3111 @@
+{
+  "results": [
+    {
+      "seed": 1234,
+      "startIsland": 21,
+      "fert": [
+        "getreide",
+        "gewuerz"
+      ],
+      "minutes": 41.85,
+      "failure": "Konkurs",
+      "milestones": {
+        "citizens": 24.07
+      },
+      "minimum": {
+        "gold": -0.15161111108003444
+      },
+      "samples": [
+        {
+          "minute": 0.02,
+          "gold": 2882,
+          "population": 0,
+          "tiers": [
+            0,
+            0,
+            0
+          ],
+          "net": -10,
+          "buildings": 2,
+          "islands": 1,
+          "stock": {
+            "bretter": 20,
+            "fisch": 0,
+            "brot": 0,
+            "tuch": 0,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "demand": [
+              0,
+              4,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              -4,
+              0,
+              0
+            ],
+            "ratio": [
+              1,
+              0,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 5.02,
+          "gold": 2705,
+          "population": 34,
+          "tiers": [
+            34,
+            0,
+            0
+          ],
+          "net": -7,
+          "buildings": 14,
+          "islands": 1,
+          "stock": {
+            "bretter": 0,
+            "fisch": 3.53,
+            "brot": 0,
+            "tuch": 0,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              34,
+              0,
+              0
+            ],
+            "demand": [
+              0,
+              12,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              22,
+              0,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 10.02,
+          "gold": 3046,
+          "population": 68,
+          "tiers": [
+            68,
+            0,
+            0
+          ],
+          "net": 35,
+          "buildings": 22,
+          "islands": 1,
+          "stock": {
+            "bretter": 4,
+            "fisch": 6.84,
+            "brot": 0,
+            "tuch": 0,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              68,
+              0,
+              0
+            ],
+            "demand": [
+              0,
+              12,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              56,
+              0,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 15.02,
+          "gold": 1368,
+          "population": 68,
+          "tiers": [
+            68,
+            0,
+            0
+          ],
+          "net": -23,
+          "buildings": 27,
+          "islands": 1,
+          "stock": {
+            "bretter": 4,
+            "fisch": 8.34,
+            "brot": 0,
+            "tuch": 1.44,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              68,
+              0,
+              0
+            ],
+            "demand": [
+              0,
+              50,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              18,
+              0,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 20.02,
+          "gold": 1084,
+          "population": 82,
+          "tiers": [
+            82,
+            0,
+            0
+          ],
+          "net": 2,
+          "buildings": 34,
+          "islands": 1,
+          "stock": {
+            "bretter": 0,
+            "fisch": 8.74,
+            "brot": 0.73,
+            "tuch": 1.83,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              82,
+              0,
+              0
+            ],
+            "demand": [
+              0,
+              66,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              16,
+              0,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 25.02,
+          "gold": 305,
+          "population": 101,
+          "tiers": [
+            93,
+            8,
+            0
+          ],
+          "net": -58,
+          "buildings": 40,
+          "islands": 1,
+          "stock": {
+            "bretter": 4,
+            "fisch": 12.69,
+            "brot": 0,
+            "tuch": 6.73,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              93,
+              8,
+              0
+            ],
+            "demand": [
+              0,
+              80,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              13,
+              8,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 30.02,
+          "gold": 202,
+          "population": 101,
+          "tiers": [
+            93,
+            8,
+            0
+          ],
+          "net": -58,
+          "buildings": 40,
+          "islands": 1,
+          "stock": {
+            "bretter": 24,
+            "fisch": 20.39,
+            "brot": 0,
+            "tuch": 14.23,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              93,
+              8,
+              0
+            ],
+            "demand": [
+              0,
+              80,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              13,
+              8,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 35.02,
+          "gold": 100,
+          "population": 101,
+          "tiers": [
+            93,
+            8,
+            0
+          ],
+          "net": -58,
+          "buildings": 40,
+          "islands": 1,
+          "stock": {
+            "bretter": 44,
+            "fisch": 28.09,
+            "brot": 0,
+            "tuch": 21.73,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              93,
+              8,
+              0
+            ],
+            "demand": [
+              0,
+              80,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              13,
+              8,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 40.02,
+          "gold": 17,
+          "population": 101,
+          "tiers": [
+            93,
+            8,
+            0
+          ],
+          "net": -51,
+          "buildings": 40,
+          "islands": 1,
+          "stock": {
+            "bretter": 53,
+            "fisch": 35.79,
+            "brot": 0,
+            "tuch": 29.23,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              93,
+              8,
+              0
+            ],
+            "demand": [
+              0,
+              76,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              17,
+              8,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        }
+      ],
+      "events": [
+        {
+          "minute": 0,
+          "event": "Bau holzfaeller auf 21",
+          "gold": 2882
+        },
+        {
+          "minute": 0.17,
+          "event": "Bau saegewerk auf 21",
+          "gold": 2762
+        },
+        {
+          "minute": 0.33,
+          "event": "Bau markt auf 21",
+          "gold": 2391
+        },
+        {
+          "minute": 0.5,
+          "event": "Bau fischer auf 21",
+          "gold": 2267
+        },
+        {
+          "minute": 0.67,
+          "event": "Bau haus auf 21",
+          "gold": 2241
+        },
+        {
+          "minute": 0.83,
+          "event": "Bau haus auf 21",
+          "gold": 2215
+        },
+        {
+          "minute": 1,
+          "event": "Bau haus auf 21",
+          "gold": 2188
+        },
+        {
+          "minute": 1.17,
+          "event": "Bau haus auf 21",
+          "gold": 2912
+        },
+        {
+          "minute": 2.83,
+          "event": "Bau haus auf 21",
+          "gold": 2817
+        },
+        {
+          "minute": 3.33,
+          "event": "Bau haus auf 21",
+          "gold": 2786
+        },
+        {
+          "minute": 3.83,
+          "event": "Bau haus auf 21",
+          "gold": 2757
+        },
+        {
+          "minute": 4.33,
+          "event": "Bau haus auf 21",
+          "gold": 2731
+        },
+        {
+          "minute": 4.83,
+          "event": "Bau haus auf 21",
+          "gold": 2707
+        },
+        {
+          "minute": 5.33,
+          "event": "Bau haus auf 21",
+          "gold": 2685
+        },
+        {
+          "minute": 5.83,
+          "event": "Bau haus auf 21",
+          "gold": 3066
+        },
+        {
+          "minute": 6.33,
+          "event": "Bau haus auf 21",
+          "gold": 3050
+        },
+        {
+          "minute": 6.83,
+          "event": "Bau haus auf 21",
+          "gold": 3036
+        },
+        {
+          "minute": 7.33,
+          "event": "Bau haus auf 21",
+          "gold": 3025
+        },
+        {
+          "minute": 7.83,
+          "event": "Bau haus auf 21",
+          "gold": 3016
+        },
+        {
+          "minute": 8.33,
+          "event": "Bau haus auf 21",
+          "gold": 3009
+        },
+        {
+          "minute": 8.83,
+          "event": "Bau haus auf 21",
+          "gold": 3006
+        },
+        {
+          "minute": 10.83,
+          "event": "Bau steinbruch auf 21",
+          "gold": 2557
+        },
+        {
+          "minute": 11.33,
+          "event": "Bau schaefer auf 21",
+          "gold": 2849
+        },
+        {
+          "minute": 11.83,
+          "event": "Bau weberei auf 21",
+          "gold": 2435
+        },
+        {
+          "minute": 12.83,
+          "event": "Bau farm auf 21",
+          "gold": 1915
+        },
+        {
+          "minute": 13.83,
+          "event": "Bau muehle auf 21",
+          "gold": 1394
+        },
+        {
+          "minute": 15.83,
+          "event": "Bau baeckerei auf 21",
+          "gold": 831
+        },
+        {
+          "minute": 16,
+          "event": "Bau haus auf 21",
+          "gold": 805
+        },
+        {
+          "minute": 16.17,
+          "event": "Bau haus auf 21",
+          "gold": 779
+        },
+        {
+          "minute": 16.33,
+          "event": "Bau haus auf 21",
+          "gold": 755
+        },
+        {
+          "minute": 18.83,
+          "event": "Bau kapelle auf 21",
+          "gold": 232
+        },
+        {
+          "minute": 19.33,
+          "event": "Bau schaefer auf 21",
+          "gold": 1118
+        },
+        {
+          "minute": 19.83,
+          "event": "Bau haus auf 21",
+          "gold": 1084
+        },
+        {
+          "minute": 20.33,
+          "event": "Bau weberei auf 21",
+          "gold": 667
+        },
+        {
+          "minute": 20.83,
+          "event": "Bau haus auf 21",
+          "gold": 624
+        },
+        {
+          "minute": 21.33,
+          "event": "Bau haus auf 21",
+          "gold": 602
+        },
+        {
+          "minute": 21.83,
+          "event": "Bau fischer auf 21",
+          "gold": 464
+        },
+        {
+          "minute": 22.33,
+          "event": "Bau haus auf 21",
+          "gold": 440
+        },
+        {
+          "minute": 23.33,
+          "event": "Aufstieg Bürger",
+          "gold": 412
+        },
+        {
+          "minute": 24,
+          "event": "Bau haus auf 21",
+          "gold": 326
+        },
+        {
+          "minute": 24.07,
+          "event": "Erste Bürger",
+          "gold": 325
+        }
+      ],
+      "blocked": {},
+      "finished": false,
+      "counts": {
+        "kontor": 1,
+        "lager": 0,
+        "haus": 25,
+        "holzfaeller": 1,
+        "fischer": 2,
+        "steinbruch": 1,
+        "farm": 1,
+        "schaefer": 2,
+        "hopfen": 0,
+        "weingut": 0,
+        "mine": 0,
+        "saegewerk": 1,
+        "muehle": 1,
+        "baeckerei": 1,
+        "weberei": 2,
+        "brauerei": 0,
+        "kelterei": 0,
+        "schmelze": 0,
+        "schmiede": 0,
+        "markt": 1,
+        "kapelle": 1,
+        "feuer": 0,
+        "kirche": 0,
+        "gewuerzfarm": 0,
+        "werft": 0
+      },
+      "stock": {
+        "holz": 18,
+        "bretter": 53,
+        "stein": 51,
+        "fisch": 39.280502777802546,
+        "getreide": 0,
+        "mehl": 2,
+        "brot": 0,
+        "wolle": 0,
+        "tuch": 32.65000000002047,
+        "hopfen": 0,
+        "bier": 0,
+        "trauben": 0,
+        "wein": 0,
+        "erz": 0,
+        "eisen": 0,
+        "werkzeug": 0,
+        "gewuerz": 0
+      },
+      "workers": {
+        "supply": [
+          0,
+          93,
+          8,
+          0
+        ],
+        "demand": [
+          0,
+          76,
+          0,
+          0
+        ],
+        "free": [
+          0,
+          17,
+          8,
+          0
+        ],
+        "ratio": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "islands": 1,
+      "colonyDetails": [
+        {
+          "i": 21,
+          "stock": {
+            "holz": 18,
+            "bretter": 53,
+            "stein": 51,
+            "fisch": 39.280502777802546,
+            "getreide": 0,
+            "mehl": 2,
+            "brot": 0,
+            "wolle": 0,
+            "tuch": 32.65000000002047,
+            "hopfen": 0,
+            "bier": 0,
+            "trauben": 0,
+            "wein": 0,
+            "erz": 0,
+            "eisen": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "buildings": [
+            {
+              "type": "kontor",
+              "status": "",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "holzfaeller",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "saegewerk",
+              "status": "Pausiert",
+              "eff": 0,
+              "pop": 0
+            },
+            {
+              "type": "markt",
+              "status": "In Betrieb",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "fischer",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 8
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "steinbruch",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "schaefer",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "weberei",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "farm",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "muehle",
+              "status": "Rohstoffe fehlen",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "baeckerei",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "kapelle",
+              "status": "In Betrieb",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "schaefer",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "weberei",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "fischer",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Verelendet",
+              "eff": 1,
+              "pop": 1
+            }
+          ],
+          "workers": {
+            "supply": [
+              0,
+              93,
+              8,
+              0
+            ],
+            "demand": [
+              0,
+              76,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              17,
+              8,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        }
+      ],
+      "fleet": [],
+      "routes": []
+    },
+    {
+      "seed": 3074,
+      "startIsland": 20,
+      "fert": [
+        "getreide",
+        "hopfen",
+        "trauben"
+      ],
+      "minutes": 41.85,
+      "failure": "Konkurs",
+      "milestones": {
+        "citizens": 24.07
+      },
+      "minimum": {
+        "gold": -0.15161111108003444
+      },
+      "samples": [
+        {
+          "minute": 0.02,
+          "gold": 2882,
+          "population": 0,
+          "tiers": [
+            0,
+            0,
+            0
+          ],
+          "net": -10,
+          "buildings": 2,
+          "islands": 1,
+          "stock": {
+            "bretter": 20,
+            "fisch": 0,
+            "brot": 0,
+            "tuch": 0,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "demand": [
+              0,
+              4,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              -4,
+              0,
+              0
+            ],
+            "ratio": [
+              1,
+              0,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 5.02,
+          "gold": 2705,
+          "population": 34,
+          "tiers": [
+            34,
+            0,
+            0
+          ],
+          "net": -7,
+          "buildings": 14,
+          "islands": 1,
+          "stock": {
+            "bretter": 0,
+            "fisch": 3.53,
+            "brot": 0,
+            "tuch": 0,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              34,
+              0,
+              0
+            ],
+            "demand": [
+              0,
+              12,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              22,
+              0,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 10.02,
+          "gold": 3046,
+          "population": 68,
+          "tiers": [
+            68,
+            0,
+            0
+          ],
+          "net": 35,
+          "buildings": 22,
+          "islands": 1,
+          "stock": {
+            "bretter": 4,
+            "fisch": 6.84,
+            "brot": 0,
+            "tuch": 0,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              68,
+              0,
+              0
+            ],
+            "demand": [
+              0,
+              12,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              56,
+              0,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 15.02,
+          "gold": 1368,
+          "population": 68,
+          "tiers": [
+            68,
+            0,
+            0
+          ],
+          "net": -23,
+          "buildings": 27,
+          "islands": 1,
+          "stock": {
+            "bretter": 4,
+            "fisch": 8.34,
+            "brot": 0,
+            "tuch": 1.44,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              68,
+              0,
+              0
+            ],
+            "demand": [
+              0,
+              50,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              18,
+              0,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 20.02,
+          "gold": 1084,
+          "population": 82,
+          "tiers": [
+            82,
+            0,
+            0
+          ],
+          "net": 2,
+          "buildings": 34,
+          "islands": 1,
+          "stock": {
+            "bretter": 0,
+            "fisch": 8.74,
+            "brot": 0.73,
+            "tuch": 1.83,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              82,
+              0,
+              0
+            ],
+            "demand": [
+              0,
+              66,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              16,
+              0,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 25.02,
+          "gold": 305,
+          "population": 101,
+          "tiers": [
+            93,
+            8,
+            0
+          ],
+          "net": -58,
+          "buildings": 40,
+          "islands": 1,
+          "stock": {
+            "bretter": 4,
+            "fisch": 12.69,
+            "brot": 0,
+            "tuch": 6.73,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              93,
+              8,
+              0
+            ],
+            "demand": [
+              0,
+              80,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              13,
+              8,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 30.02,
+          "gold": 202,
+          "population": 101,
+          "tiers": [
+            93,
+            8,
+            0
+          ],
+          "net": -58,
+          "buildings": 40,
+          "islands": 1,
+          "stock": {
+            "bretter": 24,
+            "fisch": 20.39,
+            "brot": 0,
+            "tuch": 14.23,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              93,
+              8,
+              0
+            ],
+            "demand": [
+              0,
+              80,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              13,
+              8,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 35.02,
+          "gold": 100,
+          "population": 101,
+          "tiers": [
+            93,
+            8,
+            0
+          ],
+          "net": -58,
+          "buildings": 40,
+          "islands": 1,
+          "stock": {
+            "bretter": 44,
+            "fisch": 28.09,
+            "brot": 0,
+            "tuch": 21.73,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              93,
+              8,
+              0
+            ],
+            "demand": [
+              0,
+              80,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              13,
+              8,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 40.02,
+          "gold": 17,
+          "population": 101,
+          "tiers": [
+            93,
+            8,
+            0
+          ],
+          "net": -51,
+          "buildings": 40,
+          "islands": 1,
+          "stock": {
+            "bretter": 53,
+            "fisch": 35.79,
+            "brot": 0,
+            "tuch": 29.23,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              93,
+              8,
+              0
+            ],
+            "demand": [
+              0,
+              76,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              17,
+              8,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        }
+      ],
+      "events": [
+        {
+          "minute": 0,
+          "event": "Bau holzfaeller auf 20",
+          "gold": 2882
+        },
+        {
+          "minute": 0.17,
+          "event": "Bau saegewerk auf 20",
+          "gold": 2762
+        },
+        {
+          "minute": 0.33,
+          "event": "Bau markt auf 20",
+          "gold": 2391
+        },
+        {
+          "minute": 0.5,
+          "event": "Bau fischer auf 20",
+          "gold": 2267
+        },
+        {
+          "minute": 0.67,
+          "event": "Bau haus auf 20",
+          "gold": 2241
+        },
+        {
+          "minute": 0.83,
+          "event": "Bau haus auf 20",
+          "gold": 2215
+        },
+        {
+          "minute": 1,
+          "event": "Bau haus auf 20",
+          "gold": 2188
+        },
+        {
+          "minute": 1.17,
+          "event": "Bau haus auf 20",
+          "gold": 2912
+        },
+        {
+          "minute": 2.83,
+          "event": "Bau haus auf 20",
+          "gold": 2817
+        },
+        {
+          "minute": 3.33,
+          "event": "Bau haus auf 20",
+          "gold": 2786
+        },
+        {
+          "minute": 3.83,
+          "event": "Bau haus auf 20",
+          "gold": 2757
+        },
+        {
+          "minute": 4.33,
+          "event": "Bau haus auf 20",
+          "gold": 2731
+        },
+        {
+          "minute": 4.83,
+          "event": "Bau haus auf 20",
+          "gold": 2707
+        },
+        {
+          "minute": 5.33,
+          "event": "Bau haus auf 20",
+          "gold": 2685
+        },
+        {
+          "minute": 5.83,
+          "event": "Bau haus auf 20",
+          "gold": 3066
+        },
+        {
+          "minute": 6.33,
+          "event": "Bau haus auf 20",
+          "gold": 3050
+        },
+        {
+          "minute": 6.83,
+          "event": "Bau haus auf 20",
+          "gold": 3036
+        },
+        {
+          "minute": 7.33,
+          "event": "Bau haus auf 20",
+          "gold": 3025
+        },
+        {
+          "minute": 7.83,
+          "event": "Bau haus auf 20",
+          "gold": 3016
+        },
+        {
+          "minute": 8.33,
+          "event": "Bau haus auf 20",
+          "gold": 3009
+        },
+        {
+          "minute": 8.83,
+          "event": "Bau haus auf 20",
+          "gold": 3006
+        },
+        {
+          "minute": 10.83,
+          "event": "Bau steinbruch auf 20",
+          "gold": 2557
+        },
+        {
+          "minute": 11.33,
+          "event": "Bau schaefer auf 20",
+          "gold": 2849
+        },
+        {
+          "minute": 11.83,
+          "event": "Bau weberei auf 20",
+          "gold": 2435
+        },
+        {
+          "minute": 12.83,
+          "event": "Bau farm auf 20",
+          "gold": 1915
+        },
+        {
+          "minute": 13.83,
+          "event": "Bau muehle auf 20",
+          "gold": 1394
+        },
+        {
+          "minute": 15.83,
+          "event": "Bau baeckerei auf 20",
+          "gold": 831
+        },
+        {
+          "minute": 16,
+          "event": "Bau haus auf 20",
+          "gold": 805
+        },
+        {
+          "minute": 16.17,
+          "event": "Bau haus auf 20",
+          "gold": 779
+        },
+        {
+          "minute": 16.33,
+          "event": "Bau haus auf 20",
+          "gold": 755
+        },
+        {
+          "minute": 18.83,
+          "event": "Bau kapelle auf 20",
+          "gold": 232
+        },
+        {
+          "minute": 19.33,
+          "event": "Bau schaefer auf 20",
+          "gold": 1118
+        },
+        {
+          "minute": 19.83,
+          "event": "Bau haus auf 20",
+          "gold": 1084
+        },
+        {
+          "minute": 20.33,
+          "event": "Bau weberei auf 20",
+          "gold": 667
+        },
+        {
+          "minute": 20.83,
+          "event": "Bau haus auf 20",
+          "gold": 624
+        },
+        {
+          "minute": 21.33,
+          "event": "Bau haus auf 20",
+          "gold": 602
+        },
+        {
+          "minute": 21.83,
+          "event": "Bau fischer auf 20",
+          "gold": 464
+        },
+        {
+          "minute": 22.33,
+          "event": "Bau haus auf 20",
+          "gold": 440
+        },
+        {
+          "minute": 23.33,
+          "event": "Aufstieg Bürger",
+          "gold": 412
+        },
+        {
+          "minute": 24,
+          "event": "Bau haus auf 20",
+          "gold": 326
+        },
+        {
+          "minute": 24.07,
+          "event": "Erste Bürger",
+          "gold": 325
+        }
+      ],
+      "blocked": {},
+      "finished": false,
+      "counts": {
+        "kontor": 1,
+        "lager": 0,
+        "haus": 25,
+        "holzfaeller": 1,
+        "fischer": 2,
+        "steinbruch": 1,
+        "farm": 1,
+        "schaefer": 2,
+        "hopfen": 0,
+        "weingut": 0,
+        "mine": 0,
+        "saegewerk": 1,
+        "muehle": 1,
+        "baeckerei": 1,
+        "weberei": 2,
+        "brauerei": 0,
+        "kelterei": 0,
+        "schmelze": 0,
+        "schmiede": 0,
+        "markt": 1,
+        "kapelle": 1,
+        "feuer": 0,
+        "kirche": 0,
+        "gewuerzfarm": 0,
+        "werft": 0
+      },
+      "stock": {
+        "holz": 18,
+        "bretter": 53,
+        "stein": 51,
+        "fisch": 39.280502777802546,
+        "getreide": 0,
+        "mehl": 2,
+        "brot": 0,
+        "wolle": 0,
+        "tuch": 32.65000000002047,
+        "hopfen": 0,
+        "bier": 0,
+        "trauben": 0,
+        "wein": 0,
+        "erz": 0,
+        "eisen": 0,
+        "werkzeug": 0,
+        "gewuerz": 0
+      },
+      "workers": {
+        "supply": [
+          0,
+          93,
+          8,
+          0
+        ],
+        "demand": [
+          0,
+          76,
+          0,
+          0
+        ],
+        "free": [
+          0,
+          17,
+          8,
+          0
+        ],
+        "ratio": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "islands": 1,
+      "colonyDetails": [
+        {
+          "i": 20,
+          "stock": {
+            "holz": 18,
+            "bretter": 53,
+            "stein": 51,
+            "fisch": 39.280502777802546,
+            "getreide": 0,
+            "mehl": 2,
+            "brot": 0,
+            "wolle": 0,
+            "tuch": 32.65000000002047,
+            "hopfen": 0,
+            "bier": 0,
+            "trauben": 0,
+            "wein": 0,
+            "erz": 0,
+            "eisen": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "buildings": [
+            {
+              "type": "kontor",
+              "status": "",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "holzfaeller",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "saegewerk",
+              "status": "Pausiert",
+              "eff": 0,
+              "pop": 0
+            },
+            {
+              "type": "markt",
+              "status": "In Betrieb",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "fischer",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 8
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "steinbruch",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "schaefer",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "weberei",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "farm",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "muehle",
+              "status": "Rohstoffe fehlen",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "baeckerei",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "kapelle",
+              "status": "In Betrieb",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "schaefer",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "weberei",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "fischer",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Verelendet",
+              "eff": 1,
+              "pop": 1
+            }
+          ],
+          "workers": {
+            "supply": [
+              0,
+              93,
+              8,
+              0
+            ],
+            "demand": [
+              0,
+              76,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              17,
+              8,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        }
+      ],
+      "fleet": [],
+      "routes": []
+    },
+    {
+      "seed": 55172,
+      "startIsland": 21,
+      "fert": [
+        "getreide",
+        "gewuerz"
+      ],
+      "minutes": 41.85,
+      "failure": "Konkurs",
+      "milestones": {
+        "citizens": 24.07
+      },
+      "minimum": {
+        "gold": -0.15161111108003444
+      },
+      "samples": [
+        {
+          "minute": 0.02,
+          "gold": 2882,
+          "population": 0,
+          "tiers": [
+            0,
+            0,
+            0
+          ],
+          "net": -10,
+          "buildings": 2,
+          "islands": 1,
+          "stock": {
+            "bretter": 20,
+            "fisch": 0,
+            "brot": 0,
+            "tuch": 0,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "demand": [
+              0,
+              4,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              -4,
+              0,
+              0
+            ],
+            "ratio": [
+              1,
+              0,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 5.02,
+          "gold": 2705,
+          "population": 34,
+          "tiers": [
+            34,
+            0,
+            0
+          ],
+          "net": -7,
+          "buildings": 14,
+          "islands": 1,
+          "stock": {
+            "bretter": 0,
+            "fisch": 3.53,
+            "brot": 0,
+            "tuch": 0,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              34,
+              0,
+              0
+            ],
+            "demand": [
+              0,
+              12,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              22,
+              0,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 10.02,
+          "gold": 3046,
+          "population": 68,
+          "tiers": [
+            68,
+            0,
+            0
+          ],
+          "net": 35,
+          "buildings": 22,
+          "islands": 1,
+          "stock": {
+            "bretter": 4,
+            "fisch": 6.84,
+            "brot": 0,
+            "tuch": 0,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              68,
+              0,
+              0
+            ],
+            "demand": [
+              0,
+              12,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              56,
+              0,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 15.02,
+          "gold": 1368,
+          "population": 68,
+          "tiers": [
+            68,
+            0,
+            0
+          ],
+          "net": -23,
+          "buildings": 27,
+          "islands": 1,
+          "stock": {
+            "bretter": 4,
+            "fisch": 8.34,
+            "brot": 0,
+            "tuch": 1.44,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              68,
+              0,
+              0
+            ],
+            "demand": [
+              0,
+              50,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              18,
+              0,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 20.02,
+          "gold": 1084,
+          "population": 82,
+          "tiers": [
+            82,
+            0,
+            0
+          ],
+          "net": 2,
+          "buildings": 34,
+          "islands": 1,
+          "stock": {
+            "bretter": 0,
+            "fisch": 8.74,
+            "brot": 0.73,
+            "tuch": 1.83,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              82,
+              0,
+              0
+            ],
+            "demand": [
+              0,
+              66,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              16,
+              0,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 25.02,
+          "gold": 305,
+          "population": 101,
+          "tiers": [
+            93,
+            8,
+            0
+          ],
+          "net": -58,
+          "buildings": 40,
+          "islands": 1,
+          "stock": {
+            "bretter": 4,
+            "fisch": 12.69,
+            "brot": 0,
+            "tuch": 6.73,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              93,
+              8,
+              0
+            ],
+            "demand": [
+              0,
+              80,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              13,
+              8,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 30.02,
+          "gold": 202,
+          "population": 101,
+          "tiers": [
+            93,
+            8,
+            0
+          ],
+          "net": -58,
+          "buildings": 40,
+          "islands": 1,
+          "stock": {
+            "bretter": 24,
+            "fisch": 20.39,
+            "brot": 0,
+            "tuch": 14.23,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              93,
+              8,
+              0
+            ],
+            "demand": [
+              0,
+              80,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              13,
+              8,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 35.02,
+          "gold": 100,
+          "population": 101,
+          "tiers": [
+            93,
+            8,
+            0
+          ],
+          "net": -58,
+          "buildings": 40,
+          "islands": 1,
+          "stock": {
+            "bretter": 44,
+            "fisch": 28.09,
+            "brot": 0,
+            "tuch": 21.73,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              93,
+              8,
+              0
+            ],
+            "demand": [
+              0,
+              80,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              13,
+              8,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        },
+        {
+          "minute": 40.02,
+          "gold": 17,
+          "population": 101,
+          "tiers": [
+            93,
+            8,
+            0
+          ],
+          "net": -51,
+          "buildings": 40,
+          "islands": 1,
+          "stock": {
+            "bretter": 53,
+            "fisch": 35.79,
+            "brot": 0,
+            "tuch": 29.23,
+            "bier": 0,
+            "wein": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "workers": {
+            "supply": [
+              0,
+              93,
+              8,
+              0
+            ],
+            "demand": [
+              0,
+              76,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              17,
+              8,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        }
+      ],
+      "events": [
+        {
+          "minute": 0,
+          "event": "Bau holzfaeller auf 21",
+          "gold": 2882
+        },
+        {
+          "minute": 0.17,
+          "event": "Bau saegewerk auf 21",
+          "gold": 2762
+        },
+        {
+          "minute": 0.33,
+          "event": "Bau markt auf 21",
+          "gold": 2391
+        },
+        {
+          "minute": 0.5,
+          "event": "Bau fischer auf 21",
+          "gold": 2267
+        },
+        {
+          "minute": 0.67,
+          "event": "Bau haus auf 21",
+          "gold": 2241
+        },
+        {
+          "minute": 0.83,
+          "event": "Bau haus auf 21",
+          "gold": 2215
+        },
+        {
+          "minute": 1,
+          "event": "Bau haus auf 21",
+          "gold": 2188
+        },
+        {
+          "minute": 1.17,
+          "event": "Bau haus auf 21",
+          "gold": 2912
+        },
+        {
+          "minute": 2.83,
+          "event": "Bau haus auf 21",
+          "gold": 2817
+        },
+        {
+          "minute": 3.33,
+          "event": "Bau haus auf 21",
+          "gold": 2786
+        },
+        {
+          "minute": 3.83,
+          "event": "Bau haus auf 21",
+          "gold": 2757
+        },
+        {
+          "minute": 4.33,
+          "event": "Bau haus auf 21",
+          "gold": 2731
+        },
+        {
+          "minute": 4.83,
+          "event": "Bau haus auf 21",
+          "gold": 2707
+        },
+        {
+          "minute": 5.33,
+          "event": "Bau haus auf 21",
+          "gold": 2685
+        },
+        {
+          "minute": 5.83,
+          "event": "Bau haus auf 21",
+          "gold": 3066
+        },
+        {
+          "minute": 6.33,
+          "event": "Bau haus auf 21",
+          "gold": 3050
+        },
+        {
+          "minute": 6.83,
+          "event": "Bau haus auf 21",
+          "gold": 3036
+        },
+        {
+          "minute": 7.33,
+          "event": "Bau haus auf 21",
+          "gold": 3025
+        },
+        {
+          "minute": 7.83,
+          "event": "Bau haus auf 21",
+          "gold": 3016
+        },
+        {
+          "minute": 8.33,
+          "event": "Bau haus auf 21",
+          "gold": 3009
+        },
+        {
+          "minute": 8.83,
+          "event": "Bau haus auf 21",
+          "gold": 3006
+        },
+        {
+          "minute": 10.83,
+          "event": "Bau steinbruch auf 21",
+          "gold": 2557
+        },
+        {
+          "minute": 11.33,
+          "event": "Bau schaefer auf 21",
+          "gold": 2849
+        },
+        {
+          "minute": 11.83,
+          "event": "Bau weberei auf 21",
+          "gold": 2435
+        },
+        {
+          "minute": 12.83,
+          "event": "Bau farm auf 21",
+          "gold": 1915
+        },
+        {
+          "minute": 13.83,
+          "event": "Bau muehle auf 21",
+          "gold": 1394
+        },
+        {
+          "minute": 15.83,
+          "event": "Bau baeckerei auf 21",
+          "gold": 831
+        },
+        {
+          "minute": 16,
+          "event": "Bau haus auf 21",
+          "gold": 805
+        },
+        {
+          "minute": 16.17,
+          "event": "Bau haus auf 21",
+          "gold": 779
+        },
+        {
+          "minute": 16.33,
+          "event": "Bau haus auf 21",
+          "gold": 755
+        },
+        {
+          "minute": 18.83,
+          "event": "Bau kapelle auf 21",
+          "gold": 232
+        },
+        {
+          "minute": 19.33,
+          "event": "Bau schaefer auf 21",
+          "gold": 1118
+        },
+        {
+          "minute": 19.83,
+          "event": "Bau haus auf 21",
+          "gold": 1084
+        },
+        {
+          "minute": 20.33,
+          "event": "Bau weberei auf 21",
+          "gold": 667
+        },
+        {
+          "minute": 20.83,
+          "event": "Bau haus auf 21",
+          "gold": 624
+        },
+        {
+          "minute": 21.33,
+          "event": "Bau haus auf 21",
+          "gold": 602
+        },
+        {
+          "minute": 21.83,
+          "event": "Bau fischer auf 21",
+          "gold": 464
+        },
+        {
+          "minute": 22.33,
+          "event": "Bau haus auf 21",
+          "gold": 440
+        },
+        {
+          "minute": 23.33,
+          "event": "Aufstieg Bürger",
+          "gold": 412
+        },
+        {
+          "minute": 24,
+          "event": "Bau haus auf 21",
+          "gold": 326
+        },
+        {
+          "minute": 24.07,
+          "event": "Erste Bürger",
+          "gold": 325
+        }
+      ],
+      "blocked": {},
+      "finished": false,
+      "counts": {
+        "kontor": 1,
+        "lager": 0,
+        "haus": 25,
+        "holzfaeller": 1,
+        "fischer": 2,
+        "steinbruch": 1,
+        "farm": 1,
+        "schaefer": 2,
+        "hopfen": 0,
+        "weingut": 0,
+        "mine": 0,
+        "saegewerk": 1,
+        "muehle": 1,
+        "baeckerei": 1,
+        "weberei": 2,
+        "brauerei": 0,
+        "kelterei": 0,
+        "schmelze": 0,
+        "schmiede": 0,
+        "markt": 1,
+        "kapelle": 1,
+        "feuer": 0,
+        "kirche": 0,
+        "gewuerzfarm": 0,
+        "werft": 0
+      },
+      "stock": {
+        "holz": 18,
+        "bretter": 53,
+        "stein": 51,
+        "fisch": 39.280502777802546,
+        "getreide": 0,
+        "mehl": 2,
+        "brot": 0,
+        "wolle": 0,
+        "tuch": 32.65000000002047,
+        "hopfen": 0,
+        "bier": 0,
+        "trauben": 0,
+        "wein": 0,
+        "erz": 0,
+        "eisen": 0,
+        "werkzeug": 0,
+        "gewuerz": 0
+      },
+      "workers": {
+        "supply": [
+          0,
+          93,
+          8,
+          0
+        ],
+        "demand": [
+          0,
+          76,
+          0,
+          0
+        ],
+        "free": [
+          0,
+          17,
+          8,
+          0
+        ],
+        "ratio": [
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "islands": 1,
+      "colonyDetails": [
+        {
+          "i": 21,
+          "stock": {
+            "holz": 18,
+            "bretter": 53,
+            "stein": 51,
+            "fisch": 39.280502777802546,
+            "getreide": 0,
+            "mehl": 2,
+            "brot": 0,
+            "wolle": 0,
+            "tuch": 32.65000000002047,
+            "hopfen": 0,
+            "bier": 0,
+            "trauben": 0,
+            "wein": 0,
+            "erz": 0,
+            "eisen": 0,
+            "werkzeug": 0,
+            "gewuerz": 0
+          },
+          "buildings": [
+            {
+              "type": "kontor",
+              "status": "",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "holzfaeller",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "saegewerk",
+              "status": "Pausiert",
+              "eff": 0,
+              "pop": 0
+            },
+            {
+              "type": "markt",
+              "status": "In Betrieb",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "fischer",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 8
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "steinbruch",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "schaefer",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "weberei",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "farm",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "muehle",
+              "status": "Rohstoffe fehlen",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "baeckerei",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "kapelle",
+              "status": "In Betrieb",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "schaefer",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "weberei",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "fischer",
+              "status": "Produziert",
+              "eff": 1,
+              "pop": 0
+            },
+            {
+              "type": "haus",
+              "status": "Zufrieden",
+              "eff": 1,
+              "pop": 4
+            },
+            {
+              "type": "haus",
+              "status": "Verelendet",
+              "eff": 1,
+              "pop": 1
+            }
+          ],
+          "workers": {
+            "supply": [
+              0,
+              93,
+              8,
+              0
+            ],
+            "demand": [
+              0,
+              76,
+              0,
+              0
+            ],
+            "free": [
+              0,
+              17,
+              8,
+              0
+            ],
+            "ratio": [
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        }
+      ],
+      "fleet": [],
+      "routes": []
+    }
+  ],
+  "errors": []
+}

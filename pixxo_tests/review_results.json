@@ -1,0 +1,49 @@
+﻿{
+    "factItems":  [
+                      {
+                          "width":  32,
+                          "height":  32,
+                          "iconWidth":  32,
+                          "iconHeight":  32
+                      },
+                      {
+                          "width":  32,
+                          "height":  32,
+                          "iconWidth":  32,
+                          "iconHeight":  32
+                      },
+                      {
+                          "width":  32,
+                          "height":  32,
+                          "iconWidth":  32,
+                          "iconHeight":  32
+                      },
+                      {
+                          "width":  32,
+                          "height":  32,
+                          "iconWidth":  32,
+                          "iconHeight":  32
+                      }
+                  ],
+    "fontViolations":  [
+
+                       ],
+    "smallTargets":  [
+
+                     ],
+    "unlabeledButtons":  [
+
+                         ],
+    "focus":  [
+                  {
+                      "text":  "Bauplatz für Betriebsfläche auswählen",
+                      "focused":  true,
+                      "outline":  "solid",
+                      "width":  "3px"
+                  }
+              ],
+    "viewport":  {
+                     "width":  1424,
+                     "height":  905
+                 }
+}

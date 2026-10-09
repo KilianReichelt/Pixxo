@@ -1,0 +1,5 @@
+.island-rename{display:grid;gap:8px;margin-bottom:16px}
+.island-rename input{width:100%;min-width:0;min-height:44px;box-sizing:border-box;padding:8px;border:2px solid #a88b58;background:#15110b;color:var(--ink);font:inherit;font-size:1rem}
+.island-rename label,.island-name-status{font-size:1rem}
+.island-rename input:focus-visible,.island-rename button:focus-visible{outline:3px solid #ffe3a0;outline-offset:2px}
+.island-name-status{margin:0;min-height:1.4em}

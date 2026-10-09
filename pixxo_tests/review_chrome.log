@@ -1,0 +1,17 @@
+chrome.exe : [17364:38864:1008/091007.390:ERROR:components\device_event_log\device_event_log_impl.cc:211] 
+[09:10:07.391] USB: usb_device_win.cc:66 Failed to open 
+\\?\usb#root_hub30#4&39a95ca&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8}: Zugriff verweigert (0x5)
+In C:\Users\k.reichelt\Desktop\VORLAGEN\DIGITAL\html snippets\test\ek\Pixxo 
+Pixxo\pixxo_tests\run_gameplay_tests.ps1:21 Zeichen:2
++  & $chrome @argsList 2> (Join-Path $PSScriptRoot ($kind+'_chrome.log' ...
++  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([17364:38864:10...erweigert (0x5):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[17364:18208:1008/091007.499:ERROR:google_apis\gcm\engine\registration_request.cc:291] Registration response error 
+message: DEPRECATED_ENDPOINT
+[17364:19340:1008/091010.753:ERROR:extensions\browser\crx_installer.cc:969] JavaScript-Code 
+„content_scripts/embeddedpdfs/embedded-pdf-touch-point-event-listener.js“ konnte nicht für Script geladen werden. 
+efaidnbmnnnibpcajpcglclefindmkaj 
+321559 bytes written to file C:\Users\k.reichelt\Desktop\VORLAGEN\DIGITAL\html snippets\test\ek\Pixxo 
+Pixxo\pixxo_tests\gameplay_review.png

@@ -1,0 +1,5 @@
+.maptools{gap:16px!important;padding:8px!important;box-sizing:border-box;min-height:44px}
+.maptools button{position:relative;width:28px!important;height:28px!important;min-width:28px!important;min-height:28px!important;max-width:28px!important;max-height:28px!important;flex:0 0 28px;padding:0!important;box-sizing:border-box;background:#2a1d10!important;border:1px solid #a88b58!important;display:inline-flex;align-items:center;justify-content:center;font-size:1rem!important}
+.maptools button::before{content:none!important}
+.maptools button::after{content:'';position:absolute;inset:-8px;pointer-events:auto}
+.maptools button:hover{background:#5c4425!important}.maptools button:focus-visible{outline:3px solid #ffe3a0;outline-offset:3px}

@@ -1,0 +1,32 @@
+Pixxo – lokal spielen
+
+1. Das ZIP-Archiv vollständig in einen Ordner entpacken.
+2. pixxo.html per Doppelklick in Chrome, Edge oder Firefox öffnen.
+3. Die HTML-Datei und den gesamten Unterordner assets zusammenlassen.
+
+Ein Webbrowser genügt. Schrift, Grafiken, Musik und Geräusche sind enthalten.
+Eine Installation, ein lokaler Server oder eine Internetverbindung sind nicht nötig.
+
+Spielstände
+Im Spielmenü „Jetzt speichern“ wählen. Die Partie speichert im jeweiligen Browser.
+Vor einem Ordnerwechsel oder dem Wechsel zur Onlinefassung „Exportieren“ wählen.
+Am neuen Spielort „Importieren“ wählen und die JSON-Datei öffnen. Nach einem Import
+kann die vorherige Partie im Menü wiederhergestellt werden.
+
+Bedienung
+Karte mit der Maus ziehen, mit dem Mausrad zoomen. Gebäudekategorie auswählen
+und zum Bauen auf die Karte klicken. R dreht das Gebäude. Rechtsklick beendet
+das Werkzeug. Die Gebäudeliste lässt sich mit Pfeilbuttons oder durch Ziehen
+verschieben. Straßen werden beim Loslassen entlang der Vorschau gebaut.
+
+Inseln und Versorgung
+Der Inselname kann im Inselfenster geändert werden. Getreidehöfe können auf
+jeder Insel ohne besondere Fruchtbarkeit gebaut werden; sie benötigen weiterhin
+ihre Ackerflächen. Betriebe und Häuser werden über Straßen versorgt.
+
+Handelsrouten
+Beim Schiff „Route einrichten“ wählen, Inseln als Stationen hinzufügen und die
+Reihenfolge mit den Pfeilbuttons ändern. Je Station und Frachtraum Waren zum
+Entladen und Laden sowie die Mengen wählen. Nicht ausgewählte Waren bleiben
+an Bord. Nach der letzten Station fährt das Schiff zum Anfang zurück.
+Unter „Warteverhalten und Mindestbestand“ können Wartezeiten eingestellt werden.

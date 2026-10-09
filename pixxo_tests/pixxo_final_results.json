@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-09",
+  "browser": "Firefox, vollständiges Spiel mit isoliertem Speicher",
+  "browserChecksPassed": 296,
+  "nodeChecksPassed": 446,
+  "javascriptSyntaxBlocksPassed": 28,
+  "legacyMigration": "Bestehende Firefox-Partie unter pixxo.html geöffnet, Silberstrand, 2985 Gold, 18 Bretter.",
+  "visualCheck": "Dekorationsleiste, Iconbuttons und native Sprites geprüft.",
+  "limitations": "Wirtschaft als Modell bei voller Auslastung geprüft; keine vollständige Langzeitpartie."
+}

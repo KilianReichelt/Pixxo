@@ -1,0 +1,21 @@
+{
+  "passed": 16,
+  "checks": [
+    "Inselgröße 0.56, Startwert 17: Land und mindestens ein baubarer Hafen vorhanden",
+    "Inselgröße 0.45, Startwert 17: Land und mindestens ein baubarer Hafen vorhanden",
+    "Inselgröße 0.39, Startwert 17: Land und mindestens ein baubarer Hafen vorhanden",
+    "Inselgröße 0.275, Startwert 17: Land und mindestens ein baubarer Hafen vorhanden",
+    "Inselgröße 0.14, Startwert 17: Land und mindestens ein baubarer Hafen vorhanden",
+    "Inselgröße 0.56, Startwert 289: Land und mindestens ein baubarer Hafen vorhanden",
+    "Inselgröße 0.45, Startwert 289: Land und mindestens ein baubarer Hafen vorhanden",
+    "Inselgröße 0.39, Startwert 289: Land und mindestens ein baubarer Hafen vorhanden",
+    "Inselgröße 0.275, Startwert 289: Land und mindestens ein baubarer Hafen vorhanden",
+    "Inselgröße 0.14, Startwert 289: Land und mindestens ein baubarer Hafen vorhanden",
+    "Inselgröße 0.56, Startwert 9137: Land und mindestens ein baubarer Hafen vorhanden",
+    "Inselgröße 0.45, Startwert 9137: Land und mindestens ein baubarer Hafen vorhanden",
+    "Inselgröße 0.39, Startwert 9137: Land und mindestens ein baubarer Hafen vorhanden",
+    "Inselgröße 0.275, Startwert 9137: Land und mindestens ein baubarer Hafen vorhanden",
+    "Inselgröße 0.14, Startwert 9137: Land und mindestens ein baubarer Hafen vorhanden",
+    "Beide Kartenversionen erzeugen Hafenplätze"
+  ]
+}

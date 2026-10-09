@@ -1,0 +1,5 @@
+#islandfacts .deposit-jump{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0;border:0;background:transparent;color:inherit;font:inherit;cursor:pointer}
+.settled-facts .factsummary .deposit-jump{width:44px;height:44px;flex:0 0 44px}
+#islandfacts .deposit-jump:focus-visible{outline:3px solid #ffe3a0;outline-offset:1px}
+#islandfacts:not(.settled-facts) .deposit-jump{justify-content:flex-start;width:100%;text-align:left}
+#islandfacts .deposit-jump:hover .ic{filter:brightness(1.2)}

@@ -1,0 +1,15 @@
+{
+  "passed": 10,
+  "checks": [
+    "Getreidehof und Brauerei besitzen jeweils 5 × 4 Kacheln",
+    "Drehen vertauscht die neue Gebäudegrundfläche korrekt",
+    "Ackerflächen zeigen den Namen ihres Mutterbetriebs in Klammern",
+    "Eine verwaiste Fläche bleibt verständlich beschriftet",
+    "Über-Bord-Werfen leert exakt den gewählten Frachtraum und erhält andere Slotnummern",
+    "Veraltete Warenbuttons werfen keine andere Ladung über Bord",
+    "Über-Bord-Button und Warenübergabe sind getrennte Bedienelemente ohne verschachtelte Buttons",
+    "Gelieferte Wagen bleiben als reine Grafik am Ziel zum Ausblenden bestehen",
+    "Die Grafik bleibt während des kurzen Ausblendens erhalten",
+    "Nach dem Ausblenden werden die visuellen Wagenreste entfernt"
+  ]
+}

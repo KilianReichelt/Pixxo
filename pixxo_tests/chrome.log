@@ -1,0 +1,11 @@
+chrome.exe : [4628:35672:1008/070758.453:ERROR:components\device_event_log\device_event_log_impl.cc:211] 
+[07:07:58.453] USB: usb_device_win.cc:66 Failed to open 
+\\?\usb#root_hub30#4&39a95ca&0&0#{f18a0e88-c30c-11d0-8815-00a0c906bed8}: Zugriff verweigert (0x5)
+In Zeile:22 Zeichen:1
++ & 'C:/Program Files/Google/Chrome/Application/chrome.exe' --headless  ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([4628:35672:100...erweigert (0x5):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[4628:35672:1008/070758.723:ERROR:chrome\browser\web_applications\externally_managed_app_manager.cc:680] 
+https://mail.google.com/mail/installwebapp?usp=chrome_default from install source 1 failed to install with reason 21

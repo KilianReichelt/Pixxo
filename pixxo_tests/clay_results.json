@@ -1,0 +1,26 @@
+{
+  "passed": 21,
+  "checks": [
+    "Große neue Insel erhält drei zufällige Lehmvorkommen",
+    "Vorkommen liegen vollständig mit Rand auf baubarem Land ihrer Insel",
+    "Gleicher Inselstartwert erzeugt dieselben Lehmplätze",
+    "Anderer Startwert verteilt die Vorkommen anders",
+    "Kleine Insel erhält ein eigenes Lehmvorkommen",
+    "Lehmvorkommen überlappen nicht und halten Abstand",
+    "Lehmgrube ist auf einem inland gelegenen Vorkommen ohne Küstenkontakt baubar",
+    "Beliebige Landkacheln ohne Lehmvorkommen werden abgelehnt",
+    "Straße auf dem Vorkommen verhindert einen überlappenden Bau",
+    "Verschieben ist ebenfalls an passende Vorkommen gebunden",
+    "Die Bauvorschau rastet beim Zeigen auf das Vorkommen ein",
+    "Ein Klick baut an derselben eingerasteten Position wie die Vorschau",
+    "Bestehende Strandgruben erhalten beim Laden ein nutzbares Vorkommen",
+    "Zusätzliche Vorkommen im alten Spielstand meiden Gebäude und Straßen",
+    "Gespeicherte Lehmplätze bleiben beim erneuten Laden an derselben Position",
+    "Echte Kartengeneration, Größe 0.14, Startwert 17: Lehmvorkommen auf nutzbarem Inland vorhanden",
+    "Echte Kartengeneration, Größe 0.14, Startwert 289: Lehmvorkommen auf nutzbarem Inland vorhanden",
+    "Echte Kartengeneration, Größe 0.14, Startwert 9137: Lehmvorkommen auf nutzbarem Inland vorhanden",
+    "Echte Kartengeneration, Größe 0.56, Startwert 17: Lehmvorkommen auf nutzbarem Inland vorhanden",
+    "Echte Kartengeneration, Größe 0.56, Startwert 289: Lehmvorkommen auf nutzbarem Inland vorhanden",
+    "Echte Kartengeneration, Größe 0.56, Startwert 9137: Lehmvorkommen auf nutzbarem Inland vorhanden"
+  ]
+}

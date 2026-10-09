@@ -1,0 +1,16 @@
+{
+  "passed": 11,
+  "checks": [
+    "Das Inselfenster besitzt ein beschriftetes Namensfeld und einen Speicherbutton",
+    "Ein eigener Name mit Umlauten wird übernommen und getrimmt",
+    "Speichern aktualisiert Spielstand, Kopfzeile und Fenstertitel sofort",
+    "Leere und überlange Namen werden abgewiesen",
+    "Entdeckte unbesiedelte Inseln lassen sich ebenfalls benennen",
+    "Unentdeckte Inseln erhalten kein Namensformular",
+    "Sonderzeichen werden sicher im Eingabefeld ausgegeben",
+    "Eine neue Welt setzt eigene Inselnamen auf die Vorgaben zurück",
+    "Laden stellt den gespeicherten Namen in den Inselmetadaten wieder her",
+    "Bestehende Spielstände ohne eigene Namen laden unverändert",
+    "Alle eingebundenen Spielmodule und Inline-Skripte sind syntaktisch gültig"
+  ]
+}

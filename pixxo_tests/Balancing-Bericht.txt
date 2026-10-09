@@ -1,0 +1,58 @@
+Balancing-Prüfung vom 7. Oktober 2026
+
+Drei Aufbaupartien mit unterschiedlichen Startinseln erreichen die höchste
+Bevölkerungsstufe, mindestens 500 Einwohner und eine zusätzliche besiedelte
+Insel mit aktiver Handelsroute. Keine Partie endet im Konkurs.
+
+Änderungen:
+• Zusatzversorgung verbraucht 25 % des regulären Bedarfs der nächsten Stufe.
+  Der gewünschte Einkommensbonus von +150 % bleibt erhalten.
+• Die Kelterei benötigt eine Tonne Trauben pro Tonne Wein statt zwei.
+• Das Weingut kostet 1.500 statt 8.000 Gold; der Materialbedarf bleibt gleich.
+• Volle Ziellager blockieren Handelsrouten standardmäßig nicht mehr.
+  Restladung bleibt an Bord und fährt zurück. Andere ankommende Lieferungen
+  werden bei der Beladung berücksichtigt. Optional kann eine Route warten.
+• Das Routenformular zeigt nur die Frachträume des gewählten Schiffes.
+
+Ergebnisse (Spielminuten bei normaler Geschwindigkeit):
+Start 1234: Bürger 23.1, erstes Schiff 117.0, Kolonie 120.3, 30 Patrizier 176.5, Ende 186.5 Minuten.
+  Niedrigster Geldbestand: 116.8 Gold. Negative laufende Bilanz in 6 von 38 Stichproben.
+Start 3074: Bürger 23.1, erstes Schiff 141.0, Kolonie 148.2, 30 Patrizier 238.5, Ende 248.5 Minuten.
+  Niedrigster Geldbestand: 21.9 Gold. Negative laufende Bilanz in 7 von 50 Stichproben.
+Start 55172: Bürger 23.1, erstes Schiff 125.0, Kolonie 132.0, 30 Patrizier 187.3, Ende 197.4 Minuten.
+  Niedrigster Geldbestand: 111.4 Gold. Negative laufende Bilanz in 8 von 40 Stichproben.
+
+Mit derselben Aufbaufolge scheitern die drei gesicherten Vorher-Versionen
+nach 41,9 Spielminuten am Geldmangel. Das belegt den Engpass dieser
+Aufbaufolge; daraus folgt nicht, dass jede andere Spielweise scheitert.
+
+Methode und Grenzen:
+Isolierter Chrome-Browser über Playwright, frische Spielstände. Die
+Simulation verwendet die echten Kosten, Produktionszyklen, Bedürfnisse,
+Arbeitskräfte, Aufstiegsbedingungen, Händler, Schiffe und Routen.
+Es werden nach dem Spielstart keine kostenlosen Waren, Einwohner oder
+Geldbeträge hinzugefügt. Bauplätze, Straßen und Dienstabdeckung sind
+idealisiert; Brände sind deaktiviert. Dies ist eine Wirtschaftssimulation
+und kein vollständiger manueller Durchlauf in Firefox.
+Der Aufbaucontroller verkauft Überschüsse, pausiert volle Produktionsketten
+und erhält Arbeitskräfte beim Aufstieg. Ungeplanter Ausbau kann weiterhin
+zu Defiziten führen. Die frühe Geldreserve ist knapp: 22–117 Gold.
+Die simulierte Spielzeit ist keine Vorhersage für jede menschliche Partie.
+
+Zusätzliche Prüfungen:
+Routentests: Warenbilanz, Restladung, volle Lager, ankommende Schiffe,
+Frachtraumgrenzen, Warteoption und Speicherung.
+Acht zufällige Startinseln besitzen grundlegende Bauplätze. Steinabbau
+liegt teilweise außerhalb des anfänglichen Kontor-Baugebiets und benötigt
+eine Erweiterung durch Lagerhäuser. Die Prüfung baut kein vollständiges
+Straßennetz und keine komplette Siedlung auf.
+Bestanden: Verbrauch, Direktlieferungen, Hausaufstieg und Bonus,
+Produktionssprites sowie Inselwelt, Gründung, Nebel, Bedienung und Personal.
+Keine JavaScript-Laufzeitfehler in diesen Prüfungen.
+
+Reproduzieren:
+python run_balance.py 1234 3074 55172
+python run_balance.py --baseline 1234 3074 55172
+Ausführen aus diesem Prüfunterordner; Python, Playwright und Chrome nötig.
+Die JSON-Dateien enthalten Messpunkte, Ereignisse, Flotte und Routen.
+balancing-verlauf.png zeigt Geldbestand und Bevölkerungsentwicklung.
