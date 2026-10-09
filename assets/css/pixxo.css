@@ -14,7 +14,21 @@
 #barModes button:focus-visible{outline:2px solid #e8cb85;outline-offset:2px}
 @media(max-width:760px){#barModes{bottom:6px}}
 
-#bar .deko-card{display:grid;grid-template-columns:40px 1fr;grid-template-rows:1fr 1fr;column-gap:6px;row-gap:0;text-align:left;align-items:center}
+#bar .deko-card{display:grid;grid-template-columns:40px minmax(0,1fr);grid-template-rows:1fr 1fr;column-gap:6px;row-gap:0;text-align:left;align-items:center}
 #bar .deko-card img{grid-row:1 / 3;max-width:40px;object-fit:contain}
 #bar .deko-card span{font-size:13px!important;line-height:1.15!important;white-space:normal}
 #bar .deko-card .cost{display:flex;align-items:center;gap:4px}
+
+/* Dekoration bleibt in der Leiste; Navigation wie bei den Gebäuden. */
+#bar.deko-mode{overflow:hidden!important;gap:0}
+#bar .deko-viewport{flex:1 1 0;min-width:0;height:66px;overflow:hidden;scrollbar-width:none;overscroll-behavior:contain}
+#bar .deko-track{display:flex;align-items:stretch;gap:5px;width:max-content;height:66px}
+#bar .deko-card{box-sizing:border-box;flex:0 0 180px;width:180px;min-width:180px;overflow:hidden}
+#bar .deko-card span{min-width:0;overflow-wrap:anywhere}
+#bar.deko-mode.has-deko-overflow{padding-left:60px;padding-right:60px}
+#bar .item-scroll[data-deko-scroll="left"]{left:8px}
+#bar .item-scroll[data-deko-scroll="right"]{right:8px}
+@media(max-width:600px){
+ #bar.deko-mode{width:calc(100vw - 72px);max-width:calc(100vw - 72px);bottom:calc(var(--mm) + 84px)}
+ body:has(#bar.deko-mode) #barModes{bottom:calc(var(--mm) + 84px)}
+}

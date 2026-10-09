@@ -157,12 +157,23 @@ const barModes=document.createElement('div');barModes.id='barModes';
 const dekoToggle=document.createElement('button');dekoToggle.id='dekoToggle';dekoToggle.type='button';dekoToggle.setAttribute('aria-label','Dekoration anzeigen');dekoToggle.title='Dekoration';dekoToggle.innerHTML=ic('b_deko_blumenkuebel',1.5);
 document.body.append(barModes);barModes.append(dekoToggle,$('#barToggle'));
 const pixxoRenderBar=renderBar;renderBar=function(){
+ $('#bar').classList.toggle('deko-mode',UI.barMode==='deko');
  if(UI.barMode==='deko'){
-  UI.cat=null;renderItems(true);const el=$('#bar'),h=PIXXO_DECOR.map(([id,n,w,h])=>{const type='deko_'+id,d=B[type];return `<button class="cb shiptile deko-card ${UI.tool==='build'&&UI.type===type?'on':''}" data-deko-build="${type}" title="${attr(n)} · ${w} × ${h}"><img class="px" alt="" src="${url(typeSprite(type))}" style="height:40px;width:auto"><span>${esc(n)}</span><span class="cost">${costHTML(d.cost)}</span></button>`;}).join('');if(el._last!==h){el.innerHTML=h;el._last=h;el._fleetLast=null;}
+  UI.cat=null;renderItems(true);const el=$('#bar'),h=PIXXO_DECOR.map(([id,n,w,h])=>{const type='deko_'+id,d=B[type];return `<button class="cb shiptile deko-card ${UI.tool==='build'&&UI.type===type?'on':''}" data-deko-build="${type}" title="${attr(n)} · ${w} × ${h}"><img class="px" alt="" src="${url(typeSprite(type))}" style="height:40px;width:auto"><span>${esc(n)}</span><span class="cost">${costHTML(d.cost)}</span></button>`;}).join('');if(el._last!==h){const scroll=el.querySelector('.deko-viewport')?.scrollLeft||0;el.innerHTML=`<button type="button" class="item-scroll" data-deko-scroll="left" aria-label="Vorherige Dekorationen anzeigen" aria-controls="deko-viewport" hidden>←</button><div id="deko-viewport" class="deko-viewport" role="group" aria-label="Dekorationen" tabindex="0"><div class="deko-track">${h}</div></div><button type="button" class="item-scroll" data-deko-scroll="right" aria-label="Weitere Dekorationen anzeigen" aria-controls="deko-viewport" hidden>→</button>`;el.querySelector('.deko-viewport').scrollLeft=scroll;el._last=h;el._fleetLast=null;}updateDekoNavigation();
   $('#barToggle').innerHTML=ic('i_ship',1.5);$('#barToggle').setAttribute('aria-label','Schiffe anzeigen');$('#barToggle').setAttribute('aria-pressed','false');
  }else pixxoRenderBar();
  dekoToggle.classList.toggle('on',UI.barMode==='deko');dekoToggle.setAttribute('aria-pressed',String(UI.barMode==='deko'));dekoToggle.setAttribute('aria-label',UI.barMode==='deko'?'Baukategorien anzeigen':'Dekoration anzeigen');
 };
+function updateDekoNavigation(){
+ const box=$('#bar'),viewport=box.querySelector('.deko-viewport');if(!viewport)return;
+ const track=viewport.querySelector('.deko-track'),overflow=track.scrollWidth>box.clientWidth-12;box.classList.toggle('has-deko-overflow',overflow);
+ const max=Math.max(0,viewport.scrollWidth-viewport.clientWidth);for(const button of box.querySelectorAll('[data-deko-scroll]')){button.hidden=!overflow;button.disabled=button.dataset.dekoScroll==='left'?viewport.scrollLeft<=1:viewport.scrollLeft>=max-1;}
+}
+function scrollDekoItems(direction){const viewport=$('#bar').querySelector('.deko-viewport');if(viewport)viewport.scrollBy({left:direction*Math.max(180,Math.floor(viewport.clientWidth*.8)),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}
+$('#bar').addEventListener('click',e=>{const button=e.target.closest('[data-deko-scroll]');if(button&&!button.disabled)scrollDekoItems(button.dataset.dekoScroll==='left'?-1:1);});
+$('#bar').addEventListener('scroll',updateDekoNavigation,true);
+$('#bar').addEventListener('keydown',e=>{if(!e.target.matches('.deko-viewport'))return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();scrollDekoItems(e.key==='ArrowLeft'?-1:1);}else if(e.key==='Home'||e.key==='End'){e.preventDefault();e.target.scrollLeft=e.key==='Home'?0:e.target.scrollWidth;updateDekoNavigation();}});
+new ResizeObserver(updateDekoNavigation).observe($('#bar'));
 dekoToggle.addEventListener('click',()=>{UI.barMode=UI.barMode==='deko'?'build':'deko';UI.cat=null;setTool(null);$('#bar')._last=null;renderBar();});
 $('#bar').addEventListener('click',e=>{const button=e.target.closest('[data-deko-build]');if(button){setTool('build',button.dataset.dekoBuild);selectB(null);renderBar();}});
 // Das Tutorial bleibt für eine spätere Überarbeitung im Code, wird aber nicht geöffnet.
