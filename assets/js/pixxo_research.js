@@ -45,7 +45,7 @@ function knowledgeCoverage(g=G){
  const effects=researchEffects(g),range=Math.ceil(B.forschung.knowledgeRange*(1+(effects.knowledgeRange||0)/100)),key=[g.researchNetworkRevision||0,b.id,b.x,b.y,range].join(':'),old=KNOWLEDGE_SOURCE_CACHE.get(g);let houses;
  if(old?.key===key)houses=old.houses;else{
   const distance=new Map(),queue=[];for(const [x,y] of ringCells(b))if(INMAP(x,y)&&g.road[IDX(x,y)]){const k=IDX(x,y);if(!distance.has(k)){distance.set(k,0);queue.push(k);}}
-  for(let head=0;head<queue.length;head++){const k=queue[head],depth=distance.get(k);if(depth>=range)continue;const x=k%MAPW,y=Math.floor(k/MAPW);for(const [nx,ny] of [[x-1,y],[x+1,y],[x,y-1],[x,y+1]])if(INMAP(nx,ny)){const n=IDX(nx,ny);if(g.road[n]&&!distance.has(n)){distance.set(n,depth+1);queue.push(n);}}}
+  for(let head=0;head<queue.length;head++){const k=queue[head],depth=distance.get(k);if(depth>=range)continue;const x=k%MAPW,y=Math.floor(k/MAPW);for(const n of roadNeighbours(k,g)){const next=depth+Math.hypot(n%MAPW-k%MAPW,Math.floor(n/MAPW)-Math.floor(k/MAPW));if(next<=range&&(!distance.has(n)||distance.get(n)>next)){distance.set(n,next);queue.push(n);}}}
   houses=g.blds.filter(h=>h.type==='haus'&&ringCells(h).some(([x,y])=>INMAP(x,y)&&distance.has(IDX(x,y))));KNOWLEDGE_SOURCE_CACHE.set(g,{key,houses});
  }
  const population=houses.reduce((sum,h)=>sum+(h.fire>0?0:Math.floor(h.pop||0)),0),rate=researchOperating(g)?houses.reduce((sum,h)=>sum+(h.fire>0?0:Math.floor(h.pop||0)*h.tier/5),0)*(1+(effects.knowledge||0)/100):0;return {population,rate,range,houses:houses.length,buildings:houses};
@@ -57,7 +57,7 @@ function startResearch(id,g=G){
  if(state.active)return 'Auf dieser Insel läuft bereits eine Forschung.';if(state.done.includes(id))return 'Diese Forschung ist bereits abgeschlossen.';
  if(node.requires.some(parent=>!state.done.includes(parent)))return 'Zuerst müssen alle Voraussetzungen erforscht werden.';
  if(G.gold<node.gold||state.wissen<node.wissen)return 'Gold oder Wissen fehlen.';
- G.gold-=node.gold;for(const island of WORLD.islands)if(island)island.gold=G.gold;state.wissen-=node.wissen;state.active={id,remaining:node.time,duration:node.time};return true;
+ G.gold-=node.gold;for(const island of WORLD.islands)if(island&&!island.cpu)island.gold=G.gold;state.wissen-=node.wissen;state.active={id,remaining:node.time,duration:node.time};return true;
 }
 const researchStep=step;step=function(dt){
  researchStep(dt);const state=islandResearch(G);if(!researchOperating(G))return;state.wissen+=knowledgeCoverage(G).rate*dt/60;

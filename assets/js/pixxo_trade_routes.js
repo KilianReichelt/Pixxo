@@ -74,7 +74,7 @@ function validateTradeRoute(draft,ship,id){
  let orders=0;
  for(let j=0;j<draft.stations.length;j++){
   const station=draft.stations[j],next=draft.stations[(j+1)%draft.stations.length];
-  if(!WORLD.islands[station.island]?.dock)return 'Jede Station benötigt ein eigenes Kontor mit Hafen.';
+  if(!WORLD.islands[station.island]?.dock||WORLD.islands[station.island].cpu)return 'Jede Station benötigt ein eigenes Kontor mit Hafen.';
   if(station.island===next.island)return 'Direkt aufeinanderfolgende Stationen müssen unterschiedliche Inseln sein.';
   if(!routeWaterPath(station.island,next.island))return 'Zwischen '+ISLANDS[station.island].name+' und '+ISLANDS[next.island].name+' fehlt ein Wasserweg.';
   if(station.slots.length!==SHIPS[ship.type].slots)return 'Die Zahl der Frachträume passt nicht zum Schiff.';

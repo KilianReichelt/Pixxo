@@ -57,7 +57,8 @@ const PIXXO_DECOR=[
  ['brunnen','Zierbrunnen',2,2,150],['teich','Gartenteich',3,2,180],['park','Kleiner Park',3,3,250],['garten','Großer Garten',4,3,350]
 ];
 for(const [id,n,w,h,gold] of PIXXO_DECOR){const type='deko_'+id;B[type]={n,cat:'deko',kind:'decor',w,h,cost:{gold},upk:0,req:0,d:'Platziere die Dekoration auf einer freien Grünfläche.'};BUILD_SIZES[type]={w,h};BASE_GEOMETRY[type]={w:w/1.5,h:h/1.5};}
-const pixxoScale=configureBuildingScale;configureBuildingScale=function(...args){pixxoScale(...args);for(const [id,,w,h] of PIXXO_DECOR){const d=B['deko_'+id];Object.assign(d,{w,h});BUILD_SIZES['deko_'+id]={w,h};}installNativeBuildings();};
+Object.assign(B.steinbruch,{w:2,h:3});BUILD_SIZES.steinbruch={w:2,h:3};
+const pixxoScale=configureBuildingScale;configureBuildingScale=function(...args){pixxoScale(...args);Object.assign(B.steinbruch,{w:2,h:3});BUILD_SIZES.steinbruch={w:2,h:3};for(const [id,,w,h] of PIXXO_DECOR){const d=B['deko_'+id];Object.assign(d,{w,h});BUILD_SIZES['deko_'+id]={w,h};}installNativeBuildings();};
 
 /* Der Strand richtet sich nach der tatsächlichen Wasserkante der Grundfläche. */
 function pixxoCoastSide(x,y,w,h){
@@ -78,8 +79,6 @@ const pixxoCanPlace=canPlace;canPlace=function(type,x,y){const size=buildingSize
 const pixxoCanMove=canMoveBuilding;canMoveBuilding=function(b,x,y){if(!b)return pixxoCanMove(b,x,y);const size=buildingSize(b.type,UI.tool==='move'&&UI.moveId===b.id?UI.rotation||0:b.rotation||0),why=pixxoReservedLand(b.type,x,y,size.w,size.h);return why?{ok:false,why}:pixxoCanMove(b,x,y);};
 const pixxoPlaceRoad=placeRoad;placeRoad=function(x,y){if((G.deposits||[]).some(n=>{const d=B[n.type];return x>=n.x&&x<n.x+d.w&&y>=n.y&&y<n.y+d.h;}))return false;return pixxoPlaceRoad(x,y);};
 const pixxoTool=setTool;setTool=function(t,type){pixxoTool(t,type);if(['mine','steinbruch','lehmgrube'].includes(type))UI.rotation=0;};
-// Die freistehende Berggrafik darf nicht gedreht oder gestapelt werden.
-document.addEventListener('keydown',e=>{if(e.key.toLowerCase()==='r'&&['mine','steinbruch','lehmgrube'].includes(UI.type)&&['build','move'].includes(UI.tool)){e.preventDefault();e.stopImmediatePropagation();}},true);
 
 /* Jeder Waldtile liefert insgesamt höchstens einen Ressourcenpunkt. */
 function pixxoAssignTrees(){
@@ -134,7 +133,7 @@ const pixxoDrawWarnings=drawBuildingWarnings;drawBuildingWarnings=function(ctx,.
 
 /* Darlehen gelten für das gesamte Reich. Raten können den Goldstand ins Minus bringen. */
 function pixxoBorrow(amount){if(WORLD.loan||![1000,2500,5000].includes(amount))return false;WORLD.loan={principal:amount,balance:amount*1.1,rate:amount*1.1/30,remaining:1800};G.gold+=amount;pixxoSyncGold();saveGame();return true;}
-function pixxoSyncGold(){for(const g of WORLD.islands)if(g)g.gold=G.gold;}
+function pixxoSyncGold(){for(const g of WORLD.islands)if(g&&!g.cpu)g.gold=G.gold;}
 function pixxoRepay(){const loan=WORLD.loan;if(!loan||G.gold+1e-8<loan.balance)return false;G.gold-=loan.balance;WORLD.loan=null;pixxoSyncGold();saveGame();return true;}
 function pixxoLoanStep(dt){const loan=WORLD.loan;if(!loan)return;const payment=Math.min(loan.balance,loan.rate*dt/60);G.gold-=payment;loan.balance=Math.max(0,loan.balance-payment);loan.remaining=Math.max(0,loan.remaining-dt);if(loan.balance<1e-7){WORLD.loan=null;msg('Dein Darlehen ist vollständig zurückgezahlt.','gold');}pixxoSyncGold();}
 const pixxoStepWorld=stepWorld;stepWorld=function(dt){pixxoStepWorld(dt);pixxoLoanStep(dt);pixxoQuestBadge();};
@@ -185,11 +184,13 @@ const pixxoInfoHTML=infoHTML;infoHTML=function(){let h=pixxoInfoHTML();const b=G
 const pixxoLocalTerrain=localTerrain;localTerrain=function(seed,profile,...args){
  const result=pixxoLocalTerrain(seed,profile,...args);if(PIXXO_TERRAIN_VERSION<3)return result;
  const size=ISLAND_SIZE,mx=Math.floor(size/2),my=Math.floor(size/2),halfW=Math.max(8,Math.round(profile.size*22)),halfH=Math.max(6,Math.round(profile.size*14));
- // Ein zusammenhängendes Massiv garantiert einen zugänglichen Steinabbauplatz.
+ // Abgerundete, unregelmäßige Felsrücken mit zugänglichen Abbaukanten.
+ const phase=hs(seed,81,9)*Math.PI*2;
  for(let y=my-halfH-2;y<=my+halfH+2;y++)for(let x=mx-halfW-2;x<=mx+halfW+2;x++){
   const k=y*size+x;if(result.tiles[k]<=T.SHAL)continue;
-  if(x>=mx-halfW&&x<=mx+halfW&&y>=my-halfH&&y<=my+halfH){result.tiles[k]=profile.ore>0&&hs(x,y,seed+812)<Math.min(.5,profile.ore*.22)?T.ORE:T.ROCK;result.massif[k]=1;}
-  else if(result.tiles[k]===T.ROCK||result.tiles[k]===T.ORE)result.tiles[k]=T.GRASS;
+  const nx=(x-mx)/halfW,ny=(y-my)/halfH,angle=Math.atan2(ny,nx),edge=.84+.09*Math.sin(angle*3+phase)+.06*Math.sin(angle*5-phase)+.12*(fbm(seed+81,x/7,y/7)-.5);
+  if(Math.hypot(nx,ny)<edge){result.tiles[k]=profile.ore>0&&hs(x,y,seed+812)<Math.min(.5,profile.ore*.22)?T.ORE:T.ROCK;result.massif[k]=1;}
+  else if(result.tiles[k]===T.ROCK||result.tiles[k]===T.ORE){result.tiles[k]=T.GRASS;result.massif[k]=0;}
  }
  return result;
 };
@@ -202,6 +203,9 @@ const pixxoLimitBeaches=limitBeaches;limitBeaches=function(tiles,seed){
  ].some(cells=>cells.filter(t=>t<=T.SHAL).length>=2);
  return beaches.flatMap(beach=>{for(let r=0;r<=5;r++)for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++)if(usable(beach.x+dx,beach.y+dy))return [{x:beach.x+dx,y:beach.y+dy}];return [];});
 };
+function pixxoDepositAnchor(x,y,w,h,side){
+ return {x:side==='west'?x:side==='east'?x+w-1:x+Math.floor((w-1)/2),y:side==='north'?y:side==='south'?y+h-1:y+Math.floor((h-1)/2),side};
+}
 const pixxoCreateDeposits=createDeposits;createDeposits=function(tiles,seed){
  if(PIXXO_TERRAIN_VERSION<3)return pixxoCreateDeposits(tiles,seed);
  const profile=ISLANDS[activeIsland],nodes=[],rock=(x,y)=>INMAP(x,y)&&[T.ROCK,T.ORE].includes(tiles[IDX(x,y)]),land=(x,y)=>INMAP(x,y)&&[T.GRASS,T.FOREST].includes(tiles[IDX(x,y)]);
@@ -211,13 +215,25 @@ const pixxoCreateDeposits=createDeposits;createDeposits=function(tiles,seed){
    if(!footprintCells(x,y,w,h).every(([a,b])=>rock(a,b)&&islandAt(a,b)===activeIsland))continue;
    if(type==='mine'&&!footprintCells(x,y,w,h).some(([a,b])=>tiles[IDX(a,b)]===T.ORE))continue;
    const sides=[['north',Array.from({length:w},(_,i)=>[x+i,y-1])],['south',Array.from({length:w},(_,i)=>[x+i,y+h])],['west',Array.from({length:h},(_,i)=>[x-1,y+i])],['east',Array.from({length:h},(_,i)=>[x+w,y+i])]];
-   const contact=sides.find(([,cells])=>cells.every(([a,b])=>land(a,b)));if(contact)candidates.push({type,x,y,inMountain:true,anchor:{x,y,side:contact[0]},score:hs(x,y,seed+183)});
+   const contact=sides.find(([,cells])=>cells.every(([a,b])=>land(a,b)));if(contact)candidates.push({type,x,y,inMountain:true,anchor:pixxoDepositAnchor(x,y,w,h,contact[0]),score:hs(x,y,seed+183)});
   }
   candidates.sort((a,b)=>a.score-b.score);let count=0;for(const n of candidates){if(count>=max)break;if(nodes.some(o=>Math.hypot(o.x-n.x,o.y-n.y)<8))continue;delete n.score;nodes.push(n);count++;}
  }
  return [...nodes,...generateClayDeposits(tiles,seed,activeIsland,nodes)];
 };
-const pixxoUnpackIsland=unpackIsland;unpackIsland=function(o,...args){const g=pixxoUnpackIsland(o,...args);g.fireEngines=(o.fireEngines||[]).filter(e=>Array.isArray(e.path)&&Number.isFinite(e.t));for(const good of PIXXO_GOODS)g.stock[good[0]]??=0;return g;};
+const pixxoUnpackIsland=unpackIsland;unpackIsland=function(o,...args){const g=pixxoUnpackIsland(o,...args);
+ // Belegte und gespeicherte Bergplätze behalten bei neuen Konturen ihre Koordinaten.
+ if(PIXXO_TERRAIN_VERSION>=3){
+  const saved=(o.deposits||[]).filter(n=>['mine','steinbruch'].includes(n.type)&&n.inMountain);
+  for(const n of saved){const d=B[n.type],side=n.anchor?.side||'south';n.anchor=pixxoDepositAnchor(n.x,n.y,d.w,d.h,side);
+   for(const [x,y] of footprintCells(n.x,n.y,d.w,d.h))if(INMAP(x,y)){g.tiles[IDX(x,y)]=n.type==='mine'?T.ORE:T.ROCK;mountainMassifs[IDX(x,y)]=1;}
+   const access=side==='north'?footprintCells(n.x,n.y-1,d.w,1):side==='south'?footprintCells(n.x,n.y+d.h,d.w,1):side==='west'?footprintCells(n.x-1,n.y,1,d.h):footprintCells(n.x+d.w,n.y,1,d.h);
+   for(const [x,y] of access)if(INMAP(x,y)&&[T.ROCK,T.ORE].includes(g.tiles[IDX(x,y)])){g.tiles[IDX(x,y)]=T.GRASS;mountainMassifs[IDX(x,y)]=0;}
+  }
+  if(saved.length)g.deposits=[...g.deposits.filter(n=>!['mine','steinbruch'].includes(n.type)),...saved];
+  for(const k of o.roads||[])if([T.ROCK,T.ORE].includes(g.tiles[k]))g.tiles[k]=T.GRASS;
+ }
+ g.fireEngines=(o.fireEngines||[]).filter(e=>Array.isArray(e.path)&&Number.isFinite(e.t));for(const good of PIXXO_GOODS)g.stock[good[0]]??=0;return g;};
 function pixxoSaveValid(data){return data&&[2,3,4,5,6,7,8,9].includes(data.v)&&(data.v===2?Array.isArray(data.blds):Array.isArray(data.islands)&&data.islands.some(Boolean));}
 function pixxoReceiveSaveHash(){if(!location.hash.startsWith('#pixxo-save='))return;try{const json=new TextDecoder().decode(Uint8Array.from(atob(decodeURIComponent(location.hash.slice(12))),c=>c.charCodeAt(0))),data=JSON.parse(json);if(pixxoSaveValid(data))localStorage.setItem(SAVEKEY,json);}catch(error){console.warn('Spielstandsübernahme fehlgeschlagen.',error);}finally{history.replaceState(null,'',location.pathname+location.search);}}
 const pixxoLoadGame=loadGame;loadGame=function(...args){pixxoReceiveSaveHash();const previousKey=atob('ZXdpZ2VzX2tvZW5pZ3JlaWNoX2Fubm9fdjE=');if(!localStorage.getItem(SAVEKEY)&&localStorage.getItem(previousKey))localStorage.setItem(SAVEKEY,localStorage.getItem(previousKey));let saved;try{saved=JSON.parse(localStorage.getItem(SAVEKEY));}catch{}PIXXO_TERRAIN_VERSION=saved?.terrainVersion||1;return pixxoLoadGame(...args);};
@@ -232,7 +248,7 @@ for(const [id] of PIXXO_GOODS){const entry=IMPORTED_ENTRIES.get('icon_'+id);if(e
 const engineEntry=IMPORTED_ENTRIES.get('pixxo_loeschwagen');publishPixel('pixxo_loeschwagen',importedPixels(engineEntry),16,16);
 function pixxoMiningSprite(b){
  const island=WORLD?.islands[b.island]||G,node=island.deposits.find(n=>n.type===b.type&&n.x===b.x&&n.y===b.y);if(!node?.inMountain)return null;
- const frame=workshopRunning(b)&&!WORK_ART.reduced.matches?Math.floor(G.time*4+b.id)%4:0,side=node.anchor?.side||'south',key='b_'+b.type+'_berg_'+side+'_'+frame;
+ const frame=workshopRunning(b)&&!WORK_ART.reduced.matches?Math.floor(G.time*4+b.id)%4:0,side=node.anchor?.side||'south',key='b_'+b.type+'_berg_'+side+'_'+b.w+'x'+b.h+'_'+frame;
  if(!HD_CATALOG.has(key)){const entry=IMPORTED_ENTRIES.get(b.type+'_berg_'+side),extra=12;publishPixel(key,importedPixels(entry,frame),b.w*16,b.h*16+extra,{tw:b.w,th:b.h,ex:extra,hub:null,smoke:null});}return key;
 }
 function pixxoCattleSprite(b){if(b.type!=='gehege')return null;const g=WORLD.islands[b.island]||G,owner=g.byId.get(b.fieldOwner);if(owner?.type!=='rinderhof')return null;const frame=workshopRunning(owner)&&!WORK_ART.reduced.matches?Math.floor(G.time*3+b.id)%4:0,key='b_gehege_rinder_'+frame;if(!HD_CATALOG.has(key))publishPixel(key,importedPixels(IMPORTED_ENTRIES.get('gehege_rinder'),frame),b.w*16,b.h*16,{tw:b.w,th:b.h,ex:0,hub:null,smoke:null});return rotatedSprite(key,b.rotation||0);}
@@ -249,7 +265,7 @@ const pixxoDrawBld=drawBld;drawBld=function(ctx,b){
 };
 // Start- und Reload-Ladebildschirm erst nach dem ersten gezeichneten Frame ausblenden.
 function pixxoLoaded(){const screen=document.getElementById('pixxo-loading');if(!screen)return;const progress=screen.querySelector('progress');progress.value=100;requestAnimationFrame(()=>requestAnimationFrame(()=>{screen.classList.add('loaded');setTimeout(()=>screen.remove(),450);}));}
-const pixxoAfterNewWorld=afterNewWorld;afterNewWorld=function(...args){const result=pixxoAfterNewWorld(...args);pixxoLoaded();return result;};
+const pixxoAfterNewWorld=afterNewWorld;afterNewWorld=function(...args){clearClayDepositTrees(G.tiles,allDeposits());const result=pixxoAfterNewWorld(...args);pixxoLoaded();return result;};
 
 // Spielstände zwischen lokaler Datei und gehosteter Partie übertragen.
 function pixxoExportSave(){saveGame();const json=localStorage.getItem(SAVEKEY);if(!json)return;const a=document.createElement('a'),link=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.href=link;a.download='pixxo_spielstand.json';a.click();setTimeout(()=>URL.revokeObjectURL(link),1000);}

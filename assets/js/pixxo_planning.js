@@ -1,6 +1,6 @@
 /* Straße und Flächenabriss werden erst nach der Vorschau ausgeführt. */
 let constructionPlan=null,pendingAreaDemolition=null;
-function roadTileAllowed(x,y,island=activeIsland){return INMAP(x,y)&&islandAt(x,y)===island&&!G.occ[IDX(x,y)]&&BUILDABLE(G.tiles[IDX(x,y)]);}
+function roadTileAllowed(x,y,island=activeIsland){return INMAP(x,y)&&islandAt(x,y)===island&&!G.occ[IDX(x,y)]&&BUILDABLE(G.tiles[IDX(x,y)])&&!(G.deposits||[]).some(n=>x>=n.x&&x<n.x+B[n.type].w&&y>=n.y&&y<n.y+B[n.type].h);}
 function roadEndpoint(point,towards,island){
  if(roadTileAllowed(point.x,point.y,island))return point;
  const building=INMAP(point.x,point.y)?G.byId.get(G.occ[IDX(point.x,point.y)]):null;if(!building)return null;
@@ -10,12 +10,12 @@ function plannedRoadPath(start,end,island=activeIsland){
  if(start.x===end.x&&start.y===end.y)return roadTileAllowed(start.x,start.y,island)?[IDX(start.x,start.y)]:null;
  const from=roadEndpoint(start,end,island),to=roadEndpoint(end,start,island);if(!from||!to)return null;
  const first=IDX(from.x,from.y),goal=IDX(to.x,to.y),heap=[],cost=new Map([[first,0]]),prev=new Map([[first,-1]]),closed=new Set();
- const heuristic=(x,y)=>(Math.abs(x-to.x)+Math.abs(y-to.y))*.35,less=(a,b)=>Math.abs(a.f-b.f)<1e-8?a.h<b.h:a.f<b.f;
+ const heuristic=(x,y)=>Math.hypot(x-to.x,y-to.y)*.35,less=(a,b)=>Math.abs(a.f-b.f)<1e-8?a.h<b.h:a.f<b.f;
  const push=entry=>{let i=heap.length;heap.push(entry);while(i){const p=(i-1)>>1;if(!less(entry,heap[p]))break;heap[i]=heap[p];i=p;}heap[i]=entry;};
  const pop=()=>{const top=heap[0],last=heap.pop();if(heap.length){let i=0;while(i*2+1<heap.length){let c=i*2+1;if(c+1<heap.length&&less(heap[c+1],heap[c]))c++;if(!less(heap[c],last))break;heap[i]=heap[c];i=c;}heap[i]=last;}return top.k;};
  push({k:first,f:heuristic(from.x,from.y),h:heuristic(from.x,from.y)});
  while(heap.length){const k=pop();if(closed.has(k))continue;closed.add(k);if(k===goal){const path=[];for(let p=goal;p>=0;p=prev.get(p))path.push(p);return path.reverse();}
-  const x=k%MAPW,y=Math.floor(k/MAPW);for(const [nx,ny] of [[x+1,y],[x-1,y],[x,y+1],[x,y-1]]){if(!roadTileAllowed(nx,ny,island))continue;const n=IDX(nx,ny),next=cost.get(k)+(G.road[n]?.35:1);if(closed.has(n)||cost.has(n)&&next>=cost.get(n))continue;cost.set(n,next);prev.set(n,k);const h=heuristic(nx,ny);push({k:n,f:next+h,h});}
+  const x=k%MAPW,y=Math.floor(k/MAPW);for(const [dx,dy] of LAND_STEPS){const nx=x+dx,ny=y+dy;if(!roadTileAllowed(nx,ny,island)||!roadStepAllowed(x,y,nx,ny)||dx&&dy&&(!roadTileAllowed(nx,y,island)||!roadTileAllowed(x,ny,island)))continue;const n=IDX(nx,ny),next=cost.get(k)+(G.road[n]?.35:1)*Math.hypot(nx-x,ny-y);if(closed.has(n)||cost.has(n)&&next>=cost.get(n))continue;cost.set(n,next);prev.set(n,k);const h=heuristic(nx,ny);push({k:n,f:next+h,h});}
  }
  return null;
 }

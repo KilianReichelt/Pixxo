@@ -1,0 +1,64 @@
+{
+  "passed": 5,
+  "checks": [
+    "Tageszeit: Sprung, Pause, Wechsel, Systemuhr, Speicherung, Escape",
+    "Popup und Deko-Leiste bei 320–1440 px",
+    "Zwei CPUs entwickeln sich über 20 Minuten; Spielerwirtschaft bleibt unabhängig",
+    "CPU-Handel: Eigentum, Ladung, Geld- und Warenfluss, Überkauf, Spielstand",
+    "Diagonale Planung/Verbindung, gesperrte Ecken, langsame 2-t-Transporte, Lieferwege, Bevölkerungsdichte, neun Hausvarianten"
+  ],
+  "cpu": {
+    "withBots": 3000,
+    "withoutBots": 3000,
+    "before": 3000,
+    "initial": [
+      1,
+      1
+    ],
+    "after": [
+      9,
+      9
+    ],
+    "types": [
+      [
+        "kontor",
+        "haus",
+        "markt",
+        "holzfaeller",
+        "saegewerk",
+        "fischer"
+      ],
+      [
+        "kontor",
+        "haus",
+        "markt",
+        "holzfaeller",
+        "saegewerk",
+        "fischer"
+      ]
+    ]
+  },
+  "trade": {
+    "ok": true,
+    "conserved": true,
+    "denied": true,
+    "blocked": true,
+    "persisted": true,
+    "routesOwned": true
+  },
+  "street": {
+    "loaded": true,
+    "connected": true,
+    "straightDiagonal": true,
+    "capacity": true,
+    "slower": true,
+    "delivered": true,
+    "density": true,
+    "variants": true,
+    "drawn": true,
+    "saved": true,
+    "cornerBlocked": true,
+    "routes": true
+  },
+  "errors": []
+}

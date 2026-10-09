@@ -1,4 +1,7 @@
 /* Lehmplätze sind zufällig verteilt und bleiben über den Inselspielstand erhalten. */
+function clearClayDepositTrees(tiles,deposits){
+ for(const n of deposits)if(n.type==='lehmgrube')for(const [x,y] of footprintCells(n.x,n.y,B.lehmgrube.w,B.lehmgrube.h)){if(INMAP(x,y)&&tiles[IDX(x,y)]===T.FOREST)tiles[IDX(x,y)]=T.GRASS;}
+}
 function clayDepositCount(island){return Math.max(1,Math.min(4,Math.ceil(ISLANDS[island].size*5)));}
 function generateClayDeposits(tiles,seed,island,reserved=[],blocked=()=>false,count=clayDepositCount(island)){
  if(count<=0)return [];
@@ -20,7 +23,7 @@ const clayUnpackIsland=unpackIsland;unpackIsland=function(o,...args){
  // Bestehende Gruben erhalten ihren Platz, auch wenn sie früher am Strand gebaut wurden.
  for(const b of g.blds)if(b.type==='lehmgrube'&&!saved.some(n=>n.x===b.x&&n.y===b.y))saved.push({type:'lehmgrube',x:b.x,y:b.y});
  const missing=Math.max(0,clayDepositCount(g.island)-saved.length),fresh=generateClayDeposits(g.tiles,g.seed,g.island,[...other,...saved],(x,y)=>!!g.occ[IDX(x,y)]||!!g.road[IDX(x,y)],missing);
- g.deposits=[...other,...saved,...fresh];return g;
+ g.deposits=[...other,...saved,...fresh];clearClayDepositTrees(g.tiles,g.deposits);return g;
 };
 const clayCanPlace=canPlace;canPlace=function(type,x,y){
  if(type==='lehmgrube'&&!G.deposits.some(n=>n.type===type&&n.x===x&&n.y===y&&!n.legacy))return {ok:false,why:'Die Lehmgrube benötigt ein freies Lehmvorkommen an Land.'};return clayCanPlace(type,x,y);
