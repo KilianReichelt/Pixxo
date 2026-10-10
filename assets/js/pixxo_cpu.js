@@ -24,7 +24,28 @@ function cpuCanDevelop(type){
  return true;
 }
 function cpuBuild(type){if(!cpuCanDevelop(type))return false;const retries=G.cpu.retries??={};if(retries[type]>G.cpu.age)return false;const d=B[type];if(!d||!canAfford(d.cost))return false;const essential=['haus','markt','holzfaeller','saegewerk','fischer','feuer','kartoffelhof','brennerei','steinbruch','lager'].includes(type);if(!essential&&G.gold<(d.cost.gold||0)+1200)return false;const port=G.blds.find(b=>b.type==='kontor');if(!port)return false;let sites;if(['mine','steinbruch','lehmgrube'].includes(type))sites=G.deposits.filter(n=>n.type===type&&!nodeUsed(n));else{sites=[];for(let y=Math.max(ISLANDS[activeIsland].oy+2,port.y-30);y<Math.min(ISLANDS[activeIsland].oy+ISLAND_SIZE-2,port.y+32);y++)for(let x=Math.max(ISLANDS[activeIsland].ox+2,port.x-30);x<Math.min(ISLANDS[activeIsland].ox+ISLAND_SIZE-2,port.x+32);x++)if(canPlace(type,x,y).ok){let resource=0;if(d.env)for(let dy=-d.env.r;dy<=d.env.r;dy+=2)for(let dx=-d.env.r;dx<=d.env.r;dx+=2){const nx=Math.floor(x+d.w/2+dx),ny=Math.floor(y+d.h/2+dy);if(!INMAP(nx,ny))continue;const k=IDX(nx,ny);if(d.env.t==='tree'&&G.tiles[k]===T.FOREST||d.env.t==='fish'&&G.fish[k]||d.env.t==='rock'&&[T.ROCK,T.ORE].includes(G.tiles[k]))resource++;}sites.push({x,y,score:Math.hypot(x-port.x,y-port.y)-Math.min(28,resource*1.5)+footprintCells(x,y,d.w,d.h).filter(([x,y])=>G.tiles[IDX(x,y)]===T.FOREST).length*2});}}sites.sort((a,b)=>(a.score??Math.hypot(a.x-port.x,a.y-port.y))-(b.score??Math.hypot(b.x-port.x,b.y-port.y)));for(const site of sites.slice(0,80)){if(!canPlace(type,site.x,site.y).ok||!cpuPreservesRoadCorners(site.x,site.y,d.w,d.h))continue;const mock={x:site.x,y:site.y,w:d.w,h:d.h},endpoints=ringCells(mock).filter(([x,y])=>roadTileAllowed(x,y)&&!footprintCells(mock.x,mock.y,mock.w,mock.h).some(([a,b])=>a===x&&b===y)).sort((a,b)=>Math.hypot(a[0]-cx(port),a[1]-cy(port))-Math.hypot(b[0]-cx(port),b[1]-cy(port)));let path=null;for(const [x,y] of endpoints.slice(0,4)){let candidate;const cells=footprintCells(mock.x,mock.y,mock.w,mock.h).map(([x,y])=>IDX(x,y));for(const k of cells)G.occ[k]=-1;try{const hub=cpuRoadHub(port);candidate=hub===null?null:plannedRoadPath({x:hub%MAPW,y:Math.floor(hub/MAPW)},{x,y});}finally{for(const k of cells)G.occ[k]=0;}if(candidate&&candidate.every(k=>{const x=k%MAPW,y=Math.floor(k/MAPW);return x<mock.x||x>=mock.x+mock.w||y<mock.y||y>=mock.y+mock.h;})){path=candidate;break;}}if(!path||path.length>36||G.gold<(d.cost.gold||0)+path.filter(k=>!G.road[k]).length*ROAD_COST)continue;const result=place(type,site.x,site.y);if(!result.ok)continue;for(const k of path)placeRoad(k%MAPW,Math.floor(k/MAPW));rebuildNet();delete retries[type];return result.b;}retries[type]=G.cpu.age+90;return false;}
-function cpuFields(){for(const owner of G.blds){const rule=FIELD_RULES[owner.type];if(!rule||fieldModules(owner).length>=rule.count)continue;UI.fieldOwner=owner.id;const d=B[rule.type];for(let r=2;r<=10;r++)for(let y=owner.y-r;y<=owner.y+owner.h+r;y++)for(let x=owner.x-r;x<=owner.x+owner.w+r;x++){if(canPlace(rule.type,x,y).ok&&footprintCells(x,y,d.w,d.h).every(([a,b])=>G.tiles[IDX(a,b)]!==T.FOREST)&&cpuPreservesRoadCorners(x,y,d.w,d.h)){place(rule.type,x,y);G.dirty=true;return true;}}}return false;}
+const CPU_FIELD_SEARCHES=new WeakMap(),CPU_FIELD_SEARCH_BUDGET=96;
+function cpuFields(){
+ let budget=CPU_FIELD_SEARCH_BUDGET;
+ for(const owner of G.blds){
+  const rule=FIELD_RULES[owner.type],count=rule?fieldModules(owner).length:0;if(!rule||count>=rule.count)continue;
+  UI.fieldOwner=owner.id;const d=B[rule.type];let search=CPU_FIELD_SEARCHES.get(owner);
+  const stamp=owner.x+':'+owner.y+':'+count;
+  if(!search||search.stamp!==stamp){
+   const sites=[];for(let y=owner.y-10;y<=owner.y+owner.h+10;y++)for(let x=owner.x-10;x<=owner.x+owner.w+10;x++)sites.push({x,y,distance:Math.max(Math.abs(x-cx(owner)),Math.abs(y-cy(owner)))});
+   sites.sort((a,b)=>a.distance-b.distance||a.y-b.y||a.x-b.x);search={stamp,sites,cursor:0};CPU_FIELD_SEARCHES.set(owner,search);
+  }
+  if(search.retryAt>(G.cpu?.age||0))continue;
+  while(search.cursor<search.sites.length&&budget-->0){
+   const {x,y}=search.sites[search.cursor++];if(!INMAP(x,y)||!INMAP(x+d.w-1,y+d.h-1))continue;
+   const cells=footprintCells(x,y,d.w,d.h);if(cells.some(([a,b])=>G.occ[IDX(a,b)]||G.road[IDX(a,b)]||G.tiles[IDX(a,b)]===T.FOREST))continue;
+   if(canPlace(rule.type,x,y).ok&&cpuPreservesRoadCorners(x,y,d.w,d.h)){const result=place(rule.type,x,y);if(result.ok){G.dirty=true;return true;}}
+  }
+  if(search.cursor>=search.sites.length){search.cursor=0;search.retryAt=(G.cpu?.age||0)+60;}
+  if(budget<=0)return false;
+ }
+ return false;
+}
 function cpuDecision(){const count=type=>G.blds.filter(b=>b.type===type).length,homes=count('haus'),population=totalPop(),age=G.cpu.age;
  for(const b of G.blds)if(b.type==='ruine'&&!b.ruinField&&canAfford(ruinRebuildCost(b))&&rebuildRuin(b))return;
  if(G.cpu.age>220&&!count('feuer')&&cpuBuild('feuer'))return;

@@ -2,6 +2,21 @@
 
 Stand: 10. Oktober 2026
 
+## Aktuelle Korrekturen
+
+- Hinweise enthalten nur Brände ohne einsatzbereite, über Straßen erreichbare Feuerwehr innerhalb ihrer Reichweite. Beim Schließen der angesehenen Liste oder beim Wechsel zu Aufträgen werden Meldungen und Zähler geleert. Derselbe Brand wird nicht wiederholt; neue Brände können wieder warnen.
+- Reiner Goldmangel beim Aufwerten erzeugt keinen Warnhinweis und beim Hausaufstieg keinen Fehlerton. Fehlendes Baumaterial und fehlende Voraussetzungen bleiben am Werkzeug erkennbar.
+- Seitlich angrenzende Gebäude unterbrechen bestehende diagonale Straßen nicht mehr. Zwischenstraßen verhindern weiterhin Dreiecke an T-Kreuzungen.
+- Transportkarren besitzen acht gecachte Ansichten mit sechs Ladungsformen. Auf Steinstraßen fahren sie 30 % schneller; gemischte Strecken und diagonale Distanzen werden abschnittsgenau berechnet, einschließlich Zeicheninterpolation.
+- Dämmerung beginnt um 18 Uhr und erreicht um 21 Uhr volle Nacht. Trockenzeiten einschließlich des ersten Regenintervalls betragen 15–30 Spielminuten; Regen bleibt 6–12 Minuten lang.
+- Die CPU-Feldsuche verteilt ihre Arbeit auf maximal 96 Kandidaten pro Entscheidung und setzt die Suche später fort. Vollständig erfolglose Suchen warten 60 Sekunden vor dem nächsten Versuch, damit andere Höfe weiterkommen.
+- Native Scrollleisten übernehmen kantige, kontrastreiche Pixelkanten und Menüfarben. Firefox verwendet die standardisierte Farbvariante; im Hochkontrastmodus gelten Systemfarben. Es werden keine eigenen Scroll-Widgets oder neuen Bewegungen eingeführt.
+- ZIP und WAV-Originale werden nicht mehr von Git verfolgt und sind ignoriert. Lokale Originaldateien bleiben erhalten. Das Spiel verwendet ausschließlich die zwölf komprimierten MP3-Dateien; die lokale ZIP wird weiterhin gebaut, aber nicht gepusht.
+
+Geprüft in isoliertem Chrome: 296 Spielregressionen, Startmenü und Tutorial, Audio/Wetter, Brandwarnungen mit erreichbarer, pausierter und nicht angebundener Feuerwehr, Lesen/Leeren und neue Brände, CPU-Suchbudget, Steinstraßenbonus einschließlich Misch- und Diagonalstrecken, acht Karrenansichten sowie native Pixel-Scrollleisten und Hochkontrast-Fallback. Automatisierte WCAG-Prüfungen bestanden für Startmenü, Einstellungen, Credits und Bestätigung. Eine vollständige manuelle WCAG-2.2-AA-Prüfung des gesamten Canvas-Spiels ist damit nicht ersetzt.
+
+Lokale Vergleichsmessung in der ausgebauten Testwelt mit 480 Gebäuden: maximaler Welt-Takt zuvor etwa 37,5 ms, nach der begrenzten Feldsuche etwa 5,3 ms; maximale Feldsuche zuvor 31,7 ms, danach 0,5 ms. Das ist eine isolierte Stichprobe, kein DevTools-Profil und keine Garantie für sämtliche Lag-Ursachen oder andere Hardware.
+
 ## Tageszeit und lebendige Siedlungen
 
 Der Uhrzeit-Button in der oberen Leiste öffnet die Tageszeit-Einstellungen. Der automatische Tag/Nacht-Wechsel dauert bei normalem Spieltempo 20 Minuten pro Tag und hält bei Spielpause an. Ein Zeitsprung behält den eingestellten Tag/Nacht-Wechsel bei. Eine Uhrzeit bleibt nur fest, wenn der Wechsel ausgeschaltet ist. Die Kopplung an die lokale Systemuhr berücksichtigt die Zeitzone des Computers und funktioniert auch bei pausierter Spielwirtschaft. Einstellung und Spieluhr werden im Spielstand gespeichert.

@@ -3,3 +3,8 @@
 
 # Ignore any other local zip archives (optional)
 # *.zip
+Pixxo_lokal.zip
+
+# Uncompressed local audio masters; the game uses compressed/*.mp3 only.
+/assets/music/*.wav
+/Pixxo_lokal.neu.zip

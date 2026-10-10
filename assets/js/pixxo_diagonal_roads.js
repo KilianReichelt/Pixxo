@@ -5,11 +5,14 @@ function roadStepAllowed(x,y,nx,ny,g=G){
  const dx=nx-x,dy=ny-y;if(Math.abs(dx)>1||Math.abs(dy)>1||!dx&&!dy)return false;
  // Keine Eck-Abkürzung: eine Straße auf einer der Zwischenkacheln verbindet
  // die Punkte bereits rechtwinklig. Das gilt für Zeichnung UND Wegfindung.
- return !(dx&&dy)||[IDX(nx,y),IDX(x,ny)].every(k=>!g.road[k]&&!g.occ[k]&&BUILDABLE(g.tiles[k]));
+ // Buildings beside the shared corner do not remove an existing diagonal.
+ return !(dx&&dy)||[IDX(nx,y),IDX(x,ny)].every(k=>!g.road[k]&&BUILDABLE(g.tiles[k]));
 }
 function roadNeighbours(k,g=G){const x=k%MAPW,y=Math.floor(k/MAPW);return LAND_STEPS.filter(([dx,dy])=>roadStepAllowed(x,y,x+dx,y+dy,g)&&g.road[IDX(x+dx,y+dy)]).map(([dx,dy])=>IDX(x+dx,y+dy));}
 function roadPathDistance(path){let n=0;for(let i=1;i<path.length;i++)n+=Math.hypot(path[i]%MAPW-path[i-1]%MAPW,Math.floor(path[i]/MAPW)-Math.floor(path[i-1]/MAPW));return n;}
-function cartPathAdvance(c,distance){let t=c.t;while(distance>0&&t<c.path.length-1){const i=Math.floor(t),a=c.path[i],b=c.path[i+1],length=Math.hypot(b%MAPW-a%MAPW,Math.floor(b/MAPW)-Math.floor(a/MAPW))||1,remaining=(1-(t-i))*length;if(distance<remaining){t+=distance/length;break;}t=i+1;distance-=remaining;}return t;}
+// Distance is base-speed time: split at tile boundaries so mixed roads remain
+// accurate even when one simulation tick crosses several sections.
+function cartPathAdvance(c,distance,g=G){let t=c.t;while(distance>0&&t<c.path.length-1){const i=Math.floor(t),a=c.path[i],b=c.path[i+1],fraction=t-i,length=Math.hypot(b%MAPW-a%MAPW,Math.floor(b/MAPW)-Math.floor(a/MAPW))||1,boundary=fraction<.5?.5:1,speed=g.road[fraction<.5?a:b]===2?1.3:1,remaining=(boundary-fraction)*length/speed;if(distance<remaining){t+=distance*speed/length;break;}t=i+boundary;distance-=remaining;}return t;}
 const diagonalRoadCache=new Map();
 // Vier logische Pixel Überstand füllen die Nachbarkacheln an diagonalen Ecken.
 const DIAGONAL_ROAD_PAD=4;

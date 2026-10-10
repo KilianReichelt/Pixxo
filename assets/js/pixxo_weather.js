@@ -1,9 +1,9 @@
 /* Atmosphärisches Wetter ohne Einfluss auf Wirtschaft, Terrain oder Feuer.
    Gewitter sind im Schema vorbereitet; zunächst wird nur Regen ausgelöst. */
 const WEATHER_TYPES={clear:{rain:false,implemented:true},rain:{rain:true,implemented:true},storm:{rain:true,implemented:false}};
-const WEATHER_RULES={dryMin:240,dryMax:600,rainMin:360,rainMax:720,puddleDryMax:300};
+const WEATHER_RULES={dryMin:900,dryMax:1800,rainMin:360,rainMax:720,puddleDryMax:300};
 function weatherRandom(w){w.rng=(Math.imul(1664525,w.rng)+1013904223)>>>0;return w.rng/4294967296;}
-function weatherCreate(seed){const w={version:1,rng:(seed^0x51a7c09)>>>0,time:0,type:'clear',start:0,end:0,intensity:0,nextAt:0,puddleEvents:[]};w.nextAt=180+weatherRandom(w)*420;return w;}
+function weatherCreate(seed){const w={version:1,rng:(seed^0x51a7c09)>>>0,time:0,type:'clear',start:0,end:0,intensity:0,nextAt:0,puddleEvents:[]};w.nextAt=WEATHER_RULES.dryMin+weatherRandom(w)*(WEATHER_RULES.dryMax-WEATHER_RULES.dryMin);return w;}
 function weatherState(){return WORLD.weather??=weatherCreate(WORLD.rootSeed||G.seed);}
 function weatherBeginRain(duration=null){
  const w=weatherState(),d=duration??(WEATHER_RULES.rainMin+weatherRandom(w)*(WEATHER_RULES.rainMax-WEATHER_RULES.rainMin));

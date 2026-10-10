@@ -14,7 +14,7 @@ with sync_playwright() as p:
     page.wait_for_function('StartScreen.started')
     page.evaluate('tutorialFinish();setSpeed(0)')
     result=page.evaluate("""() => {
-        const goods=[null,'holz','stein','getreide','bier','werkzeug'],dirs=[[1,0],[-1,0],[0,1],[0,-1]],data=c=>c.getContext('2d').getImageData(0,0,c.width,c.height).data;
+        const goods=[null,'holz','stein','getreide','bier','werkzeug'],dirs=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,1],[1,-1],[-1,-1]],data=c=>c.getContext('2d').getImageData(0,0,c.width,c.height).data;
         const originals=JSON.stringify(G.carts),stock=JSON.stringify(G.stock),masks=new Set();let minColors=100;
         for(const good of goods)for(const [dx,dy] of dirs)for(let frame=0;frame<2;frame++){
             const sprite=wagonSprite(dx,dy,frame,good),pixels=data(sprite),colors=new Set();
@@ -30,11 +30,12 @@ with sync_playwright() as p:
                 for(let y=0;y<40;y++)for(let x=0;x<40;x++)for(let k=0;k<4;k++)if(p[(y*40+x)*4+k]!==q[((horizontal?y:39-y)*40+(horizontal?39-x:x))*4+k])throw Error('Richtungsspiegelung');
             }
         }
-        if(masks.size!==6||WAGON_SPRITES.size!==48)throw Error('Ladungsvarianten fehlen');
-        const c=document.createElement('canvas');c.width=900;c.height=420;const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.fillStyle='#527139';g.fillRect(0,0,900,420);g.font='16px sans-serif';
+        if(masks.size!==6||WAGON_SPRITES.size!==96)throw Error('Ladungsvarianten fehlen');
+        if(new Set(dirs.slice(4).map(dir=>Array.from(data(wagonSprite(...dir,0,'holz'))).join(','))).size!==4)throw Error('Diagonale Richtungen fehlen');
+        const c=document.createElement('canvas');c.width=900;c.height=760;const g=c.getContext('2d');g.imageSmoothingEnabled=false;g.fillStyle='#527139';g.fillRect(0,0,900,760);g.font='16px sans-serif';
         const labels=['Leer','Holz','Stein / Erz','Säcke','Fässer','Kisten'];
         for(let j=0;j<6;j++){g.fillStyle='#fff';g.fillText(labels[j],j*150+8,24);
-            for(let d=0;d<4;d++){const s=wagonSprite(...dirs[d],0,goods[j]);nativeDrawImage.call(g,s,j*150+10,40+d*86,80,80);nativeDrawImage.call(g,s,j*150+104,64+d*86,20,20);}}
+            for(let d=0;d<8;d++){const s=wagonSprite(...dirs[d],0,goods[j]);nativeDrawImage.call(g,s,j*150+10,40+d*86,80,80);nativeDrawImage.call(g,s,j*150+104,64+d*86,20,20);}}
         const image=document.createElement('img');image.id='wagon-details';image.src=c.toDataURL();Object.assign(image.style,{position:'fixed',inset:0,zIndex:99999});document.body.append(image);
         const test=document.createElement('canvas');test.width=test.height=80;const t=test.getContext('2d'),cart={path:[IDX(100,100),IDX(101,100)],t:.3,col:'holz',qty:1};
         drawWagon(t,40,40,cart);const full=data(test);t.clearRect(0,0,80,80);drawWagon(t,40,40,cart,.5);const faded=data(test);
@@ -58,4 +59,4 @@ with sync_playwright() as p:
     assert page.evaluate('WORK_ART.reduced.matches')
     assert not errors,errors
     browser.close()
-    print('PASS: Detaillierte Karren, sechs Ladungsformen, vier Richtungen, unveränderte Größe, Spritecache und Ausblendung.',result,scene)
+    print('PASS: Detaillierte Karren, sechs Ladungsformen, acht Richtungen, unveränderte Größe, Spritecache und Ausblendung.',result,scene)

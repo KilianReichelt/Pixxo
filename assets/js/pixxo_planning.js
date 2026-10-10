@@ -38,7 +38,7 @@ function commitUpgradePlan(plan){
  const fresh=areaUpgradeTargets(plan.start,plan.end,plan.source,plan.island);
  if(targets.roads.some(k=>!fresh.roads.includes(k))||targets.buildings.some(({building,tier})=>building.tier!==tier||!fresh.buildings.some(n=>n.building===building)))return 'Die Auswahl hat sich geändert. Bitte erneut auswählen.';
  const cost={};for(const k of targets.roads){cost.gold=(cost.gold||0)+4;cost.stein=(cost.stein||0)+1;}for(const {building} of targets.buildings)for(const [good,n] of Object.entries(upgradeRequest(building).cost))cost[good]=(cost[good]||0)+n;
- if(!canAfford(cost))return 'Für die gesamte Auswahl fehlen Gold oder Baumaterial.';
+ if(!canAfford(cost))return upgradeOnlyFundsMissing(cost)?false:'Für die gesamte Auswahl fehlt Baumaterial.';
  for(const k of targets.roads)roadUpgrade(k%MAPW,Math.floor(k/MAPW));
  for(const {building} of targets.buildings)if(building.type==='haus')upgradeHouse(building);else upgradePort(building);
  rebuildNet();refreshWins();renderTop(true);saveGame();return true;
@@ -70,7 +70,7 @@ function areaDemolitionHTML(){
 function finishConstructionPlan(){
  const plan=constructionPlan;constructionPlan=null;if(!plan)return;
  if(plan.tool==='road'){const result=commitRoadPlan(plan);UI.paintFail=result===true?'':result;if(result!==true)msg(result,'i_alert');}
- else if(plan.tool==='upgrade'){const result=commitUpgradePlan(plan);UI.paintFail=result===true?'':result;if(result!==true)msg(result,'i_alert');}
+ else if(plan.tool==='upgrade'){const result=commitUpgradePlan(plan);UI.paintFail=typeof result==='string'?result:'';if(typeof result==='string')msg(result,'i_alert');}
  else if(plan.start.x===plan.end.x&&plan.start.y===plan.end.y){const result=demolishAt(plan.end.x,plan.end.y);if(typeof result==='string')msg(result,'i_alert');saveGame();}
  else if(plan.targets.buildings.length||plan.targets.roads.length){pendingAreaDemolition=plan.targets;openWin('area-demolition','Flächenabriss prüfen',areaDemolitionHTML);}
  updateHint();
@@ -79,7 +79,7 @@ const planningSetTool=setTool;setTool=function(...args){constructionPlan=null;pl
 const planningHint=updateHint;updateHint=function(){
  planningHint();const hint=$('#hint');if(!hint)return;let info=hint.querySelector('[data-plan-info]');if(!constructionPlan){info?.remove();return;}
  if(!info){info=document.createElement('span');info.dataset.planInfo='';hint.prepend(info);}
- const plan=constructionPlan;if(plan.tool==='upgrade'){const targets=plan.upgrades,cost=Object.entries(targets.cost).map(([good,n])=>`${n} ${good==='gold'?'Gold':GN[good].n}`).join(' · ');info.textContent=`${targets.buildings.length+targets.roads.length} × ${plan.source==='road'?'Straße':B[plan.source]?.n||'kein Gebäudetyp'}${cost?' · '+cost:''}${canAfford(targets.cost)?'':' · Material fehlt'} · Loslassen zum Aufwerten. `;return;}
+ const plan=constructionPlan;if(plan.tool==='upgrade'){const targets=plan.upgrades,cost=Object.entries(targets.cost).map(([good,n])=>`${n} ${good==='gold'?'Gold':GN[good].n}`).join(' · ');info.textContent=`${targets.buildings.length+targets.roads.length} × ${plan.source==='road'?'Straße':B[plan.source]?.n||'kein Gebäudetyp'}${cost?' · '+cost:''}${upgradeMaterialsAvailable(targets.cost)?'':' · Material fehlt'} · Loslassen zum Aufwerten. `;return;}
  info.textContent=plan.tool==='road'?(plan.path?`${plan.newRoads.length} neue Straßenfelder · ${plan.gold} Gold${G.gold<plan.gold?' · Gold fehlt':''} · Loslassen zum Bauen. `:'Kein bebaubarer Weg zum Ziel. '):`${plan.targets.buildings.length} Gebäude · ${plan.targets.roads.length} Straßenfelder · Loslassen zum Prüfen. `;
 };
 const planningGhost=drawGhost;drawGhost=function(ctx){

@@ -180,7 +180,7 @@ with sync_playwright() as p:
         dayClock().system=false;dayClock().minutes=720;
         const sample=()=>Array.from(prepareFog().getContext('2d').getImageData(0,0,1,1).data);
         const day=sample();dayClock().minutes=0;const night=sample();
-        dayClock().minutes=1260;const dusk=sample();dayClock().minutes=720;
+        dayClock().minutes=1170;const dusk=sample();dayClock().minutes=720;
         return {day,night,dusk};
     }""")
     assert sum(fog['night'][:3]) < sum(fog['dusk'][:3]) < sum(fog['day'][:3]), fog

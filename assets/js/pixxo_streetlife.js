@@ -13,6 +13,7 @@ function wagonCargoType(good){
  return good?'crates':'empty';
 }
 function wagonSprite(dx,dy,frame,good=null){
+ if(dx&&dy)return wagonDiagonalSprite(dx,dy,frame,good);
  const dir=Math.abs(dx)>Math.abs(dy)?(dx<0?'w':'e'):(dy<0?'n':'s'),cargo=wagonCargoType(good),key=dir+':'+frame+':'+cargo;
  if(WAGON_SPRITES.has(key))return WAGON_SPRITES.get(key);
  // Double-resolution pixel drawing, still exactly 20 × 20 world pixels.
@@ -58,6 +59,27 @@ function wagonSprite(dx,dy,frame,good=null){
   r(-2,8,4,4,'#caa27b');r(-2,8,4,1,'#806044');r(-2,12,4,4,'#5b8387');r(-2,12,1,3,'#85a4a0');
   r(-2-(frame?1:0),16,2,4,'#3a302a');r(frame?1:0,16,2,4,'#3a302a');
  }
+ WAGON_SPRITES.set(key,c);return c;
+}
+function wagonDiagonalSprite(dx,dy,frame,good){
+ const sx=Math.sign(dx),sy=Math.sign(dy),key=(sx>0?'e':'w')+(sy>0?'s':'n')+':'+frame+':'+wagonCargoType(good);
+ if(WAGON_SPRITES.has(key))return WAGON_SPRITES.get(key);
+ const base=wagonSprite(1,0,frame,good),pixels=base.getContext('2d').getImageData(0,0,40,40).data;
+ const c=document.createElement('canvas');c.width=c.height=40;const g=c.getContext('2d'),image=g.createImageData(40,40);
+ const workerColors=new Set(['202,162,123','128,96,68','229,196,155','91,131,135','133,164,160','196,155,116','58,48,42']);
+ // Project the cart and its cargo into a diagonal pixel grid. Keep the
+ // walking worker upright rather than rotating the entire sprite.
+ for(let y=0;y<40;y++)for(let x=0;x<40;x++){
+  const px=(x+.5-20)*sx,py=(y+.5-20)*sy,u=(.46*px+.6*py)/.6072,v=(-.46*px+.72*py)/.6072;
+  const bx=Math.floor(u+20),by=Math.floor(v+20);if(bx<0||by<0||bx>=40||by>=40)continue;
+  const i=(by*40+bx)*4;if(bx>=31&&workerColors.has(pixels[i]+','+pixels[i+1]+','+pixels[i+2]))continue;
+  image.data.set(pixels.subarray(i,i+4),(y*40+x)*4);
+ }
+ g.putImageData(image,0,0);
+ const x=Math.round(20+sx*10)-2,y=Math.round(20+sy*6),r=(xx,yy,w,h,color)=>{g.fillStyle=color;g.fillRect(xx,yy,w,h);};
+ r(x,y-11,4,4,'#caa27b');r(x,y-11,4,1,'#806044');r(x+1,y-9,1,1,'#e5c49b');
+ r(x,y-7,4,6,'#5b8387');r(x,y-6,1,4,'#85a4a0');r(x+3*sx,y-5,1,3,'#c49b74');
+ r(x-(frame?1:0),y-1,2,4,'#3a302a');r(x+3+(frame?1:0),y-1,2,4,'#3a302a');
  WAGON_SPRITES.set(key,c);return c;
 }
 function drawWagon(ctx,px,py,c,alpha=1){ctx.save();ctx.globalAlpha*=alpha;const i=Math.min(c.path.length-2,Math.max(0,Math.floor(c.t))),a=c.path[Math.max(0,i)],b=c.path[Math.min(c.path.length-1,i+1)],dx=b%MAPW-a%MAPW,dy=Math.floor(b/MAPW)-Math.floor(a/MAPW),frame=G.speed>0&&!WORK_ART.reduced.matches?Math.floor(c.t*4)%2:0;if(UI.sel&&(c.source===UI.sel||c.target===UI.sel)){ctx.strokeStyle='#ffe16a';ctx.lineWidth=1.5;ctx.strokeRect(Math.round(px)-10,Math.round(py)-10,20,20);}ctx.imageSmoothingEnabled=false;ctx.drawImage(wagonSprite(dx,dy,frame,c.col),Math.round(px)-10,Math.round(py)-10,20,20);ctx.restore();}

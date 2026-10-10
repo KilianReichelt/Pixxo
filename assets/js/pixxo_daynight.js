@@ -4,7 +4,7 @@ function dayClock(){if(!WORLD)return {minutes:720,enabled:true,system:false};ret
 function dayMinutes(){const c=dayClock();if(c.system){const now=new Date();return now.getHours()*60+now.getMinutes()+now.getSeconds()/60;}return c.minutes;}
 function dayTimeLabel(){const m=Math.floor(dayMinutes());return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}
 function twilightFade(value){const t=Math.max(0,Math.min(1,value));return t*t*(3-2*t);}
-function nightAmount(){const h=dayMinutes()/60;return h<5||h>=22?1:h<7?1-twilightFade((h-5)/2):h>=19?twilightFade((h-19)/3):0;}
+function nightAmount(){const h=dayMinutes()/60;return h<5||h>=21?1:h<7?1-twilightFade((h-5)/2):h>=18?twilightFade((h-18)/3):0;}
 // Fog follows the night tint without changing discovery alpha.
 const dayPrepareFog=prepareFog;
 let nightFogCanvas=null,nightFogLevel=-1;

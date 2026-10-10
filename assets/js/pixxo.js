@@ -118,7 +118,9 @@ const pixxoEnvFor=envFor;envFor=function(type,x,y){const result=pixxoEnvFor(type
 };
 
 /* Brände: ein Wagen je Wache, Straßenfahrt, Ausbreitung und geschützter Löscheinsatz. */
-function pixxoIgnite(b){if(!b||b.fire>0||['wh','field','ruin','decor'].includes(B[b.type].kind))return false;b.fire=60;b.extinguish=0;G.dirty=true;msg('Ein Brand ist ausgebrochen: '+bname(b)+'. Platziere eine Feuerwehr in der Nähe und verbinde sie über Straßen, um den Brand zu löschen!','i_alert');return true;}
+function pixxoFireProtected(b){return G.blds.some(station=>station.type==='feuer'&&station.conn&&!station.paused&&station.fire<=0&&Math.hypot(cx(station)-cx(b),cy(station)-cy(b))<=def(station).r&&deliveryPath(station,b)?.length);}
+function pixxoWarnUnprotectedFire(b){if(b.fireWarningRaised||pixxoFireProtected(b))return;b.fireWarningRaised=true;msg('Brand ohne Feuerwehr in Reichweite: '+bname(b)+'. Verbinde eine nahe Feuerwehr über Straßen mit dem Gebäude.','i_alert');}
+function pixxoIgnite(b){if(!b||b.fire>0||['wh','field','ruin','decor'].includes(B[b.type].kind))return false;b.fire=60;b.extinguish=0;b.fireWarningRaised=false;G.dirty=true;pixxoWarnUnprotectedFire(b);return true;}
 function pixxoEngineArrived(b){return (G.fireEngines||[]).some(e=>e.phase!=='return'&&e.target===b.id&&e.t>=e.path.length-1&&pixxoValidEngine(e));}
 function pixxoValidEngine(e){const station=G.byId.get(e.station),target=G.byId.get(e.target);if(!station||!station.conn||station.paused||station.fire>0||!e.path.length||e.path.some(k=>!G.road[k]))return false;
  if(e.phase==='return')return ringCells(station).some(([x,y])=>INMAP(x,y)&&IDX(x,y)===e.path[e.path.length-1]);
@@ -138,6 +140,7 @@ function pixxoFireStep(dt){
  }
  for(const e of G.fireEngines)e.t=Math.min(e.path.length-1,e.t+dt*2.4);
  for(const b of burning){
+  pixxoWarnUnprotectedFire(b);
   if(pixxoEngineArrived(b)){b.extinguish=Math.min(1,(b.extinguish||0)+dt/12);b.status='Wird gelöscht';if(b.extinguish>=1){for(const e of G.fireEngines.filter(e=>e.phase!=='return'&&e.target===b.id))pixxoReturnEngine(e);b.fire=0;b.extinguish=0;G.dirty=true;msg('Der Brand in '+bname(b)+' wurde gelöscht.','i_kreuz');}continue;}
   const neighbors=G.blds.filter(n=>n!==b&&n.fire<=0&&!['wh','field','ruin','decor'].includes(B[n.type].kind)&&Math.hypot(Math.max(0,n.x-b.x-b.w,b.x-n.x-n.w),Math.max(0,n.y-b.y-b.h,b.y-n.y-n.h))<=1.5);
   for(const neighbor of neighbors)if(Math.random()<1-Math.exp(-.004*dt))pixxoIgnite(neighbor);
@@ -160,15 +163,16 @@ const pixxoFinHTML=finHTML;finHTML=function(){const loan=WORLD.loan;return pixxo
 const pixxoEconomy=economy;economy=function(){const e=pixxoEconomy(),payment=WORLD?.loan?.rate||0;return {...e,upk:e.upk+payment,net:e.net-payment};};
 const pixxoWinAct=winAct;winAct=function(id,ds){if(ds.act==='loan-borrow')pixxoBorrow(Number(ds.amount));else if(ds.act==='loan-repay')pixxoRepay();else pixxoWinAct(id,ds);if(ds.act==='pause'||ds.act.startsWith('loan-')){const held=UI.holdUI;UI.holdUI=false;for(const w of Object.values(WINS)){w.hold=false;w.last=null;refreshWin(w);}renderTop(true);UI.holdUI=held;}};
 
-/* Nur spielrelevante Ereignisse werden gesammelt. Bedienhinweise bleiben am Werkzeug. */
-const pixxoToast=toast;toast=function(text,icon){if(icon!=='i_alert'&&icon!=='i_quest'&&!/Brand|niedergebrannt|gelöscht|erforscht|Kontor gegründet|Darlehen|Handelsschiff|Händler/.test(text))return;pixxoToast(text,icon);};
-const pixxoMessageHook=MSGHOOK;MSGHOOK=function(text,icon){if(icon!=='i_alert'&&icon!=='i_quest'&&!/Brand|niedergebrannt|gelöscht|erforscht|Kontor gegründet|Darlehen|Handelsschiff|Händler/.test(text))return;pixxoMessageHook(text,icon);};
+/* Hinweise enthalten ausschließlich ungeschützte Brände, einmal je Brand. */
+function pixxoIsFireWarning(text,icon){return icon==='i_alert'&&typeof text==='string'&&text.startsWith('Brand ohne Feuerwehr in Reichweite: ');}
+const pixxoToast=toast;toast=function(text,icon){if(pixxoIsFireWarning(text,icon))pixxoToast(text,icon);};
+const pixxoMessageHook=MSGHOOK;MSGHOOK=function(text,icon){if(pixxoIsFireWarning(text,icon))pixxoMessageHook(text,icon);};
 const questButton=sidebar.querySelector('[data-side="quest"]');questButton.insertAdjacentHTML('beforeend','<span class="side-event-count" aria-hidden="true" hidden></span>');
 function pixxoQuestBadge(){if(!WORLD)return;const seen=new Set(WORLD.questSeen||[]),current=activeQuest(),notifications=[...QUESTS.filter(q=>G.quests[q.id]).map(q=>'done:'+q.id),...(current?['new:'+current.id]:[])],unread=notifications.filter(key=>!seen.has(key));
  if(UI.sidebarTab==='quest'){WORLD.questSeen=[...new Set([...seen,...notifications])];unread.length=0;}
  const badge=questButton.querySelector('.side-event-count');badge.textContent=String(unread.length);badge.hidden=!unread.length;questButton.setAttribute('aria-label',unread.length?'Aufträge · '+unread.length+' neue Meldungen':'Aufträge');
 }
-const pixxoToggleSidebar=toggleSidebar;toggleSidebar=function(...args){pixxoToggleSidebar(...args);pixxoQuestBadge();};
+const pixxoToggleSidebar=toggleSidebar;toggleSidebar=function(...args){const read=UI.sidebarTab==='events';pixxoToggleSidebar(...args);if(read&&UI.sidebarTab!=='events'){$('#toasts').replaceChildren();UI.log=[];UI.unreadEvents=0;updateEventBadge();}pixxoQuestBadge();};
 const pixxoOpenQuest=openWin_quest;openWin_quest=function(){pixxoOpenQuest();WORLD.questSeen=[...QUESTS.filter(q=>G.quests[q.id]).map(q=>'done:'+q.id),...(activeQuest()?['new:'+activeQuest().id]:[])];pixxoQuestBadge();};
 // Zwei übereinanderliegende Icon-Schalter für Schiffe und Dekoration.
 const barModes=document.createElement('div');barModes.id='barModes';
