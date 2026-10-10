@@ -1,6 +1,14 @@
 /* Nach innen erodierte Felskonturen: zwei Kacheln Abstand je Höhenstufe.
    Nur Darstellung; Erz, Bauplätze und Abbaukontakte bleiben unverändert. */
 const MOUNTAIN_TERRACES=new WeakMap();
+function rockCornerBevel(x,y,dx,dy,g=G){
+ const rock=(a,b)=>INMAP(a,b)&&[T.ROCK,T.ORE].includes(g.tiles[IDX(a,b)]);
+ return rock(x,y)&&INMAP(x+dx,y)&&INMAP(x,y+dy)&&BUILDABLE(g.tiles[IDX(x+dx,y)])&&BUILDABLE(g.tiles[IDX(x,y+dy)]);
+}
+function clipRockTile(ctx,x,y,px,py){
+ const nw=rockCornerBevel(x,y,-1,-1)?8:0,ne=rockCornerBevel(x,y,1,-1)?8:0,se=rockCornerBevel(x,y,1,1)?8:0,sw=rockCornerBevel(x,y,-1,1)?8:0;
+ ctx.beginPath();ctx.moveTo(px+nw,py);ctx.lineTo(px+16-ne,py);ctx.lineTo(px+16,py+ne);ctx.lineTo(px+16,py+16-se);ctx.lineTo(px+16-se,py+16);ctx.lineTo(px+sw,py+16);ctx.lineTo(px,py+16-sw);ctx.lineTo(px,py+nw);ctx.closePath();ctx.clip();
+}
 function mountainTerraceField(island,tiles=G.tiles){
  let islands=MOUNTAIN_TERRACES.get(tiles);if(!islands){islands=new Map();MOUNTAIN_TERRACES.set(tiles,islands);}
  if(islands.has(island))return islands.get(island);

@@ -1,5 +1,15 @@
 /* Relative Schriftgrößen, kontrastreiche Flächen und sichtbarer Fokus. */
 html{font-size:100%}
+.win[data-id="info"] .building-actions{display:flex;gap:8px;align-items:stretch}
+.win[data-id="info"] .building-actions .btn{flex:1 1 0;min-width:0;min-height:44px;width:0;white-space:normal;overflow-wrap:anywhere;font-size:.875rem;padding:6px 4px}
+.win[data-id="info"] .tag{font-size:.875rem;white-space:normal;overflow-wrap:anywhere}
+.win[data-id="info"] .tag.status-error{background:#632c26;color:#fff0dd;border:2px solid #efad92}
+.save-feedback{width:min(360px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;padding:16px;border:4px solid #a88b58;background:#21190f;color:#f3e6c8;font:1rem/1.5 LowresPixel,'Segoe UI',Arial,sans-serif;box-shadow:0 0 0 3px #0d0803}
+.save-feedback::backdrop{background:rgba(0,0,0,.55)}
+.save-feedback h2{font-size:1.125rem;line-height:1.4;margin:0 0 12px}
+.save-feedback p{font-size:1rem;margin:0 0 16px;overflow-wrap:anywhere}
+.save-feedback .btn{min-width:80px;min-height:44px;font-size:1rem}
+.save-feedback .btn:focus-visible{outline:3px solid #ffe3a0;outline-offset:3px}
 body :is(.small,.rate,.cost,.sz,.logline,.side-event-count,.factitem b,.deko-card span){font-size:.875rem!important}
 body #bar .deko-card span,body .cpu-offer small{font-size:.875rem!important}
 body :focus-visible{outline:3px solid #ffe3a0;outline-offset:3px}

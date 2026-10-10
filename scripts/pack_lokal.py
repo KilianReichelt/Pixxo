@@ -24,6 +24,10 @@ music = sorted((root / 'assets/music/compressed').glob('*.mp3'))
 if len(music) != 12:
     raise ValueError('Es werden zwölf komprimierte Musikdateien benötigt.')
 files.extend(music)
+for name in ('Pixxo_Demo_Flussstadt.json', 'Pixxo_Demo_Anleitung.md', 'SPRITE_STANDARDS.md', 'AGENTS.md'):
+    demo = root / name
+    if demo.is_file():
+        files.append(demo)
 
 with zipfile.ZipFile(temporary, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as package:
     for source in files:

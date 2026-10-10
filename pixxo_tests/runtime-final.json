@@ -1,0 +1,312 @@
+{
+  "calls": {
+    "stepWorld": {
+      "count": 1908,
+      "total": 3064.9999999552965,
+      "max": 10.599999994039536,
+      "slow": 0
+    },
+    "step": {
+      "count": 5724,
+      "total": 2170.300000205636,
+      "max": 2.7000000029802322,
+      "slow": 0
+    },
+    "render": {
+      "count": 4499,
+      "total": 19762.39999987185,
+      "max": 166.40000000596046,
+      "slow": 3
+    },
+    "drawMini": {
+      "count": 472,
+      "total": 113.00000010430813,
+      "max": 0.7000000029802322,
+      "slow": 0
+    },
+    "renderTop": {
+      "count": 191,
+      "total": 220.49999997019768,
+      "max": 7.199999988079071,
+      "slow": 0
+    },
+    "renderItems": {
+      "count": 190,
+      "total": 550.7000000327826,
+      "max": 9.800000011920929,
+      "slow": 0
+    },
+    "refreshWins": {
+      "count": 190,
+      "total": 44.19999998807907,
+      "max": 2.6000000089406967,
+      "slow": 0
+    },
+    "saveGame": {
+      "count": 3,
+      "total": 11.900000005960464,
+      "max": 4.4000000059604645,
+      "slow": 0
+    },
+    "rebuildNet": {
+      "count": 45,
+      "total": 94.30000001192093,
+      "max": 4.299999997019768,
+      "slow": 0
+    },
+    "plannedRoadPath": {
+      "count": 79,
+      "total": 70.09999996423721,
+      "max": 2.5,
+      "slow": 0
+    },
+    "assignWorkforce": {
+      "count": 6004,
+      "total": 118.99999965727329,
+      "max": 0.7999999970197678,
+      "slow": 0
+    },
+    "requestLogistics": {
+      "count": 5724,
+      "total": 51.80000016093254,
+      "max": 1.5,
+      "slow": 0
+    },
+    "deliveryPath": {
+      "count": 252121,
+      "total": 307.70000042021275,
+      "max": 0.5,
+      "slow": 0
+    },
+    "civicRequestProjects": {
+      "count": 5724,
+      "total": 12.199999898672104,
+      "max": 1.0999999940395355,
+      "slow": 0
+    },
+    "civicStepProjects": {
+      "count": 5724,
+      "total": 14.30000002682209,
+      "max": 0.10000000894069672,
+      "slow": 0
+    },
+    "drawNight": {
+      "count": 4499,
+      "total": 2609.900000065565,
+      "max": 60.20000000298023,
+      "slow": 1
+    },
+    "nightWindows": {
+      "count": 233948,
+      "total": 160.69999971985817,
+      "max": 27.19999998807907,
+      "slow": 0
+    },
+    "drawDayClouds": {
+      "count": 4499,
+      "total": 6.800000041723251,
+      "max": 0.20000000298023224,
+      "slow": 0
+    },
+    "publishPixel": {
+      "count": 47,
+      "total": 4.999999955296516,
+      "max": 0.30000001192092896,
+      "slow": 0
+    },
+    "worldBuildings": {
+      "count": 351394,
+      "total": 145.60000076889992,
+      "max": 0.20000000298023224,
+      "slow": 0
+    },
+    "canPlace": {
+      "count": 182717,
+      "total": 419.09999945759773,
+      "max": 0.7000000029802322,
+      "slow": 0
+    },
+    "cpuBuild": {
+      "count": 2039,
+      "total": 742.6999997645617,
+      "max": 6,
+      "slow": 0
+    }
+  },
+  "frames": {
+    "count": 13139,
+    "p50": 6.900000000008731,
+    "p95": 7.100000000005821,
+    "p99": 13.900000000008731,
+    "max": 243.10000000000036,
+    "over100": 2
+  },
+  "longTasks": [
+    {
+      "ms": 67,
+      "start": 4677.399999991059
+    },
+    {
+      "ms": 179,
+      "start": 4745
+    },
+    {
+      "ms": 62,
+      "start": 4926.899999991059
+    },
+    {
+      "ms": 61,
+      "start": 4989.79999999702
+    },
+    {
+      "ms": 54,
+      "start": 5194.79999999702
+    }
+  ],
+  "heap": {
+    "used": 212000000,
+    "total": 254000000
+  },
+  "cpuSamples": [
+    [
+      "(idle) @ :0",
+      38022
+    ],
+    [
+      "(program) @ :0",
+      8502
+    ],
+    [
+      "drawImage @ :0",
+      5725
+    ],
+    [
+      "render @ pixxo.html:1398",
+      968
+    ],
+    [
+      "fillRect @ :0",
+      697
+    ],
+    [
+      "window.<computed> @ :4",
+      505
+    ],
+    [
+      "CanvasRenderingContext2D.drawImage @ pixxo_performance.js:61",
+      333
+    ],
+    [
+      "drawBeachSurf @ pixxo_navigation.js:170",
+      322
+    ],
+    [
+      "landscapeTreeSprite @ pixxo_landscape_variants.js:24",
+      320
+    ],
+    [
+      "fmt @ pixxo.html:1237",
+      240
+    ],
+    [
+      "def @ pixxo_research.js:34",
+      235
+    ],
+    [
+      "addStreetPeople @ pixxo_streetlife.js:90",
+      170
+    ],
+    [
+      "drawNight @ pixxo_daynight.js:78",
+      168
+    ],
+    [
+      "(garbage collector) @ :0",
+      159
+    ],
+    [
+      "additionalHouseGoods @ pixxo.html:1116",
+      159
+    ],
+    [
+      "step @ pixxo.html:1134",
+      153
+    ],
+    [
+      "deliveryPath @ pixxo_diagonal_roads.js:49",
+      150
+    ],
+    [
+      "civicSprite @ pixxo_aristocrat_art.js:113",
+      150
+    ],
+    [
+      " @ pixxo.html:1450",
+      132
+    ],
+    [
+      "drawStreetPerson @ pixxo_streetlife.js:106",
+      131
+    ],
+    [
+      "drawDeposits @ pixxo.html:2096",
+      128
+    ],
+    [
+      "drawLandRegion @ pixxo_rivers.js:171",
+      116
+    ],
+    [
+      "pixelRoadSprite @ pixxo_pixel_art.js:97",
+      110
+    ],
+    [
+      "houseVariantSprite @ pixxo_house_variants.js:5",
+      110
+    ],
+    [
+      "roadReach @ pixxo_diagonal_roads.js:59",
+      108
+    ],
+    [
+      " @ pixxo.html:2097",
+      104
+    ],
+    [
+      "getImageData @ :0",
+      95
+    ],
+    [
+      "isRiver @ pixxo_rivers.js:70",
+      95
+    ],
+    [
+      " @ pixxo.html:879",
+      93
+    ],
+    [
+      "nightWindowState @ pixxo_daynight.js:76",
+      89
+    ],
+    [
+      "now @ :0",
+      77
+    ],
+    [
+      "drawDeposits @ pixxo_clay.js:38",
+      75
+    ],
+    [
+      "roadStepAllowed @ pixxo_diagonal_roads.js:3",
+      73
+    ],
+    [
+      "roadNeighbours @ pixxo_diagonal_roads.js:11",
+      72
+    ],
+    [
+      " @ pixxo.html:1413",
+      67
+    ]
+  ]
+}

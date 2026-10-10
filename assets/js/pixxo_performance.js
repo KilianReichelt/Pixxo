@@ -81,6 +81,7 @@ rotatedSprite=function(name,rotation=0){
  const key=name+'_rotation'+rotation;if(SP[key])return key;
  const source=entry.pixelSource,low=document.createElement('canvas');low.width=rotation%2?source.height:source.width;low.height=rotation%2?source.width:source.height;
  const c=low.getContext('2d');c.imageSmoothingEnabled=false;c.translate(low.width/2,low.height/2);c.rotate(rotation*Math.PI/2);nativeDrawImage.call(c,source,-source.width/2,-source.height/2);
+ if(source._nightWindows)low._nightWindows=source._nightWindows.map(p=>rotation===1?{...p,x:source.height-p.y-p.h,y:p.x,w:p.h,h:p.w}:rotation===2?{...p,x:source.width-p.x-p.w,y:source.height-p.y-p.h}:{...p,x:p.y,y:source.width-p.x-p.w,w:p.h,h:p.w});
  publishPixel(key,low,rotation%2?entry.h:entry.w,rotation%2?entry.w:entry.h,{...SPB[name],hub:null,smoke:null});return key;
 };
 
@@ -127,13 +128,14 @@ revealSea=function(x,y,r=30){
  for(let cy=Math.max(0,Math.floor((y-r)/FOG_CHUNK_SIZE));cy<=Math.min(Math.ceil(MAPH/FOG_CHUNK_SIZE)-1,Math.floor((y+r)/FOG_CHUNK_SIZE));cy++)
  for(let cx=Math.max(0,Math.floor((x-r)/FOG_CHUNK_SIZE));cx<=Math.min(Math.ceil(MAPW/FOG_CHUNK_SIZE)-1,Math.floor((x+r)/FOG_CHUNK_SIZE));cx++)PERF_FOG.chunks.delete(cx+':'+cy);
 };
-/* Simulation mit 20 Takten pro Sekunde; Zeichnen weiter mit Display-Bildrate. */
-let simulationAccumulator=0;
+/* Simulation mit 20 Takten, Weltzeichnen höchstens 60-mal pro Sekunde.
+   Auf schnellen Displays keine identischen Weltbilder unnötig neu zeichnen. */
+let simulationAccumulator=0,lastWorldRender=-Infinity;
 frame=function(now){
  if(document.hidden){lastT=now;simulationAccumulator=0;requestAnimationFrame(frame);return;}
  const dt=clamp((now-lastT)/1000,0,.1);lastT=now;UI.vt+=dt;
  if(G.speed>0){simulationAccumulator+=dt;while(simulationAccumulator>=.05){let remaining=.05*G.speed;while(remaining>0){const tick=Math.min(remaining,.2);stepWorld(tick);remaining-=tick;}simulationAccumulator-=.05;}}else simulationAccumulator=0;
- clampCam();render();uiAcc+=dt;mmAcc+=dt;
+ clampCam();if(now-lastWorldRender>=1000/60-.5){render();lastWorldRender=now;}uiAcc+=dt;mmAcc+=dt;
  if(mmAcc>.2){mmAcc=0;drawMini();if(UI.tool)updateHint();}
  if(uiAcc>.5){uiAcc=0;renderTop();refreshWins();renderItems();}
  requestAnimationFrame(frame);

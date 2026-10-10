@@ -127,7 +127,7 @@ function startShow(page='home'){
 function startClose(){startDialog.close();document.body.classList.remove('start-open');}
 const startOriginalInit=init,startOriginalSave=saveGame,startOriginalStep=stepWorld;
 saveGame=function(){if(StartScreen.started)return startOriginalSave();};
-stepWorld=function(dt){if(!startDialog.open&&tutorialPanel.hidden)startOriginalStep(dt);};
+stepWorld=function(dt){if(!StartScreen.loading&&!startDialog.open&&tutorialPanel.hidden)startOriginalStep(dt);};
 const startSetSpeed=setSpeed;
 setSpeed=function(speed){if(!tutorialPanel.hidden){tourResumeSpeed=speed;startSetSpeed(0);}else startSetSpeed(speed);};
 init=function(){
@@ -142,9 +142,22 @@ function startPlay(fresh=false){
   if(!StartScreen.started){if(fresh)localStorage.removeItem(SAVEKEY);StartScreen.started=true;startOriginalInit();}
   else if(fresh){musicQueue=musicShuffle(musicIndex);musicNext();UI.unreadEvents=0;$('#toasts').replaceChildren();updateEventBadge();startNew();}
   else if(WORLD.tutorial?.version===2&&!WORLD.tutorial.done&&!WORLD.tutorial.dismissed)openTutorial();
-  if(!tutorialPanel.hidden)tutorialPanel.querySelector('[data-tour="next"]')?.focus();else cv.focus();
+  if(!StartScreen.loading){if(!tutorialPanel.hidden)tutorialPanel.querySelector('[data-tour="next"]')?.focus();else cv.focus();}
  }catch(error){startShow();const p=document.createElement('p');p.setAttribute('role','alert');p.textContent='Die Partie konnte nicht gestartet werden. '+error.message;startDialog.querySelector('.start-card').append(p);console.error(error);}
 }
+function startContinue(){
+ if(!StartScreen.ready||StartScreen.loading)return;StartScreen.loading=true;startClose();
+ const screen=pixxoLoadingShow('Die Partie wird fortgesetzt …'),held=[...document.body.children].filter(el=>el!==screen&&!['SCRIPT','STYLE','LINK'].includes(el.tagName)).map(el=>[el,el.inert]);
+ for(const [el] of held)el.inert=true;document.body.setAttribute('aria-busy','true');screen.focus();
+ // Let the browser paint the overlay before synchronous save loading begins.
+ requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>{
+  for(const [el,inert] of held)el.inert=inert;
+  try{startPlay();render();}finally{StartScreen.loading=false;document.body.removeAttribute('aria-busy');pixxoLoaded(()=>{if(startDialog.open)startDialog.querySelector('button:not(:disabled)')?.focus();else if(!tutorialPanel.hidden)tutorialPanel.querySelector('[data-tour="next"]')?.focus();else cv.focus();});}
+ },0)));
+}
+const saveFeedback=document.createElement('dialog');saveFeedback.id='save-feedback';saveFeedback.className='save-feedback';saveFeedback.setAttribute('aria-labelledby','save-feedback-title');saveFeedback.setAttribute('aria-describedby','save-feedback-text');saveFeedback.innerHTML='<h2 id="save-feedback-title">Gespeichert</h2><p id="save-feedback-text" role="status" aria-atomic="true"></p><button type="button" class="btn" data-save-feedback-close autofocus>OK</button>';document.body.append(saveFeedback);
+saveFeedback.querySelector('button').addEventListener('click',()=>saveFeedback.close());
+function showSaveFeedback(success){saveFeedback.querySelector('h2').textContent=success?'Gespeichert':'Speichern fehlgeschlagen';const text=saveFeedback.querySelector('p');text.setAttribute('role',success?'status':'alert');text.textContent=success?'Das Spiel wurde erfolgreich gespeichert.':'Das Spiel konnte nicht gespeichert werden. Bitte prüfe, ob der Browser genügend Speicherplatz zulässt.';if(!saveFeedback.open)saveFeedback.showModal();saveFeedback.querySelector('button').focus();}
 startDialog.addEventListener('cancel',e=>{e.preventDefault();if(StartScreen.returnToGame&&StartScreen.page==='settings')startPlay();else if(StartScreen.page!=='home')startRender('home');});
 startDialog.addEventListener('keydown',e=>{
  if(e.key==='Escape'){e.preventDefault();e.stopPropagation();if(StartScreen.returnToGame&&StartScreen.page==='settings')startPlay();else if(StartScreen.page!=='home')startRender('home');}
@@ -153,7 +166,7 @@ startDialog.addEventListener('click',e=>{
  const b=e.target.closest('[data-start]');if(!b||b.disabled)return;
  switch(b.dataset.start){
   case 'home':startRender();break;
-  case 'continue':startPlay();break;
+  case 'continue':if(StartScreen.returnToGame&&StartScreen.page==='settings')startPlay();else startContinue();break;
   case 'new':if(startHasSave())startRender('confirm');else startPlay(true);break;
   case 'confirm-new':startPlay(true);break;
   case 'tutorial':startPlay();WORLD.tutorial={version:2,step:0};openTutorial();saveGame();break;

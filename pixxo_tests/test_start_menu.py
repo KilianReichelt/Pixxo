@@ -223,6 +223,7 @@ with sync_playwright() as p:
     assert page.locator('[data-start="confirm-new"]').is_visible()
     page.keyboard.press("Escape")
     page.locator('[data-start="continue"]').click()
+    page.wait_for_function("!startDialog.open && !StartScreen.loading")
     assert page.locator("#pixxo-tour").is_hidden()
     page.evaluate("setSpeed(1)")
     page.evaluate("stepWorld(2)")

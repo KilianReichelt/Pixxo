@@ -56,5 +56,3 @@ drawGhost=function(ctx){
  ctx.fillStyle='rgba(235,212,149,.55)';for(const t of valid){ctx.fillRect(t.x*16,t.y*16,d.w*16,d.h*16);ctx.strokeRect(t.x*16+1,t.y*16+1,d.w*16-2,d.h*16-2);}
  ctx.restore();
 };
-const fieldRectangleInfo=infoHTML;
-infoHTML=function(){const html=fieldRectangleInfo(),b=G.byId.get(UI.sel),rule=b&&FIELD_RULES[b.type];if(!rule)return html;return html+(fieldRectangleEnabled(rule.type)?'<p>Betriebsflächen: einzeln anklicken oder mit gedrückter Maustaste ein Rechteck ziehen. Unzulässige Positionen werden übersprungen. Per Tastatur setzt Enter Start und Ziel, Escape bricht ab.</p>':'<p>Betriebsflächen: jedes Gehege einzeln per Klick platzieren. Per Tastatur setzt Enter ein Gehege, Escape bricht ab.</p>');};

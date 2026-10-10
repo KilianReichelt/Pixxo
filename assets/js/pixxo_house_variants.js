@@ -11,6 +11,7 @@ function houseVariantSprite(b){
   // roof tile, window and facade pixel before recoloring or quarter-turning.
   const original=HD_CATALOG.get(base)?.pixelSource||SP[base],source=document.createElement('canvas');
   source.width=original.width;source.height=original.height;
+  source._nightWindows=original._nightWindows;
   const g=source.getContext('2d');g.imageSmoothingEnabled=false;nativeDrawImage.call(g,original,0,0);
   const image=g.getImageData(0,0,source.width,source.height),data=image.data;
   for(let y=0;y<source.height;y++)for(let x=0;x<source.width;x++){

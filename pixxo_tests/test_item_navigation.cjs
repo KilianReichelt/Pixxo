@@ -23,7 +23,7 @@ listeners.pointerdown(pointer(200));listeners.pointermove(pointer(197));check(vi
 let blocked=false;listeners.clickCapture({detail:1,preventDefault(){blocked=true;},stopImmediatePropagation(){}});check(!blocked,'Ein kurzer Klick wählt weiterhin ein Gebäude aus');
 listeners.pointerdown(pointer(200));listeners.pointermove(pointer(100));check(viewport.scrollLeft===100&&viewport.capture===1,'Ziehen nach links scrollt nach rechts und hält den Zeiger fest');
 const oldViewport=viewport;run('renderItems()');check(viewport===oldViewport,'Neuzeichnen unterbricht eine laufende Ziehbewegung nicht');
-listeners.pointerup(pointer(100));listeners.clickCapture({detail:1,preventDefault(){blocked=true;},stopImmediatePropagation(){}});check(blocked&&viewport.capture===null,'Loslassen beendet das Ziehen ohne ein Gebäude auszuwählen');
+listeners.pointerup(pointer(100));listeners.clickCapture({detail:1,preventDefault(){blocked=true;},stopImmediatePropagation(){}});check(blocked&&oldViewport.capture===null,'Loslassen beendet das Ziehen ohne ein Gebäude auszuwählen');
 listeners.pointerdown(pointer(200));listeners.pointermove(pointer(300));check(viewport.scrollLeft===0,'Ziehen nach rechts scrollt zurück zum Anfang');listeners.pointercancel(pointer(300));check(run('itemDrag===null'),'Ein abgebrochener Zeiger beendet die Ziehbewegung');
 listeners.pointerdown(pointer(200,{pointerType:'touch'}));check(run('itemDrag===null'),'Touchbedienung behält das native Scrollverhalten');
 console.log(JSON.stringify({passed:checks.length,checks},null,2));

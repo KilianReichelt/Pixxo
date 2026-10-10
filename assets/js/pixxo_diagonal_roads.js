@@ -6,7 +6,7 @@ function roadStepAllowed(x,y,nx,ny,g=G){
  // Keine Eck-Abkürzung: eine Straße auf einer der Zwischenkacheln verbindet
  // die Punkte bereits rechtwinklig. Das gilt für Zeichnung UND Wegfindung.
  // Buildings beside the shared corner do not remove an existing diagonal.
- return !(dx&&dy)||[IDX(nx,y),IDX(x,ny)].every(k=>!g.road[k]&&BUILDABLE(g.tiles[k]));
+ return !(dx&&dy)||[[nx,y,-dx,dy],[x,ny,dx,-dy]].every(([a,b,c,d])=>!g.road[IDX(a,b)]&&(BUILDABLE(g.tiles[IDX(a,b)])||!g.occ[IDX(a,b)]&&rockCornerBevel(a,b,c,d,g)));
 }
 function roadNeighbours(k,g=G){const x=k%MAPW,y=Math.floor(k/MAPW);return LAND_STEPS.filter(([dx,dy])=>roadStepAllowed(x,y,x+dx,y+dy,g)&&g.road[IDX(x+dx,y+dy)]).map(([dx,dy])=>IDX(x+dx,y+dy));}
 function roadPathDistance(path){let n=0;for(let i=1;i<path.length;i++)n+=Math.hypot(path[i]%MAPW-path[i-1]%MAPW,Math.floor(path[i]/MAPW)-Math.floor(path[i-1]/MAPW));return n;}

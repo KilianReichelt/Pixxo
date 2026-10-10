@@ -1,6 +1,7 @@
 /* Straße und Flächenabriss werden erst nach der Vorschau ausgeführt. */
 let constructionPlan=null,pendingAreaDemolition=null;
 function roadTileAllowed(x,y,island=activeIsland){return INMAP(x,y)&&islandAt(x,y)===island&&!G.occ[IDX(x,y)]&&BUILDABLE(G.tiles[IDX(x,y)])&&!(G.deposits||[]).some(n=>x>=n.x&&x<n.x+B[n.type].w&&y>=n.y&&y<n.y+B[n.type].h);}
+function roadCornerPlacementAllowed(x,y,dx,dy,island){return roadTileAllowed(x,y,island)||INMAP(x,y)&&islandAt(x,y)===island&&!G.occ[IDX(x,y)]&&rockCornerBevel(x,y,dx,dy)&&!(G.deposits||[]).some(n=>x>=n.x&&x<n.x+B[n.type].w&&y>=n.y&&y<n.y+B[n.type].h);}
 function roadEndpoint(point,towards,island){
  if(roadTileAllowed(point.x,point.y,island))return point;
  const building=INMAP(point.x,point.y)?G.byId.get(G.occ[IDX(point.x,point.y)]):null;if(!building)return null;
@@ -16,7 +17,7 @@ function plannedRoadPath(start,end,island=activeIsland,maxLength=Infinity){
  const pop=()=>{const top=heap[0],last=heap.pop();if(heap.length){let i=0;while(i*2+1<heap.length){let c=i*2+1;if(c+1<heap.length&&less(heap[c+1],heap[c]))c++;if(!less(heap[c],last))break;heap[i]=heap[c];i=c;}heap[i]=last;}return top.k;};
  push({k:first,f:heuristic(from.x,from.y),h:heuristic(from.x,from.y)});
  while(heap.length){const k=pop();if(closed.has(k))continue;closed.add(k);if(k===goal){const path=[];for(let p=goal;p>=0;p=prev.get(p))path.push(p);return path.reverse();}
-  const x=k%MAPW,y=Math.floor(k/MAPW);for(const [dx,dy] of LAND_STEPS){const nx=x+dx,ny=y+dy;if(Math.hypot(nx-from.x,ny-from.y)+Math.hypot(nx-to.x,ny-to.y)>maxLength||!roadTileAllowed(nx,ny,island)||!roadStepAllowed(x,y,nx,ny)||dx&&dy&&(!roadTileAllowed(nx,y,island)||!roadTileAllowed(x,ny,island)))continue;const n=IDX(nx,ny),next=cost.get(k)+(G.road[n]?.35:1)*Math.hypot(nx-x,ny-y);if(closed.has(n)||cost.has(n)&&next>=cost.get(n))continue;cost.set(n,next);prev.set(n,k);const h=heuristic(nx,ny);push({k:n,f:next+h,h});}
+const x=k%MAPW,y=Math.floor(k/MAPW);for(const [dx,dy] of LAND_STEPS){const nx=x+dx,ny=y+dy;if(Math.hypot(nx-from.x,ny-from.y)+Math.hypot(nx-to.x,ny-to.y)>maxLength||!roadTileAllowed(nx,ny,island)||!roadStepAllowed(x,y,nx,ny)||dx&&dy&&(!roadCornerPlacementAllowed(nx,y,-dx,dy,island)||!roadCornerPlacementAllowed(x,ny,dx,-dy,island)))continue;const n=IDX(nx,ny),next=cost.get(k)+(G.road[n]?.35:1)*Math.hypot(nx-x,ny-y);if(closed.has(n)||cost.has(n)&&next>=cost.get(n))continue;cost.set(n,next);prev.set(n,k);const h=heuristic(nx,ny);push({k:n,f:next+h,h});}
  }
  return null;
 }
@@ -38,7 +39,7 @@ function commitUpgradePlan(plan){
  if(!targets.buildings.length&&!targets.roads.length)return plan.source==='road'&&!stoneRoadUnlocked()?'Steinbruch fehlt':'Keine aufwertbaren Objekte dieser Art ausgewählt.';
  const fresh=areaUpgradeTargets(plan.start,plan.end,plan.source,plan.island);
  if(targets.roads.some(k=>!fresh.roads.includes(k))||targets.buildings.some(({building,tier})=>building.tier!==tier||!fresh.buildings.some(n=>n.building===building)))return 'Die Auswahl hat sich geändert. Bitte erneut auswählen.';
- const cost={};for(const k of targets.roads){cost.gold=(cost.gold||0)+4;cost.stein=(cost.stein||0)+1;}for(const {building} of targets.buildings)for(const [good,n] of Object.entries(upgradeRequest(building).cost))cost[good]=(cost[good]||0)+n;
+ const cost={};for(const k of targets.roads)for(const [good,n] of Object.entries(typeof bridgeUpgradeTileCost==='function'?bridgeUpgradeTileCost(k):{gold:4,stein:1}))cost[good]=(cost[good]||0)+n;for(const {building} of targets.buildings)for(const [good,n] of Object.entries(upgradeRequest(building).cost))cost[good]=(cost[good]||0)+n;
  if(!canAfford(cost))return upgradeOnlyFundsMissing(cost)?false:'Für die gesamte Auswahl fehlt Baumaterial.';
  for(const k of targets.roads)roadUpgrade(k%MAPW,Math.floor(k/MAPW));
  for(const {building} of targets.buildings)if(building.type==='haus')upgradeHouse(building);else upgradePort(building);

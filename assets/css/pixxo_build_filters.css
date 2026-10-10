@@ -1,0 +1,25 @@
+/* Population ribbons: native pixel silhouettes and accessible tier labels. */
+#items{min-width:min(var(--population-min-width,0px),calc(100vw - var(--mm) - 76px))}
+#items .bi[data-pop-tier],#population-filters [data-pop-tier]{--tier-dark:#67412c;--tier-light:#c89b79;--tier-ribbon:#67412c}
+#items .bi[data-pop-tier="2"],#population-filters [data-pop-tier="2"]{--tier-dark:#8c572c;--tier-light:#e0a86b;--tier-ribbon:#ad7443}
+#items .bi[data-pop-tier="3"],#population-filters [data-pop-tier="3"]{--tier-dark:#778791;--tier-light:#dbe5df;--tier-ribbon:#b6c6c7}
+#items .bi[data-pop-tier="4"],#population-filters [data-pop-tier="4"]{--tier-dark:#a87923;--tier-light:#f7d570;--tier-ribbon:#dab248}
+#items .items-track{min-height:var(--population-track-height,0px)}
+#items .bi[data-pop-tier]{position:relative;border:3px solid var(--edge);background-clip:padding-box}
+#items .bi[data-pop-tier]::after{content:"";position:absolute;top:0;left:0;width:34px;height:34px;clip-path:polygon(0 12px,12px 0,34px 0,0 34px);pointer-events:none;background:var(--tier-ribbon)}
+#items .bi[data-pop-tier]:not([data-pop-tier="1"])::after{background:linear-gradient(135deg,var(--tier-dark),var(--tier-ribbon) 36%,var(--tier-light) 49%,var(--tier-ribbon) 63%,var(--tier-dark))}
+#items .bi[hidden]{display:none!important}
+#items .bi[data-pop-tier]:disabled{filter:none;opacity:1}
+#items .bi[data-pop-tier]:disabled>img{filter:grayscale(1);opacity:.6}
+#items .bi[data-pop-tier]:disabled :is(b,.cost,.sz){color:#c8c1b1}
+#population-filters{position:fixed;z-index:20;display:flex;flex-wrap:nowrap;gap:8px;padding:6px;box-sizing:border-box;border:2px solid #b69a65;background:#302719;color:#ffeac5;overflow-x:auto;scroll-padding:6px;overscroll-behavior:contain;width:max-content}
+#population-filters button{flex:0 0 auto;min-height:44px;min-width:44px;padding:6px 10px;font:inherit;font-size:1rem;line-height:1.5;color:var(--tier-light,#ffeac5);background:#302719;border:2px solid transparent;cursor:pointer;white-space:nowrap}
+#population-filters [data-pop-tier="0"]{color:#ffeac5}
+#population-filters button[aria-pressed="true"]{background:#49371f;text-decoration:underline;text-underline-offset:4px;border-color:#b69a65}
+#population-filters:focus-visible,#population-filters button:focus-visible,#items .bi:focus-visible{outline:3px solid #ffe3a0;outline-offset:-3px}
+#items .bi[data-road-mode]{min-width:150px;min-height:150px;font-size:1rem}
+#items .population-empty{max-width:250px;white-space:normal;font-size:1rem;line-height:1.5;color:#ffeac5}
+#road-plan-summary{position:fixed;z-index:16;box-sizing:border-box;padding:8px 12px;margin:0;border:2px solid #d8bd7a;background:#302719;color:#ffeac5;font-size:1rem;line-height:1.5;overflow-wrap:anywhere}
+#road-plan-summary[data-error="true"]{border-color:#e5a080;background:#572c25;color:#ffe6cf}
+@media(max-width:760px){#items{min-width:min(var(--population-min-width,0px),calc(100vw - 16px))}}
+@media(prefers-reduced-motion:reduce){#items .bi::after{transition:none;animation:none}}

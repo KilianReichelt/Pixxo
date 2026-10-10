@@ -34,6 +34,7 @@ itemDragBox.addEventListener('pointermove',e=>{
 function finishItemDrag(e){
  const drag=itemDrag;if(!drag||drag.pointer!==e.pointerId)return;
  itemDrag=null;itemDragClick=drag.dragged;drag.viewport.classList.remove('is-dragging');
+ renderItems(true);
  if(drag.viewport.hasPointerCapture(e.pointerId))drag.viewport.releasePointerCapture(e.pointerId);
 }
 itemDragBox.addEventListener('pointerup',finishItemDrag);

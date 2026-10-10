@@ -98,18 +98,118 @@ renderIslandFacts=function(){
 };
 
 /* Pixelraster, Holzpalette und helle Segel passen zur vorhandenen Weltgrafik. */
-makeDirectionalShip=function(dir,type){
- const c=document.createElement('canvas');c.width=c.height=32;const g=c.getContext('2d');g.imageSmoothingEnabled=false;
- const angle=dir*Math.PI/4,dx=Math.cos(angle),dy=Math.sin(angle)*.65,nx=-Math.sin(angle),ny=Math.cos(angle)*.65,length=type==='clipper'?12:10;
- const point=(u,v)=>[Math.round(16+dx*u+nx*v),Math.round(24+dy*u+ny*v)];
- const poly=(points,color,drop=0)=>{g.fillStyle=color;g.beginPath();points.forEach(([u,v],i)=>{const [x,y]=point(u,v);if(i)g.lineTo(x,y+drop);else g.moveTo(x,y+drop);});g.closePath();g.fill();};
- const hull=[[-length,-4],[length-4,-4],[length+2,0],[length-4,4],[-length,4],[-length-1,0]];
- poly(hull,'#203f47',3);poly(hull,'#382c25',2);poly(hull,'#795033',1);poly(hull,'#b68b54');poly([[-length+2,-2],[length-3,-2],[length,0],[length-3,2],[-length+2,2]],'#dbb777');
- for(const u of type==='clipper'?[-6,3]:[-3,4]){const [x,y]=point(u,0),h=type==='clipper'?15:12;g.fillStyle='#493426';g.fillRect(x,y-h,1,h);g.fillStyle='#6e5c43';g.fillRect(x-4,y-h+3,9,1);g.fillStyle='#c6b88b';g.fillRect(x-4,y-h+4,8,6);g.fillStyle='#eee3bc';g.fillRect(x-3,y-h+3,6,6);g.fillStyle='#fff0cc';g.fillRect(x-2,y-h+3,2,5);g.fillStyle='#a29571';g.fillRect(x-4,y-h+9,8,1);g.fillStyle='#913d34';g.fillRect(x+1,y-h-1,4,2);}
- const [x,y]=point(-length+3,0);g.fillStyle='#63432b';g.fillRect(x-2,y-3,4,3);g.fillStyle='#e5c68a';g.fillRect(x-2,y-3,4,1);
- const scaled=document.createElement('canvas');scaled.width=scaled.height=64;const out=scaled.getContext('2d');out.imageSmoothingEnabled=false;out.drawImage(c,0,0,64,64);return scaled;
+const MARITIME_SHIP_FRAMES=6,MARITIME_SHIP_CACHE=new Map();
+makeDirectionalShip=function(dir,type,frame=0){
+ dir=((dir%8)+8)%8;type=type==='clipper'?'clipper':'schooner';frame=((frame%6)+6)%6;
+ const key=type+':'+dir+':'+frame;if(MARITIME_SHIP_CACHE.has(key))return MARITIME_SHIP_CACHE.get(key);
+ const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');g.imageSmoothingEnabled=false;
+ const angle=dir*Math.PI/4,dx=Math.cos(angle),dy=Math.sin(angle)*.65,nx=-Math.sin(angle),ny=Math.cos(angle)*.65,clipper=type==='clipper',length=clipper?24:20,width=clipper?7:6,swell=[0,1,2,1,0,-1][frame];
+ const point=(u,v,z=0)=>[Math.round(32+dx*u+nx*v),Math.round(44+dy*u+ny*v-z)];
+ const dot=(p,color)=>{g.fillStyle=color;g.fillRect(p[0],p[1],1,1);};
+ const line=(a,b,color)=>{let [x,y]=a;const [bx,by]=b,ax=Math.abs(bx-x),ay=-Math.abs(by-y),sx=x<bx?1:-1,sy=y<by?1:-1;let error=ax+ay;for(;;){dot([x,y],color);if(x===bx&&y===by)break;const e=2*error;if(e>=ay){error+=ay;x+=sx;}if(e<=ax){error+=ax;y+=sy;}}};
+ // Scan-converted polygons have solid native pixels, never blurred edges.
+ const polygon=(points,color)=>{const minY=Math.max(0,Math.min(...points.map(p=>p[1]))),maxY=Math.min(63,Math.max(...points.map(p=>p[1])));g.fillStyle=color;
+  for(let y=minY;y<=maxY;y++){const cuts=[];for(let i=0,j=points.length-1;i<points.length;j=i++){const a=points[i],b=points[j];if((a[1]>y+.5)!==(b[1]>y+.5))cuts.push(a[0]+(y+.5-a[1])*(b[0]-a[0])/(b[1]-a[1]));}cuts.sort((a,b)=>a-b);for(let i=0;i+1<cuts.length;i+=2){const start=Math.max(0,Math.ceil(cuts[i]-.5)),end=Math.min(64,Math.ceil(cuts[i+1]-.5));if(end>start)g.fillRect(start,y,end-start,1);}}
+ };
+ const poly=(points,color,z=0)=>polygon(points.map(([u,v])=>point(u,v,z)),color),edge=(points,color,z=0)=>points.forEach((p,i)=>line(point(...p,z),point(...points[(i+1)%points.length],z),color));
+ const hull=[[-length,-width+1],[-length+5,-width],[length-6,-width],[length+2,0],[length-6,width],[-length+5,width],[-length,width-1]];
+ poly(hull,'#294e61',-5);poly(hull,'#352a25',-4);poly(hull,'#61412e',-3);poly(hull,'#92623b',-1);poly(hull,'#c39a63');edge(hull,'#46382a');
+ const deck=[[-length+2,-width+2],[-length+5,-width+1],[length-7,-width+1],[length,0],[length-7,width-1],[-length+5,width-1],[-length+2,width-2]];
+ poly(deck,clipper?'#b99b68':'#bfa16b');
+ for(let v=-width+2;v<width-1;v+=2)line(point(-length+4,v),point(length-8,v),'#9a794d');
+ for(let u=-length+5;u<length-6;u+=5)for(const v of [-width+2,width-2]){line(point(u,v,-2),point(u+2,v,-2),'#322b28');dot(point(u,v,-1),'#d5b47a');}
+ for(const v of [-width,width]){line(point(-length+4,v,1),point(length-7,v,1),'#e2c28a');for(let u=-length+4;u<length-5;u+=5)line(point(u,v),point(u,v,2),'#705034');}
+ // A raised stern cabin, hatch grate, and barrels on the working deck.
+ const stern=-length+5;
+ poly([[stern-2,-3],[stern+4,-3],[stern+4,3],[stern-2,3]],'#684b33',1);
+ for(const v of [-3,3])line(point(stern-2,v,1),point(stern-2,v,5),'#49382a');
+ poly([[stern-2,-3],[stern+4,-3],[stern+4,3],[stern-2,3]],'#d8b578',5);edge([[stern-2,-3],[stern+4,-3],[stern+4,3],[stern-2,3]],'#957343',5);
+ for(const u of [stern,stern+2])dot(point(u,width>6?3:2,3),'#364d50');
+ poly([[-2,-2],[3,-2],[3,2],[-2,2]],'#6c5438',1);for(let u=-1;u<3;u++)line(point(u,-1,2),point(u,1,2),'#b49360');
+ for(const u of [-length+11,length-9]){const [x,y]=point(u,2,2);g.fillStyle='#5e4432';g.fillRect(x-1,y-1,3,3);g.fillStyle='#bc8e55';g.fillRect(x-1,y-1,3,1);dot([x,y+1],'#e0b571');}
+ line(point(length-4,0,2),point(length+5,0,4),'#c3a370');
+ const masts=(clipper?[-12,0,12]:[-6,7]).sort((a,b)=>point(a,0)[1]-point(b,0)[1]);
+ for(const u of masts){const height=clipper?(u===0?32:27):(u<0?27:23),foot=point(u,0),top=point(u,0,height);
+  for(const anchor of [-length+3,length-3])line(top,point(anchor,0),'#76664d');for(const v of [-width+1,width-1])line(point(u,0,height-8),point(u,v),'#897553');
+  line(foot,top,'#3f3227');line(point(u,0,1),point(u,0,height-1),'#b39159');
+  if(clipper){
+   const sailPoint=(v,z)=>{const p=point(u,v,z);p[0]+=Math.round(v*dx*.7);return p;};
+   for(const [z,span,depth] of [[height-4,5,7],[height-13,7,9]]){
+    const sail=[sailPoint(-span,z),sailPoint(span,z),sailPoint(span+swell*.3,z-depth+1),sailPoint(swell*.4,z-depth-1),sailPoint(-span,z-depth+1)];
+    polygon(sail,'#c6bb94');line(sail[0],sail[1],'#66543d');polygon([sailPoint(-span+1,z-1),sailPoint(span-1,z-1),sailPoint(span-1+swell*.3,z-depth+2),sailPoint(swell*.4,z-depth),sailPoint(-span+1,z-depth+2)],'#eee1b9');
+    line(sailPoint(-span+2,z-2),sailPoint(-span+2,z-depth+2),'#fff0cd');line(sailPoint(span-2,z-2),sailPoint(span-2,z-depth+2),'#d7c99f');
+   }
+  }else{
+   const sailPoint=(offset,v,z)=>{const p=point(u+offset,v,z);p[0]+=Math.round(offset*Math.abs(Math.sin(angle))*.65);return p;};
+   const sail=[sailPoint(0,0,height-2),sailPoint(8,1+swell*.35,height-9),sailPoint(8,1+swell*.35,7),sailPoint(0,0,8)];polygon(sail,'#c2b58e');
+   polygon([sailPoint(1,0,height-4),sailPoint(7,1+swell*.35,height-9),sailPoint(7,1+swell*.35,9),sailPoint(1,0,10)],'#eee0b8');line(sailPoint(2,0,height-6),sailPoint(2,0,11),'#fff0cb');line(sail[0],sail[1],'#685740');
+  }
+  const flutter=[0,0,1,1,-1,-1][frame],flag=[top,[top[0]+6,top[1]+swell],[top[0]+5+flutter,top[1]+3+swell],[top[0]+1,top[1]+2+flutter]];polygon(flag,clipper?'#477f91':'#a45140');line(flag[0],flag[1],clipper?'#88b7bd':'#df9970');
+ }
+ // Triangular jib from the forward mast to the bowsprit.
+ polygon([point(length-8,0,19),point(length+5,0,4),point(length-8,0,7)],'#d4c69f');line(point(length-7,0,17),point(length+3,0,5),'#f6e7bf');
+ MARITIME_SHIP_CACHE.set(key,c);return c;
 };
 for(const type of ['schooner','clipper'])for(let dir=0;dir<8;dir++)SHIP_SPRITES[type][dir]=makeDirectionalShip(dir,type);
+drawShipSprite=function(ctx,p,dir,type){const frame=WORK_ART.reduced.matches?0:Math.floor(G.time*3)%MARITIME_SHIP_FRAMES;ctx.drawImage(makeDirectionalShip(dir||0,type,frame),Math.round(p.x*16)-32,Math.round(p.y*16)-48);};
+const OCEAN_FRAMES=12,OCEAN_SPRITES=new Map();
+function oceanSprite(frame){
+ frame=((frame%OCEAN_FRAMES)+OCEAN_FRAMES)%OCEAN_FRAMES;if(OCEAN_SPRITES.has(frame))return OCEAN_SPRITES.get(frame);
+ const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d'),image=g.createImageData(128,128),phase=frame*Math.PI*2/OCEAN_FRAMES;
+ for(let y=0;y<128;y++)for(let x=0;x<128;x++){
+  const a=x*Math.PI*2/128,b=y*Math.PI*2/128,depth=Math.sin(a*2+b)*Math.cos(b*2-a)*3,ripple=Math.sin(a*8+b*3-phase)+Math.sin(b*7-a*2+phase)*.5;
+  const crest=Math.max(0,ripple-1.1)*18,noise=(hs(x,y,913)-.5)*3,i=(y*128+x)*4;
+  image.data[i]=27+depth+ripple*2+crest*.7+noise;image.data[i+1]=88+depth*1.6+ripple*4+crest+noise;image.data[i+2]=139+depth+ripple*4+crest*.8+noise;image.data[i+3]=255;
+ }
+ g.putImageData(image,0,0);
+ // Short, irregular glints swell and fade on a seamless periodic surface.
+ for(let i=0;i<55;i++){const x=Math.floor(hs(i,2,925)*128),y=Math.floor(hs(i,3,925)*128),pulse=(Math.sin(phase+hs(i,4,925)*Math.PI*2)+1)/2,length=2+Math.floor(pulse*4),drift=Math.round(Math.sin(phase+hs(i,5,925)*6)*2);g.fillStyle=pulse>.75?'#75b2c2':pulse>.35?'#508fae':'#397ba3';for(let k=0;k<length;k++)g.fillRect((x+k+128)%128,(y+drift+128)%128,1,1);}
+ OCEAN_SPRITES.set(frame,c);return c;
+}
+function drawOcean(ctx,x0,y0,x1,y1){const frame=WORK_ART.reduced.matches?0:Math.floor(G.time*3)%OCEAN_FRAMES;ctx.fillStyle=pats[frame]||(pats[frame]=ctx.createPattern(oceanSprite(frame),'repeat'));ctx.fillRect(x0,y0,x1-x0,y1-y0);}
+function drawBeachSurf(ctx,tx0,ty0,tx1,ty1){
+ const time=WORK_ART.reduced.matches?0:G.time;ctx.save();
+ for(let y=ty0;y<=ty1;y++)for(let x=tx0;x<=tx1;x++){if(G.tiles[IDX(x,y)]!==T.SAND)continue;
+  for(const [dx,dy] of [[0,-1],[1,0],[0,1],[-1,0]]){const nx=x+dx,ny=y+dy;if(!INMAP(nx,ny)||G.tiles[IDX(nx,ny)]>T.SHAL)continue;
+   // Phase follows the coastline, not individual tile seeds, to avoid seams.
+   const along=dx?y:x,phase=(time*.16+along*.027)%1,reach=Math.sin(phase*Math.PI)*5,alpha=Math.sin(phase*Math.PI)*.55;
+   if(alpha<.025)continue;ctx.globalAlpha=alpha;ctx.fillStyle='#cbe5d8';
+   for(let i=0;i<16;i++){const wobble=Math.round(Math.sin((along*16+i)*.22)*.6),distance=Math.round(reach)+wobble;
+    const px=dx===1?(x+1)*16-distance:dx===-1?x*16+distance:x*16+i,py=dy===1?(y+1)*16-distance:dy===-1?y*16+distance:y*16+i;
+    ctx.fillRect(px,py,dx?1:1+Number(i%5===0),dy?1:1+Number(i%5===0));
+    if(i%3!==0){ctx.globalAlpha=alpha*.3;ctx.fillRect(px+dx*2,py+dy*2,1,1);ctx.globalAlpha=alpha;}
+   }
+  }
+ }ctx.restore();
+}
+function shipyardLaunchPoint(yard,g=G,ignoreId=null){
+ const side=pixxoCoastSide(yard.x,yard.y,yard.w,yard.h);if(!side)return null;
+ const [dx,dy]={north:[0,-1],east:[1,0],south:[0,1],west:[-1,0]}[side],center={x:yard.x+yard.w/2+dx*(yard.w/2+2),y:yard.y+yard.h/2+dy*(yard.h/2+2)},candidates=[];
+ for(let y=Math.floor(center.y)-3;y<=Math.ceil(center.y)+3;y++)for(let x=Math.floor(center.x)-3;x<=Math.ceil(center.x)+3;x++)if(INMAP(x,y)&&g.tiles[IDX(x,y)]<=T.SHAL&&!g.occ[IDX(x,y)]){
+  const p={x:x+.5,y:y+.5};if((WORLD.fleet||[]).some(sh=>sh.id!==ignoreId&&!sh.buildLeft&&freeShipPosition(sh)&&Math.hypot(freeShipPosition(sh).x-p.x,freeShipPosition(sh).y-p.y)<1.5))continue;candidates.push(p);
+ }
+ candidates.sort((a,b)=>Math.hypot(a.x-center.x,a.y-center.y)-Math.hypot(b.x-center.x,b.y-center.y));
+ return candidates.find(p=>!g.dock||seaPath(g.dock,p))||null;
+}
+const yardBuildShip=buildShip;
+buildShip=function(type){
+ const selected=G.byId.get(UI.sel),yard=selected?.type==='werft'?selected:G.blds.find(b=>b.type==='werft'&&b.conn&&!b.paused&&!b.fire);
+ if(!yard||!yard.conn||yard.paused||yard.fire)return 'Eine angeschlossene Segelschiffwerft wird benötigt.';
+ const anchor=shipyardLaunchPoint(yard);if(!anchor)return 'Vor der Werft ist kein freier, erreichbarer Liegeplatz.';
+ const result=yardBuildShip(type);if(result===true){const sh=WORLD.fleet[WORLD.fleet.length-1];sh.yardId=yard.id;sh.anchor=anchor;}return result;
+};
+const yardStepFleet=stepFleet;
+stepFleet=function(dt){const building=(WORLD?.fleet||[]).filter(sh=>sh.buildLeft>0);yardStepFleet(dt);for(const sh of building)if(sh.buildLeft<=0){const g=WORLD.islands[sh.at],yard=g?.byId.get(sh.yardId);if(yard){const anchor=shipyardLaunchPoint(yard,g,sh.id);if(anchor)sh.anchor=anchor;}sh.status='Vor Anker';}};
+const SHIP_HIT_PIXELS=new WeakMap();
+function shipAtWorldPoint(x,y){
+ for(const sh of [...(WORLD?.fleet||[])].reverse()){if(sh.buildLeft>0)continue;const p=freeShipPosition(sh);if(!p)continue;
+  const sprite=makeDirectionalShip(sh.heading||0,sh.type,WORK_ART.reduced.matches?0:Math.floor(G.time*3)%MARITIME_SHIP_FRAMES),sx=Math.floor(x-(Math.round(p.x*16)-32)),sy=Math.floor(y-(Math.round(p.y*16)-48));
+  if(sx>=0&&sx<64&&sy>=0&&sy<64){let pixels=SHIP_HIT_PIXELS.get(sprite);if(!pixels){pixels=sprite.getContext('2d').getImageData(0,0,64,64).data;SHIP_HIT_PIXELS.set(sprite,pixels);}if(pixels[(sy*64+sx)*4+3]>0)return sh;}
+  if(64*UI.sc/UI.DR<24&&Math.hypot(x-p.x*16,y-p.y*16)<12*UI.DR/UI.sc)return sh;
+ }return null;
+}
+const maritimeClickTile=clickTile;
+clickTile=function(t){if(!UI.tool){const sh=shipAtWorldPoint(t.worldX??(t.x+.5)*16,t.worldY??(t.y+.5)*16);if(sh){selectB(null);selectShip(sh.id);return;}}maritimeClickTile(t);};
 drawFleet=function(ctx){
  const a=scr2w(0,0),b=scr2w(innerWidth,innerHeight);
  for(const sh of WORLD?.fleet||[]){if(sh.buildLeft>0)continue;const p=freeShipPosition(sh);if(!p||p.x*16<a.x-64||p.x*16>b.x+64||p.y*16<a.y-64||p.y*16>b.y+64)continue;

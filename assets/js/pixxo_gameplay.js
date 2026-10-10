@@ -87,9 +87,9 @@ const fieldPack=packIsland;packIsland=function(g){const result=fieldPack(g);resu
 const fieldRelevant=buildingRelevant;buildingRelevant=function(type){return B[type]?.kind!=='field'&&fieldRelevant(type);};
 const fieldUnlocked=unlocked;unlocked=function(type){return B[type]?.kind==='field'?!!G.byId.get(UI.fieldOwner):fieldUnlocked(type);};
 const fieldAct=winAct;winAct=function(id,ds){if(ds.act==='fields'){const b=G.byId.get(UI.sel);if(!b||!FIELD_RULES[b.type])return;UI.fieldOwner=b.id;setTool('build',FIELD_RULES[b.type].type);closeWin('info');return;}fieldAct(id,ds);};
-const logisticsInfoHTML=infoHTML;infoHTML=function(){const b=G.byId.get(UI.sel);let h=logisticsInfoHTML();if(!b)return h;const d=def(b),rule=FIELD_RULES[b.type];if(rule)h+=`<div class="sect">Reservierte Betriebsflächen</div><p>${fieldModules(b).length} / ${rule.count} ${B[rule.type].n} · je ${B[rule.type].w} × ${B[rule.type].h} Kacheln · maximal 24 Felder Abstand</p><button class="btn" data-act="fields" ${fieldModules(b).length>=rule.count?'disabled':''}>Betriebsflächen anlegen</button>`;
+const logisticsInfoHTML=infoHTML;infoHTML=function(){const b=G.byId.get(UI.sel);let h=logisticsInfoHTML();if(!b)return h;const d=def(b),rule=FIELD_RULES[b.type];if(rule)h+=`<div class="sect">Reservierte Betriebsflächen</div><p>${fieldModules(b).length} / ${rule.count} ${B[rule.type].n}</p><button class="btn" data-act="fields" ${fieldModules(b).length>=rule.count?'disabled':''}>${rule.type==='gehege'?'Gehege platzieren':'Feld platzieren'}</button>`;
  if(b.type==='haus')h+=`<section class="needgroup"><h3>Luxusbedürfnisse</h3>${Object.keys(TIERS[b.tier].luxury).map(g=>`<p>${chk(houseGoodSupplied(b,g))} ${ic(g,1)} ${GN[g].n} · ${((TIERS[b.tier].luxury[g])*Math.max(0,b.pop)).toFixed(3)} t/Min. · +${luxuryBonus(b,g).toFixed(1)} Gold/Min.</p>`).join('')}</section>`;
- if(d.transportRange&&!warehouseTarget(b))h+=`<p role="status">Kein Lager in Reichweite (Transportreichweite: ${d.transportRange} Straßenfelder).</p>`;return h;};
+ return h;};
 function roadReach(b,limit){const result=new Map(),q=[];for(const [x,y] of ringCells(b)){if(!INMAP(x,y))continue;const k=IDX(x,y);if(G.road[k]&&!result.has(k)){result.set(k,0);q.push(k);}}for(let i=0;i<q.length;i++){const k=q[i],distance=result.get(k);if(distance>=limit)continue;const x=k%MAPW,y=Math.floor(k/MAPW);for(const n of roadNeighbours(k)){if(!result.has(n)){result.set(n,distance+1);q.push(n);}}}return result;}
 function drawLogisticsReach(ctx,b){const range=def(b).transportRange;if(!range)return;ctx.save();ctx.fillStyle='rgba(80,190,255,.45)';ctx.strokeStyle='#e9f8ff';ctx.setLineDash([3,2]);ctx.lineWidth=1;for(const [k] of roadReach(b,range)){const x=k%MAPW*16,y=Math.floor(k/MAPW)*16;ctx.fillRect(x,y,16,16);ctx.strokeRect(x+2,y+2,12,12);}ctx.restore();}
 const logisticsGhost=drawGhost;drawGhost=function(ctx){if(['build','move'].includes(UI.tool)&&UI.type){const t=ghostTile();if(t){const d=buildingSize(UI.type,UI.rotation||0),b={...d,type:UI.type,x:t.x-Math.floor(d.w/2),y:t.y-Math.floor(d.h/2)};drawLogisticsReach(ctx,b);if(B[UI.type].kind==='field'){const owner=G.byId.get(UI.fieldOwner);if(owner)ring(ctx,cx(owner),cy(owner),24,'#f8edb0',true);}}}logisticsGhost(ctx);};
@@ -104,7 +104,6 @@ const fieldShowSites=showSites;showSites=function(type){if(B[type]?.kind==='fiel
 
 
 const fieldSitesAct=winAct;winAct=function(id,ds){if(ds.act==='field-sites'){const b=G.byId.get(UI.sel);if(!b||!FIELD_RULES[b.type])return;UI.fieldOwner=b.id;showSites(FIELD_RULES[b.type].type);return;}fieldSitesAct(id,ds);};
-const fieldSitesInfo=infoHTML;infoHTML=function(){const h=fieldSitesInfo(),b=G.byId.get(UI.sel);return h+(b&&FIELD_RULES[b.type]?'<button class="btn" data-act="field-sites">Bauplatz für Betriebsfläche auswählen</button>':'');};
 // Nach Abriss oder Straßenunterbrechung bleibt Fracht an ihrem tatsächlichen Ort.
 function recoverCartPath(c){const position=c.path[Math.min(c.path.length-1,Math.floor(c.t))];if(!G.road[position])return null;const ends=new Map();for(const w of whList())for(const [x,y] of ringCells(w))if(INMAP(x,y)&&G.road[IDX(x,y)])ends.set(IDX(x,y),w);const queue=[position],prev=new Map([[position,-1]]);let end=-1;
  for(let i=0;i<queue.length;i++){const k=queue[i];if(ends.has(k)){end=k;break;}const x=k%MAPW,y=Math.floor(k/MAPW);for(const n of roadNeighbours(k)){if(!prev.has(n)){prev.set(n,k);queue.push(n);}}}
@@ -142,6 +141,7 @@ function terrainChunk(chunkX,chunkY){const key=chunkX+':'+chunkY;let image=land.
   if(t===T.DEEP)continue;
   const v=hs(x,y,77);let img;
   if(t===T.SAND)img=SP['sand'+Math.floor(v*3)];else if(t===T.ROCK)img=SP['rock'+Math.floor(hs(x,y,G.seed)*4)];else if(t===T.ORE)img=SP.ore;else img=landscapeGrassSprite(x,y,t===T.FOREST);
+  if(isR(t)){g.drawImage(landscapeGrassSprite(x,y),px,py);g.save();clipRockTile(g,x,y,px,py);}
   g.drawImage(img,px,py);
   if(t===T.GRASS||t===T.FOREST){const shade=fbm(WORLD?.rootSeed||G.seed,x/11,y/11);g.fillStyle=shade>.6?'rgba(216,211,109,.12)':shade<.4?'rgba(13,61,35,.16)':'rgba(0,0,0,0)';g.fillRect(px,py,16,16);if(t===T.GRASS&&hs(x,y,G.seed+84)<.06){g.fillStyle='#b5be73';g.fillRect(px+4,py+8,2,1);g.fillRect(px+11,py+5,1,1)}}
   if(isR(t)){
@@ -150,6 +150,7 @@ function terrainChunk(chunkX,chunkY){const key=chunkX+':'+chunkY;let image=land.
    if(!isR(tt(x-1,y))){g.fillStyle='rgba(255,255,255,.12)';g.fillRect(px,py,2,16)}
    if(!isR(tt(x+1,y))){g.fillStyle='rgba(0,0,0,.25)';g.fillRect(px+14,py,2,16)}
    drawMountainTerrace(g,x,y,px,py);
+   g.restore();
   }
   // Uferlinien
   const sh=(dx,dy)=>isW(tt(x+dx,y+dy));

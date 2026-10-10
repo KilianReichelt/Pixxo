@@ -8,7 +8,7 @@ const sandbox={Math,Map,Set,WeakMap,Uint8Array,Uint32Array,Int32Array,Float64Arr
  IDX:(x,y)=>y*12+x,INMAP:(x,y)=>x>=0&&y>=0&&x<12&&y<12,
  WORLD:{rootSeed:42,islands:[],routes:[],fleet:[]},UI:{z:1,viewedIsland:0},activeIsland:0,islandOwners:new Int16Array(144).fill(-1),
  ISLANDS:[{name:'Prüfinsel',wx:8,wy:8,size:1,fert:['getreide']}],GN:{getreide:{n:'Getreide'}},SHIPS:{schooner:{speed:1,slots:2},clipper:{speed:2,slots:4}},
- seaPath:noop,routeWaterPath:noop,voyageTime:noop,sailShip:noop,freeShipPosition:noop,shipActivity:noop,renderBar:noop,renderTop:noop,routeForm:noop,shipHTML:()=>'',winAct:noop,updateFog:noop,renderIslandFacts:noop,makeDirectionalShip:noop,drawFleet:noop,drawLandRegion:noop,drawWorldFog:noop,worldBuildings:noop,
+ seaPath:noop,routeWaterPath:noop,voyageTime:noop,sailShip:noop,freeShipPosition:noop,shipActivity:noop,renderBar:noop,renderTop:noop,routeForm:noop,shipHTML:()=>'',winAct:noop,updateFog:noop,renderIslandFacts:noop,makeDirectionalShip:noop,drawFleet:noop,drawLandRegion:noop,drawWorldFog:noop,worldBuildings:noop,buildShip:noop,stepFleet:noop,clickTile:noop,
  waterRoutes:new Map(),SP:{},urlC:{},SHIP_SPRITES:{schooner:[],clipper:[]},soundEffect:noop,headingForPath:()=>0,drawShipSprite:noop,
  fogClock:0,fogDirty:false,fogFades:new Map(),PERF_FOG:{miniDirty:false,chunks:new Map()},revealSea:noop,
  document:{createElement:()=>({getContext:()=>canvasContext,toDataURL:()=>'',setAttribute:noop}),activeElement:null,querySelector:()=>null},

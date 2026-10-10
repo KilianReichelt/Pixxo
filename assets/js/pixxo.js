@@ -53,6 +53,12 @@ function pixxoProductionStatus(b){
  if(b.eff<=0)return b.staffEff===0?'Arbeitskräfte fehlen':'Ressourcen fehlen';
  if(Object.entries(B[b.type].in||{}).some(([g,n])=>deliveryStock(b,g)<n))return 'Rohstoffe fehlen';return 'Produziert';
 }
+function buildingWindowStatus(b){
+ const d=def(b);let text=b.fire>0?'In Flammen':b.paused?'Pausiert':d.kind==='prod'?pixxoProductionStatus(b):b.status||'In Betrieb';
+ if(!b.fire&&!b.paused&&d.kind==='prod'&&text==='Produziert'&&b.status)text=b.status;
+ if(!b.fire&&!b.paused&&d.transportRange&&!warehouseTarget(b))text='Kein Lager in Reichweite';
+ return {text,error:b.fire>0||(!b.paused&&(/fehlt|fehlen|^Kein|^Keine|außerhalb|Wartet|voll|Unzufrieden|Verelendet/.test(text)||d.kind==='prod'&&!text.startsWith('Produziert')))};
+}
 for(const [type,d] of Object.entries(B))if((BUILD_TIER[type]||d.workforce?.tier||1)>=2){
  d.cost=Object.fromEntries(Object.entries(d.cost||{}).map(([g,n])=>[g,Math.ceil(n*1.3)]));d.upk=Math.ceil((d.upk||0)*1.3);
 }
@@ -271,11 +277,29 @@ const engineEntry=IMPORTED_ENTRIES.get('pixxo_loeschwagen');publishPixel('pixxo_
 function pixxoMiningSprite(b){
  const island=WORLD?.islands[b.island]||G,node=island.deposits.find(n=>n.type===b.type&&n.x===b.x&&n.y===b.y);if(!node?.inMountain)return null;
  const frame=workshopRunning(b)&&!WORK_ART.reduced.matches?Math.floor(G.time*4+b.id)%4:0,side=node.anchor?.side||'south',key='b_'+b.type+'_berg_'+side+'_'+b.w+'x'+b.h+'_'+frame;
- if(!HD_CATALOG.has(key)){const entry=IMPORTED_ENTRIES.get(b.type+'_berg_'+side),extra=12;publishPixel(key,importedPixels(entry,frame),b.w*16,b.h*16+extra,{tw:b.w,th:b.h,ex:extra,hub:null,smoke:null});}return key;
+ if(!HD_CATALOG.has(key)){const extra=12;publishPixel(key,miningEntranceArt(b,side,frame),b.w*16,b.h*16+extra,{tw:b.w,th:b.h,ex:extra,hub:null,smoke:null});}return key;
 }
-function pixxoCattleSprite(b){if(b.type!=='gehege')return null;const g=WORLD.islands[b.island]||G,owner=g.byId.get(b.fieldOwner);return owner?.type==='rinderhof'?livestockEnclosureSprite(b,true):null;}
+function miningEntranceArt(b,side,frame){
+ const source=importedPixels(IMPORTED_ENTRIES.get(b.type+'_berg_'+side),0),low=document.createElement('canvas');low.width=b.w*16;low.height=b.h*16+12;
+ const c=low.getContext('2d');c.imageSmoothingEnabled=false;nativeDrawImage.call(c,source,0,0,low.width,low.height);
+ const image=c.getImageData(0,0,low.width,low.height);for(let i=0;i<image.data.length;i+=4){const r=image.data[i],g=image.data[i+1],v=image.data[i+2];if(image.data[i+3]&&(r>g*1.12&&g>v*1.1||r+g+v<150)){const tone=hs(i%low.width,Math.floor(i/low.width),57)>.5?116:104;image.data.set([tone,tone+5,tone+12,255],i);}}c.putImageData(image,0,0);
+ const portal=document.createElement('canvas');portal.width=18;portal.height=26;const g=portal.getContext('2d'),r=(color,x,y,w,h)=>{g.fillStyle=color;g.fillRect(x,y,w,h);};
+ r('#49494c',1,3,16,20);r('#333236',3,5,12,17);r('#181e21',5,7,8,14);r('#242a2c',6,8,6,12);
+ for(const x of [2,14]){r('#4e3728',x,3,2,19);r('#99733f',x,4,1,17);for(const y of [5,10,16])r('#d5b378',x,y,1,1);}
+ r('#4c382a',2,2,14,3);r('#ba9358',3,2,12,1);r('#836039',3,4,12,1);r('#b1a27b',1,22,16,2);
+ for(const x of [6,11]){r('#3b4245',x,17,2,9);r('#a4a9a1',x,17,1,9);}for(const y of [19,22,25])r('#745d40',5,y,8,1);
+ r('#483a2d',15,9,3,5);r('#efba62',16,10,1,2);r('#ffe2a0',16,10,1,1);
+ if(frame>0){const y=18+[0,1,2,1][frame%4];r('#3b3830',5,y+4,8,2);r('#57402e',4,y,10,4);r('#a28250',5,y,8,1);r(b.type==='mine'?'#a26c4c':'#9aa1a2',6,y-2,5,2);r('#d1c4a1',7,y-2,2,1);}
+ const turn={south:0,west:1,north:2,east:3}[side]||0,rotated=document.createElement('canvas');rotated.width=turn%2?26:18;rotated.height=turn%2?18:26;const out=rotated.getContext('2d');out.imageSmoothingEnabled=false;out.translate(rotated.width/2,rotated.height/2);out.rotate(turn*Math.PI/2);out.drawImage(portal,-9,-13);
+ const x=side==='west'?0:side==='east'?low.width-rotated.width:Math.floor((low.width-rotated.width)/2),y=side==='north'?12:side==='south'?low.height-rotated.height:12+Math.floor((b.h*16-rotated.height)/2);c.drawImage(rotated,x,y);return low;
+}
+// The build-site symbol keeps its front view and uses exact quarter-turns.
+for(let frame=0;frame<5;frame++)for(const [side,turn] of [['left',1],['right',3]]){
+ const source=HD_CATALOG.get('stollen_front'+frame)?.pixelSource||SP['stollen_front'+frame],low=document.createElement('canvas');low.width=low.height=16;const c=low.getContext('2d');c.imageSmoothingEnabled=false;c.translate(8,8);c.rotate(turn*Math.PI/2);nativeDrawImage.call(c,source,-8,-8,16,16);publishPixel('stollen_'+side+frame,low,16,16);
+}
+function pixxoCattleSprite(b){if(b.type!=='gehege')return null;const g=WORLD.islands[b.island]||G,owner=g.byId.get(b.fieldOwner);return livestockEnclosureSprite(b,enclosureAnimal(owner));}
 const pixxoWorkshopSprite=workshopSprite;workshopSprite=function(b){if(pixxoCattleSprite(b))return pixxoCattleSprite(b);return ['mine','steinbruch'].includes(b.type)?pixxoMiningSprite(b)||pixxoWorkshopSprite(b):pixxoWorkshopSprite(b);};
-const pixxoSpName=spName;spName=function(b){if(pixxoCattleSprite(b))return pixxoCattleSprite(b);return ['mine','steinbruch'].includes(b.type)?pixxoMiningSprite(b)||pixxoSpName(b):pixxoSpName(b);};
+const pixxoSpName=spName;spName=function(b){if(b.type==='werft')return shipyardSprite(b);if(pixxoCattleSprite(b))return pixxoCattleSprite(b);return ['mine','steinbruch'].includes(b.type)?pixxoMiningSprite(b)||pixxoSpName(b):pixxoSpName(b);};
 const pixxoBubbleFor=bubbleFor;bubbleFor=function(b){return B[b.type].kind==='decor'?null:pixxoBubbleFor(b);};
 const pixxoDrawBld=drawBld;drawBld=function(ctx,b){
  pixxoDrawBld(ctx,b);if(B[b.type].place!=='coast')return;
@@ -286,7 +310,10 @@ const pixxoDrawBld=drawBld;drawBld=function(ctx,b){
  ctx.fillStyle='#d0af73';ctx.fillRect(x,y,horizontal?14:1,horizontal?1:14);ctx.restore();
 };
 // Start- und Reload-Ladebildschirm erst nach dem ersten gezeichneten Frame ausblenden.
-function pixxoLoaded(){const screen=document.getElementById('pixxo-loading');if(!screen)return;const progress=screen.querySelector('progress');progress.value=100;requestAnimationFrame(()=>requestAnimationFrame(()=>{screen.classList.add('loaded');setTimeout(()=>screen.remove(),450);}));}
+document.querySelector('#pixxo-loading progress').setAttribute('aria-label','Ladefortschritt');
+const PIXXO_LOADING_TEMPLATE=document.getElementById('pixxo-loading').cloneNode(true);
+function pixxoLoadingShow(text){let screen=document.getElementById('pixxo-loading');if(!screen){screen=PIXXO_LOADING_TEMPLATE.cloneNode(true);document.body.append(screen);}clearTimeout(screen.dismissTimer);screen.loadToken=(screen.loadToken||0)+1;screen.classList.remove('loaded');screen.querySelector('progress').removeAttribute('value');screen.querySelector('p').textContent=text;screen.tabIndex=-1;return screen;}
+function pixxoLoaded(onDone){if(typeof StartScreen!=='undefined'&&StartScreen.loading)return;const screen=document.getElementById('pixxo-loading');if(!screen){onDone?.();return;}const token=screen.loadToken=(screen.loadToken||0)+1,progress=screen.querySelector('progress');progress.value=100;requestAnimationFrame(()=>requestAnimationFrame(()=>{if(token!==screen.loadToken)return;screen.classList.add('loaded');screen.dismissTimer=setTimeout(()=>{if(token!==screen.loadToken)return;screen.remove();onDone?.();},450);}));}
 const pixxoAfterNewWorld=afterNewWorld;afterNewWorld=function(...args){clearClayDepositTrees(G.tiles,allDeposits());const result=pixxoAfterNewWorld(...args);pixxoLoaded();return result;};
 
 // Spielstände zwischen lokaler Datei und gehosteter Partie übertragen.

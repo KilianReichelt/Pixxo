@@ -4,7 +4,7 @@ function publishPixel(name,low,w,h,meta){
  const a={canvas:low,ctx:low.getContext('2d'),w,h};
  const small=document.createElement('canvas');small.width=w;small.height=h;
  const c=small.getContext('2d');c.imageSmoothingEnabled=false;nativeDrawImage.call(c,low,0,0,w,h);
- HD_IMAGES.set(small,a.canvas);SP[name]=small;HD_CATALOG.set(name,{...a,small,pixelSource:low});urlC[name]=low.toDataURL();if(meta)SPB[name]={...meta,W:w,H:h};return small;
+ HD_IMAGES.set(small,a.canvas);SP[name]=small;HD_CATALOG.set(name,{...a,small,pixelSource:low});delete urlC[name];if(meta)SPB[name]={...meta,W:w,H:h};return small;
 }
 function smallPixelSource(source,max=32){
  const low=document.createElement('canvas'),factor=Math.min(1,max/Math.max(source.width,source.height));
