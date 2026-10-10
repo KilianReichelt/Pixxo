@@ -1,6 +1,6 @@
 /* Pixxo: Versorgung, Notfälle, Darlehen und neue Bauobjekte. */
 let PIXXO_TERRAIN_VERSION=3;
-const PIXXO_GOODS=[['kartoffeln','Kartoffeln',12],['schnaps','Kartoffelschnaps',30],['haeute','Häute',14],['leder','Leder',25],['stiefel','Lederstiefel',50],['wachs','Wachs',18],['kerzen','Kerzen',45]];
+const PIXXO_GOODS=[['kartoffeln','Kartoffeln',12],['schnaps','Schnaps',30],['haeute','Häute',14],['leder','Leder',25],['stiefel','Lederstiefel',50],['wachs','Wachs',18],['kerzen','Kerzen',45]];
 for(const [id,n,v] of PIXXO_GOODS){const good={id,n,v};GOODS.push(good);GN[id]=good;}
 const PIXXO_CHAINS=[
  ['kartoffelhof','Kartoffelhof',1,{},'kartoffeln',45,12,200],
@@ -20,14 +20,33 @@ FIELD_CROP_SPRITES.kartoffelhof='acker_kartoffeln';
 B.imkerei.out.wachs=1;B.imkerei.d='Gewinnt Honig und Wachs.';
 TIERS[1].goods.schnaps=.018;TIERS[2].goods.stiefel=.015;TIERS[3].goods.kerzen=.012;
 for(const [g,rate] of Object.entries(TIERS[2].goods))TIERS[2].goods[g]=rate*.5;
-// Zusätzliche Waren vergrößern die Belegung; jede Ware zählt einmal.
+// Pflicht- und Zusatzversorgung zählen gleich; Luxus gibt keine Bewohnerplätze.
+function pixxoHouseNeeds(b){const t=TIERS[b.tier];return {services:t.svc,goods:Object.keys({...t.goods,...additionalHouseGoods(b)})};}
+function pixxoHouseNeedCount(b){const needs=pixxoHouseNeeds(b);return needs.services.length+needs.goods.length;}
+for(const tier of [1,2,3]){const count=pixxoHouseNeedCount({tier});TIERS[tier].cap=Math.ceil(TIERS[tier].cap/count)*count;}
+function pixxoResidentsPerNeed(b){return TIERS[b.tier].cap/pixxoHouseNeedCount(b);}
 function pixxoHouseCapacity(b){
- const t=TIERS[b.tier];if(!b.conn||b.fire>0)return 0;
- const base=[...t.svc.map(s=>!!b.cov[s]),...Object.keys(t.goods).map(g=>houseGoodSupplied(b,g))];
- const extras=Object.keys({...additionalHouseGoods(b),...t.luxury});
- const ratio=base.filter(Boolean).length/base.length,bonus=extras.length?extras.filter(g=>houseGoodSupplied(b,g)).length/extras.length:0;
- return t.cap*ratio*(.6+.4*bonus);
+ if(!b.conn||b.fire>0)return 0;
+ const needs=pixxoHouseNeeds(b),fulfilled=needs.services.filter(s=>!!b.cov[s]).length+needs.goods.filter(g=>houseGoodSupplied(b,g)).length;
+ return fulfilled*pixxoResidentsPerNeed(b);
 }
+function pixxoHousePopulationStep(b,target,dt,lossSeconds=60){
+ const cap=TIERS[b.tier].cap;
+ b.pop=Math.max(0,Math.min(cap,Math.round(Number(b.pop)||0)));target=Math.max(0,Math.min(cap,Math.round(target)));
+ const direction=Math.sign(target-b.pop);
+ if(!direction){b.populationProgress=0;b.populationDirection=0;return;}
+ if(!(dt>0)||!Number.isFinite(dt))return;
+ if(b.populationDirection!==direction)b.populationProgress=0;
+ b.populationDirection=direction;
+ b.populationProgress=(b.populationProgress||0)+cap/(direction>0?40:lossSeconds)*dt;
+ const people=Math.min(Math.abs(target-b.pop),Math.floor(b.populationProgress+1e-9));
+ b.pop+=direction*people;b.populationProgress=Math.max(0,b.populationProgress-people);
+ if(b.pop===target){b.populationProgress=0;b.populationDirection=0;}
+}
+const pixxoPopulationUnpack=unpackIsland;
+unpackIsland=function(...args){const island=pixxoPopulationUnpack(...args);for(const b of island.blds)if(b.type==='haus')b.pop=Math.max(0,Math.min(TIERS[b.tier].cap,Math.round(Number(b.pop)||0)));return island;};
+const pixxoPopulationPack=packIsland;
+packIsland=function(island){const saved=pixxoPopulationPack(island);for(const b of saved.blds)if(b.type==='haus'){const live=island.byId.get(b.id);b.populationProgress=live.populationProgress||0;b.populationDirection=live.populationDirection||0;}return saved;};
 function pixxoProductionStatus(b){
  if(b.fire>0)return 'In Flammen';if(b.paused)return 'Pausiert';if(!b.conn)return 'Kein Straßenanschluss';
  if(B[b.type].kind!=='prod')return 'In Betrieb';if(!productionLinked(b))return 'Verbinde den Betrieb mit einem Lager oder Abnehmer';
@@ -72,7 +91,7 @@ function pixxoReservedLand(type,x,y,w,h){
  for(const n of nodes){const d=B[n.type];if(n.type===type&&n.x===x&&n.y===y)continue;
   if(cells.some(([a,b])=>a>=n.x&&a<n.x+d.w&&b>=n.y&&b<n.y+d.h))return 'Halte das Vorkommen für den Abbaubetrieb frei.';
  }
- if(B[type].place!=='coast'&&cells.some(([a,b])=>INMAP(a,b)&&G.tiles[IDX(a,b)]===T.SAND))return 'Platziere dieses Gebäude auf Grünland.';
+ if(B[type].place!=='coast'&&cells.some(([a,b])=>INMAP(a,b)&&G.tiles[IDX(a,b)]===T.SAND))return 'Kann nicht auf Sand gebaut werden.';
  return null;
 }
 const pixxoCanPlace=canPlace;canPlace=function(type,x,y){const size=buildingSize(type,UI.tool==='build'&&UI.type===type?UI.rotation||0:0),why=pixxoReservedLand(type,x,y,size.w,size.h);return why?{ok:false,why}:pixxoCanPlace(type,x,y);};
@@ -162,6 +181,7 @@ const pixxoRenderBar=renderBar;renderBar=function(){
   $('#barToggle').innerHTML=ic('i_ship',1.5);$('#barToggle').setAttribute('aria-label','Schiffe anzeigen');$('#barToggle').setAttribute('aria-pressed','false');
  }else pixxoRenderBar();
  dekoToggle.classList.toggle('on',UI.barMode==='deko');dekoToggle.setAttribute('aria-pressed',String(UI.barMode==='deko'));dekoToggle.setAttribute('aria-label',UI.barMode==='deko'?'Baukategorien anzeigen':'Dekoration anzeigen');
+ const dekoIcon=UI.barMode==='deko'?'i_houses':'pixxo_deko';if(dekoToggle.dataset.icon!==dekoIcon){dekoToggle.innerHTML=ic(dekoIcon,1.5);dekoToggle.dataset.icon=dekoIcon;}dekoToggle.title=UI.barMode==='deko'?'Baukategorien anzeigen':'Dekoration anzeigen';
 };
 function updateDekoNavigation(){
  const box=$('#bar'),viewport=box.querySelector('.deko-viewport');if(!viewport)return;
@@ -175,10 +195,8 @@ $('#bar').addEventListener('keydown',e=>{if(!e.target.matches('.deko-viewport'))
 new ResizeObserver(updateDekoNavigation).observe($('#bar'));
 dekoToggle.addEventListener('click',()=>{UI.barMode=UI.barMode==='deko'?'build':'deko';UI.cat=null;setTool(null);$('#bar')._last=null;renderBar();});
 $('#bar').addEventListener('click',e=>{const button=e.target.closest('[data-deko-build]');if(button){setTool('build',button.dataset.dekoBuild);selectB(null);renderBar();}});
-// Das Tutorial bleibt für eine spätere Überarbeitung im Code, wird aber nicht geöffnet.
-openTutorial=function(){};
-const pixxoMenuHTML=menuHTML;menuHTML=function(){return pixxoMenuHTML().replace(/<button[^>]*data-act="tutorial-open"[^>]*>.*?<\/button>/g,'');};
-const pixxoInfoHTML=infoHTML;infoHTML=function(){let h=pixxoInfoHTML();const b=G.byId.get(UI.sel);if(b?.type==='haus')h+=`<div class="kv"><span>Belegung durch Versorgung</span><b>${pixxoHouseCapacity(b).toFixed(1)} / ${TIERS[b.tier].cap}</b></div><p class="small">Grundversorgung und Dienste: 60 %. Zusätzliche Waren: bis zu 40 %.</p>`;if(b?.fire>0&&pixxoEngineArrived(b))h+=`<p>Löscheinsatz · ${Math.round((b.extinguish||0)*100)} %</p>${bar(b.extinguish||0,'#78bd69')}`;return h;};
+// Die geführte Einführung wird im abschließend geladenen Startmodul eingerichtet.
+const pixxoInfoHTML=infoHTML;infoHTML=function(){let h=pixxoInfoHTML();const b=G.byId.get(UI.sel);if(b?.type==='haus')h+=`<div class="kv"><span>Belegung durch Versorgung</span><b>${pixxoHouseCapacity(b)} / ${TIERS[b.tier].cap}</b></div><p class="small">Jedes erfüllte Bedürfnis ermöglicht ${pixxoResidentsPerNeed(b)} Bewohner. Dienste, Grundversorgung und zusätzliche Waren zählen jeweils einmal. Luxusbedürfnisse erhöhen die Belegung nicht.</p>`;if(b?.fire>0&&pixxoEngineArrived(b))h+=`<p>Löscheinsatz · ${Math.round((b.extinguish||0)*100)} %</p>${bar(b.extinguish||0,'#78bd69')}`;return h;};
 
 /* Neue Welten erhalten gerade Hafenstrände und Abbauflächen im Gebirge. */
 const pixxoLocalTerrain=localTerrain;localTerrain=function(seed,profile,...args){

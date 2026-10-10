@@ -1,6 +1,12 @@
 /* Acht Straßenrichtungen teilen sich dieselben Regeln in Planung und Transport. */
 const LAND_STEPS=[[0,-1],[1,0],[0,1],[-1,0],[1,-1],[1,1],[-1,1],[-1,-1]];
-function roadStepAllowed(x,y,nx,ny,g=G){if(!INMAP(nx,ny))return false;const dx=nx-x,dy=ny-y;return !(dx&&dy)||[IDX(nx,y),IDX(x,ny)].every(k=>!g.occ[k]&&BUILDABLE(g.tiles[k]));}
+function roadStepAllowed(x,y,nx,ny,g=G){
+ if(!INMAP(x,y)||!INMAP(nx,ny))return false;
+ const dx=nx-x,dy=ny-y;if(Math.abs(dx)>1||Math.abs(dy)>1||!dx&&!dy)return false;
+ // Keine Eck-Abkürzung: eine Straße auf einer der Zwischenkacheln verbindet
+ // die Punkte bereits rechtwinklig. Das gilt für Zeichnung UND Wegfindung.
+ return !(dx&&dy)||[IDX(nx,y),IDX(x,ny)].every(k=>!g.road[k]&&!g.occ[k]&&BUILDABLE(g.tiles[k]));
+}
 function roadNeighbours(k,g=G){const x=k%MAPW,y=Math.floor(k/MAPW);return LAND_STEPS.filter(([dx,dy])=>roadStepAllowed(x,y,x+dx,y+dy,g)&&g.road[IDX(x+dx,y+dy)]).map(([dx,dy])=>IDX(x+dx,y+dy));}
 function roadPathDistance(path){let n=0;for(let i=1;i<path.length;i++)n+=Math.hypot(path[i]%MAPW-path[i-1]%MAPW,Math.floor(path[i]/MAPW)-Math.floor(path[i-1]/MAPW));return n;}
 function cartPathAdvance(c,distance){let t=c.t;while(distance>0&&t<c.path.length-1){const i=Math.floor(t),a=c.path[i],b=c.path[i+1],length=Math.hypot(b%MAPW-a%MAPW,Math.floor(b/MAPW)-Math.floor(a/MAPW))||1,remaining=(1-(t-i))*length;if(distance<remaining){t+=distance/length;break;}t=i+1;distance-=remaining;}return t;}

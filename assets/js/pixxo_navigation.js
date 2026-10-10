@@ -128,7 +128,7 @@ const detailedWorldFog=drawWorldFog;
 drawWorldFog=function(ctx,x0,y0,x1,y1){
  if(UI.z>=.45){detailedWorldFog(ctx,x0,y0,x1,y1);return;}
  const image=prepareFog();if(image)nativeDrawImage.call(ctx,image,0,0,MAPW*16,MAPH*16);
- ctx.fillStyle='#bdc9d0';if(x0<0)ctx.fillRect(x0,y0,-x0,y1-y0);if(y0<0)ctx.fillRect(0,y0,MAPW*16,-y0);if(x1>MAPW*16)ctx.fillRect(MAPW*16,y0,x1-MAPW*16,y1-y0);if(y1>MAPH*16)ctx.fillRect(0,MAPH*16,MAPW*16,y1-MAPH*16);
+ ctx.fillStyle=nightFogEdgeColor();if(x0<0)ctx.fillRect(x0,y0,-x0,y1-y0);if(y0<0)ctx.fillRect(0,y0,MAPW*16,-y0);if(x1>MAPW*16)ctx.fillRect(MAPW*16,y0,x1-MAPW*16,y1-y0);if(y1>MAPH*16)ctx.fillRect(0,MAPH*16,MAPW*16,y1-MAPH*16);
 };
 /* Gebäudeverweise bleiben gültig bei Bewegung; Neubauten und Laden erneuern die Liste. */
 let buildingListCache={world:null,states:[],list:[]};

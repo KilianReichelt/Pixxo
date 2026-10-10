@@ -28,7 +28,7 @@ Die Deko-Leiste bleibt begrenzt und verwendet dieselben Pfeil-Buttons wie die Ge
 
 Grundwaren und öffentliche Dienste ermöglichen gemeinsam 60 % der Hauskapazität. Zusatzwaren und Luxusversorgung erschließen die übrigen 40 %. Fehlende Versorgung senkt die Zielbelegung; Einwohner ziehen schrittweise aus. Nur über einen Markt versorgte Einwohner verbrauchen Waren. Der Verbrauch richtet sich nach tatsächlicher Einwohnerzahl.
 
-Neue Pflichtwaren: Kartoffelschnaps für Siedler (Kartoffelhof → Brennerei), Lederstiefel für Bürger (Rinderhof → Gerberei → Schuster), Kerzen für Patrizier (Wachs der Imkerei + Tuch → Kerzenzieherei). Die Betriebe sind bereits vor dem jeweiligen Wohnhausaufstieg verfügbar. Kartoffelhöfe benötigen 16 Ackerflächen, Rinderhöfe drei Gehege.
+Neue Pflichtwaren: Schnaps für Siedler (Kartoffelhof → Brennerei), Lederstiefel für Bürger (Rinderhof → Gerberei → Schuster), Kerzen für Patrizier (Wachs der Imkerei + Tuch → Kerzenzieherei). Die Betriebe sind bereits vor dem jeweiligen Wohnhausaufstieg verfügbar. Kartoffelhöfe benötigen 16 Ackerflächen, Rinderhöfe drei Gehege.
 
 Bürger verbrauchen pro Einwohner 50 % der bisherigen Pflichtwarenmenge. Ab Bürgerfreischaltung steigen Gebäudekosten und Goldunterhalt um 30 %, aufgerundet; Hausaufwertungen kosten ebenfalls 30 % mehr. Eine neue Partie beginnt mit 30 Brettern.
 
@@ -98,3 +98,14 @@ Zusätzliche Browserprüfung: `pixxo_tests/world_progress.cjs` prüft 30 Geländ
 Diagonale Erdwege verwenden dieselbe helle Erdpalette wie gerade Straßen. Diagonale Straßen zeichnen mit vier Pixeln Überstand in die freien Kachelecken; dadurch bleiben diagonale Verbindungen durchgehend texturiert. Pflasterwege nutzen ebenfalls diese Verbindungen und ein durchgehendes Fugenraster. Die Wegfindung und Baukosten bleiben unverändert. `pixxo_tests/diagonal_road_art.cjs` prüft beide Beläge an den Kachelecken und erzeugt eine Browseransicht für die Sichtprüfung.
 
 Gebäude lassen sich nicht mehr mit R drehen. Der Drehhinweis entfällt aus dem Baumodus. Bereits gespeicherte Ausrichtungen werden weiterhin geladen.
+
+### Menü, Audio und Regen
+
+- Musik, Geräusche und Ambiente besitzen separate Regler mit jeweils einem An-/Aus-Button unmittelbar dahinter. Die Lautstärken bleiben beim Stummschalten erhalten; Kanalzustände werden gespeichert. Der globale Ton-Button ist entfernt.
+- Audio-Labels im Spielmenü haben 30 px Mindesthöhe; Regler und Buttons bleiben mindestens 44 px hoch. „Neues Spiel“ ist rot hinterlegt. „Startmenü“ fragt vor der Rückkehr nach und speichert nach Bestätigung die Partie.
+- Regenphasen dauern jetzt 6–12 Spielminuten, viermal länger als zuvor. Fünf unterschiedlich große, feste Pixel-Sprites für Pfützen werden zufällig verteilt. Sie blenden nach einer kurzen zufälligen Verzögerung über 90–180 Spielsekunden weich ein, ohne ihre Größe zu verändern, und nach Regenende unterschiedlich langsam aus. Regenrauschen verwendet ausschließlich den Ambient-Kanal.
+- Der Markt zeigt nachts warme Lämpchen und Lichterketten. Seine Tagesgrafik bleibt unverändert.
+- Das Lagerfenster ist bis zu 520 px breit. Über der Tabelle ersetzen die Filter „Alle“, „Rohstoffe“ und „Handwerk“ die Caption. Alle Filter berücksichtigen weiterhin die freigeschaltete Bevölkerungsstufe und sind mit der Tastatur bedienbar.
+- Gebäude zeigen den Transporthinweis nur dann, wenn kein Lager in Reichweite liegt.
+
+Geprüft mit isolierten Browserprofilen: Menübestätigung einschließlich Abbrechen, einzelne Stummschalter mit Speicherung, mobile Layouts, Lagerfilter, Regenlaufzeit, tatsächlich gezeichnete Pfützen und nächtliche Marktbeleuchtung. Die geänderten Menü- und Lagerbereiche bestehen die automatisierten WCAG-Prüfungen; eine vollständige WCAG-2.2-AA-Prüfung des vorhandenen Canvas-Spiels ist damit nicht abgedeckt.

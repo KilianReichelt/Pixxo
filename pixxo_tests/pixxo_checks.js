@@ -9,8 +9,8 @@ function runPixxoChecks(){
  for(const [id] of PIXXO_DECOR){check(B['deko_'+id].upk===0&&Object.keys(B['deko_'+id].cost).join()==='gold','Deko nur Gold: '+id);check(!!SP['b_deko_'+id],'Deko besitzt natives Sprite: '+id);}
  check(B.schuster.workforce.tier===1&&BUILD_TIER.schuster===1&&BUILD_TIER.kerzenzieherei===2,'Neue Pflichtwaren sind vor dem Aufstieg herstellbar');
  const house={type:'haus',tier:1,pop:4,conn:true,fire:0,sat:{fisch:true,schnaps:true},cov:{markt:true}};
- check(near(pixxoHouseCapacity(house),2.4),'Grundversorgung belegt 60 %');for(const g of Object.keys({...additionalHouseGoods(house),...TIERS[1].luxury}))house.sat[g]=true;
- check(near(pixxoHouseCapacity(house),4),'Vollversorgung belegt 100 %');house.cov.markt=false;check(near(pixxoHouseCapacity(house),0),'Ohne Markt keine Warenversorgung');house.cov.markt=true;house.sat.schnaps=false;check(pixxoHouseCapacity(house)<4,'Fehlender Pflichtbedarf senkt Belegung');
+ check(near(pixxoHouseCapacity(house),3*pixxoResidentsPerNeed(house)),'Drei erfüllte Bedürfnisse ermöglichen ganze Bewohner');for(const g of Object.keys({...additionalHouseGoods(house),...TIERS[1].luxury}))house.sat[g]=true;
+ check(near(pixxoHouseCapacity(house),TIERS[1].cap),'Vollversorgung belegt 100 %');house.cov.markt=false;check(near(pixxoHouseCapacity(house),0),'Ohne Markt keine Warenversorgung');house.cov.markt=true;house.sat.schnaps=false;check(pixxoHouseCapacity(house)===TIERS[1].cap-pixxoResidentsPerNeed(house),'Fehlendes Bedürfnis senkt Belegung um ganze Bewohner');
  check(Object.keys(TIERS[1].goods).includes('schnaps')&&Object.keys(TIERS[2].goods).includes('stiefel')&&Object.keys(TIERS[3].goods).includes('kerzen'),'Neue Waren sind Pflichtbedarf');
  check(near(TIERS[2].goods.fisch,.01),'Bürgerverbrauch um 50 % reduziert');
  WORLD.loan=null;const gold=G.gold;check(pixxoBorrow(1000)&&near(G.gold,gold+1000),'Darlehen zahlt Gold aus');check(!pixxoBorrow(2500),'Nur ein laufendes Darlehen');pixxoLoanStep(60);check(near(WORLD.loan.balance,1100-1100/30),'Eine Minute zieht korrekte Rate ab');G.gold=10000;check(pixxoRepay()&&!WORLD.loan,'Vorzeitige Rückzahlung');
@@ -53,7 +53,16 @@ function runPixxoChecks(){
  const lager=add('lager',baseX+5,baseY+35),production=[];
  for(let i=0;i<PIXXO_CHAINS.length;i++){const type=PIXXO_CHAINS[i][0],b=add(type,baseX+12+i*5,baseY+40,{inputStock:Object.fromEntries(Object.keys(B[type].in).map(g=>[g,100]))});production.push(b);}
  for(let x=baseX+10;x<=baseX+42;x++)G.road[IDX(x,baseY+43)]=1;for(let y=baseY+35;y<=baseY+43;y++)G.road[IDX(baseX+10,y)]=1;
- h.pop=100;hh2.pop=100;
+ // Echte Hauskapazitäten statt 100 Einwohner in einem einzelnen Testhaus.
+ add('markt',baseX+25,baseY+24);add('kapelle',baseX+25,baseY+32);
+ for(let row=0;row<4;row++)for(let col=0;col<4;col++){const tier=col<2&&row>=2?2:1;add('haus',baseX+35+col*4,baseY+24+row*4,{tier,pop:TIERS[tier].cap});}
+ for(let y=baseY+5;y<=baseY+43;y++)G.road[IDX(baseX+34,y)]=1;
+ for(let x=baseX;x<=baseX+34;x++)G.road[IDX(x,baseY+B.kontor.h)]=1;
+ for(let y=baseY+B.kontor.h;y<=baseY+5;y++)G.road[IDX(baseX+34,y)]=1;
+ for(let row=0;row<4;row++)for(let x=baseX+34;x<=baseX+51;x++)G.road[IDX(x,baseY+27+row*4)]=1;
+ for(let y=baseY+24;y<=baseY+37;y++)G.road[IDX(baseX+25+B.markt.w,y)]=1;
+ for(let x=baseX+25+B.markt.w;x<=baseX+34;x++)G.road[IDX(x,baseY+35)]=1;
+ for(let x=baseX+10;x<=baseX+51;x++)G.road[IDX(x,baseY+43)]=1;
  for(const owner of production.filter(b=>FIELD_RULES[b.type])){const rule=FIELD_RULES[owner.type];for(let i=0;i<rule.count;i++)add(rule.type,baseX+10+i*(rule.type==='gehege'?3:1)%16,baseY+(rule.type==='gehege'?59:55)+Math.floor(i/16)*3,{fieldOwner:owner.id});}
  rebuildNet();const counters=Object.fromEntries(PIXXO_CHAINS.map(c=>[c[4],G.cnt.prod[c[4]]||0]));for(let i=0;i<750;i++)step(.1);for(const chain of PIXXO_CHAINS)check((G.cnt.prod[chain[4]]||0)>counters[chain[4]],'Produktionskette erzeugt Ware in echter Simulation: '+chain[1]);
  localStorage.setItem(SAVEKEY,originalSaved);check(loadGame(),'Spielstand nach Regeländerungen ladbar');check(G.deposits.some(n=>n.type==='steinbruch'&&n.inMountain),'Bergabbauplätze bleiben beim Laden erhalten');

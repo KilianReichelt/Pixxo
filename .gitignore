@@ -1,0 +1,5 @@
+# Ignore local Pixxo archive created for backups or local transfers
+/Pixxo_lokal.zip
+
+# Ignore any other local zip archives (optional)
+# *.zip

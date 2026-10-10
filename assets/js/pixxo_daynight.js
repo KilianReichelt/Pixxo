@@ -5,6 +5,38 @@ function dayMinutes(){const c=dayClock();if(c.system){const now=new Date();retur
 function dayTimeLabel(){const m=Math.floor(dayMinutes());return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');}
 function twilightFade(value){const t=Math.max(0,Math.min(1,value));return t*t*(3-2*t);}
 function nightAmount(){const h=dayMinutes()/60;return h<5||h>=22?1:h<7?1-twilightFade((h-5)/2):h>=19?twilightFade((h-19)/3):0;}
+// Fog follows the night tint without changing discovery alpha.
+const dayPrepareFog=prepareFog;
+let nightFogCanvas=null,nightFogLevel=-1;
+function nightFogEdgeColor(){
+ const amount=nightAmount()*.58;
+ return 'rgb('+[189,201,208].map((channel,i)=>Math.round(channel*(1-amount)+[8,16,42][i]*amount)).join(',')+')';
+}
+prepareFog=function(){
+ const changed=fogDirty||fogFades.size>0||PERF_FOG.miniDirty,source=dayPrepareFog();if(!source)return source;
+ const level=Math.round(nightAmount()*100);if(level===0){nightFogLevel=-1;return source;}
+ if(!nightFogCanvas||nightFogCanvas.width!==source.width||nightFogCanvas.height!==source.height){
+  nightFogCanvas=document.createElement('canvas');nightFogCanvas.width=source.width;nightFogCanvas.height=source.height;nightFogLevel=-1;
+ }
+ if(changed||level!==nightFogLevel){
+  const c=nightFogCanvas.getContext('2d');c.clearRect(0,0,source.width,source.height);c.drawImage(source,0,0);
+  c.save();c.globalCompositeOperation='source-atop';c.fillStyle='rgba(8,16,42,'+(level/100*.58)+')';c.fillRect(0,0,source.width,source.height);c.restore();nightFogLevel=level;
+ }
+ return nightFogCanvas;
+};
+// The detailed map uses chunked fog instead of the minimap canvas.
+const dayFogChunk=fogChunk,nightFogChunks=new WeakMap();
+fogChunk=function(x,y){
+ const source=dayFogChunk(x,y),level=Math.round(nightAmount()*100);if(!level)return source;
+ const stamp=PERF_FOG.chunks.get(x+':'+y);let entry=nightFogChunks.get(source);
+ if(!entry||entry.level!==level||entry.stamp!==stamp){
+  const canvas=entry?.canvas||document.createElement('canvas');canvas.width=source.width;canvas.height=source.height;
+  const c=canvas.getContext('2d');c.drawImage(source,0,0);c.globalCompositeOperation='source-atop';
+  c.fillStyle='rgba(8,16,42,'+(level/100*.58)+')';c.fillRect(0,0,canvas.width,canvas.height);c.globalCompositeOperation='source-over';
+  entry={canvas,level,stamp};nightFogChunks.set(source,entry);
+ }
+ return entry.canvas;
+};
 const dayStepWorld=stepWorld;stepWorld=function(dt){dayStepWorld(dt);const c=dayClock();if(c.enabled&&!c.system)c.minutes=(c.minutes+dt*1440/DAY_LENGTH_SECONDS)%1440;};
 const clockPopup=document.createElement('section');clockPopup.id='clock-popup';clockPopup.className='clock-popup';clockPopup.hidden=true;clockPopup.setAttribute('role','dialog');clockPopup.setAttribute('aria-label','Tageszeit');
 clockPopup.innerHTML='<div class="clock-heading"><strong>Tageszeit</strong><button type="button" class="btn" data-clock-close aria-label="Tageszeit schließen">×</button></div><p data-clock-label></p><label><input type="checkbox" data-clock-enabled> Tag/Nacht-Wechsel</label><label><input type="checkbox" data-clock-system> Mit Systemuhr koppeln</label><form data-clock-form><label for="clock-time">Zu einer Uhrzeit springen</label><div class="clock-jump"><input id="clock-time" type="time" value="12:00" required><button class="btn" type="submit">Übernehmen</button></div></form><p class="small">Ein Spieltag dauert 20 Minuten bei normalem Tempo. Der Zeitsprung behält den eingestellten Wechsel bei. Zum Festhalten einer Uhrzeit schalte den Wechsel aus.</p>';

@@ -47,7 +47,7 @@ drawWorldFog=function(c,x0,y0,x1,y1){
  if(!fogCacheState())return;
  const unit=FOG_CHUNK_SIZE*16,cx0=Math.max(0,Math.floor(x0/unit)),cy0=Math.max(0,Math.floor(y0/unit)),cx1=Math.min(Math.ceil(MAPW/FOG_CHUNK_SIZE)-1,Math.floor(x1/unit)),cy1=Math.min(Math.ceil(MAPH/FOG_CHUNK_SIZE)-1,Math.floor(y1/unit));
  for(let cy=cy0;cy<=cy1;cy++)for(let cx=cx0;cx<=cx1;cx++){const canvas=fogChunk(cx,cy);nativeDrawImage.call(c,canvas,cx*unit,cy*unit,canvas.width*16,canvas.height*16);}
- c.fillStyle='#bdc9d0';if(x0<0)c.fillRect(x0,y0,-x0,y1-y0);if(y0<0)c.fillRect(0,y0,MAPW*16,-y0);if(x1>MAPW*16)c.fillRect(MAPW*16,y0,x1-MAPW*16,y1-y0);if(y1>MAPH*16)c.fillRect(0,MAPH*16,MAPW*16,y1-MAPH*16);
+ c.fillStyle=nightFogEdgeColor();if(x0<0)c.fillRect(x0,y0,-x0,y1-y0);if(y0<0)c.fillRect(0,y0,MAPW*16,-y0);if(x1>MAPW*16)c.fillRect(MAPW*16,y0,x1-MAPW*16,y1-y0);if(y1>MAPH*16)c.fillRect(0,MAPH*16,MAPW*16,y1-MAPH*16);
 };
 function invalidateTerrainCells(x,y,w=1,h=1){
  if(land?._tiles!==G.tiles)return;

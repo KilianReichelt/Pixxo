@@ -12,7 +12,7 @@ references = re.findall(
     r'<(?:script|link)\b[^>]*(?:src|href)=["\x27]([^"\x27]+)',
     entry.read_text(encoding='utf-8'),
 )
-files = [entry, root / "index.html", root / ".nojekyll", root / "assets/pixxo-logo.svg"]
+files = [entry, root / "index.html", root / ".nojekyll", root / "assets/pixxo-logo.svg", root / "assets/start-world.png"]
 for reference in references:
     source = (root / reference).resolve()
     if not source.is_relative_to(root) or not source.is_file():
@@ -20,6 +20,10 @@ for reference in references:
     if source not in files:
         files.append(source)
 instructions = (root / 'Spielstart.txt').read_bytes()
+music = sorted((root / 'assets/music/compressed').glob('*.mp3'))
+if len(music) != 12:
+    raise ValueError('Es werden zwölf komprimierte Musikdateien benötigt.')
+files.extend(music)
 
 with zipfile.ZipFile(temporary, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as package:
     for source in files:

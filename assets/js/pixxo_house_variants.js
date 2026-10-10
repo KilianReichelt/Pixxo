@@ -2,6 +2,29 @@
 function houseVariant(b){if(!Number.isInteger(b.visualVariant)||b.visualVariant<0||b.visualVariant>2)b.visualVariant=Math.floor(hs(b.id,b.island||0,WORLD?.rootSeed||G.seed)*3);return b.visualVariant;}
 const variantPlace=place;place=function(...args){const result=variantPlace(...args);if(result.ok&&result.b.type==='haus')result.b.visualVariant=Math.floor(Math.random()*3);return result;};
 const HOUSE_VARIANT_BASES=new Map();
-function houseVariantSprite(b){const variant=houseVariant(b),base=typeSprite('haus',b.tier),key=base+'_variant'+variant;if(!HD_CATALOG.has(key)||HOUSE_VARIANT_BASES.get(key)!==SP[base]){HOUSE_VARIANT_BASES.set(key,SP[base]);for(const name of Object.keys(SP))if(name.startsWith(key+'_rotation')){delete SP[name];delete SPB[name];HD_CATALOG.delete(name);delete urlC[name];}const source=smallPixelSource(SP[base]),g=source.getContext('2d'),image=g.getImageData(0,0,source.width,source.height),data=image.data;for(let y=0;y<source.height;y++)for(let x=0;x<source.width;x++){const i=(y*source.width+x)*4;if(!data[i+3])continue;const r=data[i],green=data[i+1],blue=data[i+2];if(variant===1&&r>green*1.15&&green>blue*1.1){data[i]=Math.min(255,r*.82);data[i+1]=Math.min(255,green*1.07);data[i+2]=Math.min(255,blue*1.28);}else if(variant===2&&Math.max(r,green,blue)-Math.min(r,green,blue)<55&&r>90){data[i]=Math.min(255,r*1.04);data[i+1]=green*.92;data[i+2]=blue*.79;}}g.putImageData(image,0,0);if(variant){const x=Math.floor(source.width*(variant===1?.3:.68)),y=Math.floor(source.height*.18);g.fillStyle='#44372e';g.fillRect(x,y,3,6);g.fillStyle='#ad8c69';g.fillRect(x,y,2,5);g.fillStyle='#dac29a';g.fillRect(x-1,y,4,1);}if(variant===2){const x=Math.floor(source.width*.38),y=Math.floor(source.height*.55);g.fillStyle='#483d2d';g.fillRect(x,y,5,4);g.fillStyle='#d2bf88';g.fillRect(x+1,y+1,3,2);g.fillStyle='#514834';g.fillRect(x+2,y+1,1,2);}const m=SPB[base];publishPixel(key,source,SP[base].width,SP[base].height,{tw:m.tw,th:m.th,ex:m.ex,hub:m.hub,smoke:m.smoke});}return rotatedSprite(key,b.rotation||0);}
+function houseVariantSprite(b){
+ const variant=houseVariant(b),base=typeSprite('haus',b.tier),key=base+'_variant'+variant;
+ if(!HD_CATALOG.has(key)||HOUSE_VARIANT_BASES.get(key)!==SP[base]){
+  HOUSE_VARIANT_BASES.set(key,SP[base]);
+  for(const name of Object.keys(SP))if(name.startsWith(key+'_rotation')){delete SP[name];delete SPB[name];HD_CATALOG.delete(name);delete urlC[name];}
+  // Clone the native artwork, not its downscaled logical sprite. Keep every
+  // roof tile, window and facade pixel before recoloring or quarter-turning.
+  const original=HD_CATALOG.get(base)?.pixelSource||SP[base],source=document.createElement('canvas');
+  source.width=original.width;source.height=original.height;
+  const g=source.getContext('2d');g.imageSmoothingEnabled=false;nativeDrawImage.call(g,original,0,0);
+  const image=g.getImageData(0,0,source.width,source.height),data=image.data;
+  for(let y=0;y<source.height;y++)for(let x=0;x<source.width;x++){
+   const i=(y*source.width+x)*4;if(!data[i+3])continue;
+   const r=data[i],green=data[i+1],blue=data[i+2];
+   if(variant===1&&r>green*1.15&&green>blue*1.1){data[i]=Math.min(255,r*.82);data[i+1]=Math.min(255,green*1.07);data[i+2]=Math.min(255,blue*1.28);}
+   else if(variant===2&&Math.max(r,green,blue)-Math.min(r,green,blue)<55&&r>90){data[i]=Math.min(255,r*1.04);data[i+1]=green*.92;data[i+2]=blue*.79;}
+  }
+  g.putImageData(image,0,0);
+  if(variant){const x=Math.floor(source.width*(variant===1?.3:.68)),y=Math.floor(source.height*.18);g.fillStyle='#44372e';g.fillRect(x,y,3,6);g.fillStyle='#ad8c69';g.fillRect(x,y,2,5);g.fillStyle='#dac29a';g.fillRect(x-1,y,4,1);}
+  if(variant===2){const x=Math.floor(source.width*.38),y=Math.floor(source.height*.55);g.fillStyle='#483d2d';g.fillRect(x,y,5,4);g.fillStyle='#d2bf88';g.fillRect(x+1,y+1,3,2);g.fillStyle='#514834';g.fillRect(x+2,y+1,1,2);}
+  const m=SPB[base];publishPixel(key,source,SP[base].width,SP[base].height,{tw:m.tw,th:m.th,ex:m.ex,hub:m.hub,smoke:m.smoke});
+ }
+ return rotatedSprite(key,b.rotation||0);
+}
 const houseVariantSpName=spName;spName=function(b){return b.type==='haus'?houseVariantSprite(b):houseVariantSpName(b);};
 const houseVariantWorkshop=workshopSprite;workshopSprite=function(b){return b.type==='haus'?houseVariantSprite(b):houseVariantWorkshop(b);};

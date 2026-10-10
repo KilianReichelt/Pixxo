@@ -4,6 +4,7 @@
 <title>Pixxo</title>
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="stylesheet" href="assets/css/pixxo.css">
+<link rel="stylesheet" href="assets/css/pixxo_start.css">
 <style>
 :root{--ink:#f3e6c8;--muted:#b9a67f;--gold:#f0c24a;--good:#9ad66a;--bad:#e8806a;--edge:#0d0803;--topH:52px;
  --c3:polygon(0 3px,3px 3px,3px 0,calc(100% - 3px) 0,calc(100% - 3px) 3px,100% 3px,100% calc(100% - 3px),calc(100% - 3px) calc(100% - 3px),calc(100% - 3px) 100%,3px 100%,3px calc(100% - 3px),0 calc(100% - 3px));--mm:140px}
@@ -122,7 +123,7 @@ html,body{font-family:LowresPixel,'Segoe UI',Arial,sans-serif;font-size:20px;lin
 #islandfacts{position:fixed;right:8px;bottom:calc(var(--mm) + 32px);z-index:18;width:260px;background:#21190f;border:3px solid #806343;padding:10px;color:var(--ink)}.factfert{display:flex;flex-wrap:wrap;gap:3px 10px;font-size:18px;margin:6px 0}.factfert span{white-space:nowrap}#islandfacts .mini{width:100%;margin-top:6px}#islandfacts b{font-size:20px}
 @media(max-width:760px){#islandfacts{bottom:calc(var(--mm) + 144px);width:220px;padding:6px}.maptools{top:calc(var(--topH) + 8px);bottom:auto;max-width:220px}.maptools button[data-map="left"],.maptools button[data-map="right"],.maptools button[data-map="up"],.maptools button[data-map="down"]{display:none}}
 
-:root{--mm:164px}#top{align-items:center;gap:6px;padding:6px 8px}#top>.sp{display:none}#top>.chip,#top>.worldname{order:0}#top>#goodsbar{order:1;flex:1 1 440px;width:auto;max-width:100%;min-width:0;padding:0;height:56px;min-height:56px}#top>.speeds{order:2}#top>.navbtn:not(.worldname){order:3}#top button{height:56px;max-height:56px;box-sizing:border-box;align-items:center;justify-content:center}#top .chip{padding:3px 8px}#top .reschip{height:56px;padding:5px 8px}#top .rate{line-height:1.1}#top .chip b{line-height:1.1}.speeds .tb{width:48px}.maptools{position:static!important;display:flex!important;align-items:center;justify-content:space-between;flex-wrap:nowrap;width:100%;max-width:none;gap:3px;background:#21190f;padding:4px 0 0;border:0}.maptools button{padding:0;font-size:20px}.maptools span{font-size:18px;text-align:center;flex:1}#mmw{bottom:8px}#mm{width:var(--mm);height:var(--mm)}#islandfacts{bottom:calc(var(--mm) + 84px)}#bar{max-width:calc(100vw - var(--mm) - 36px)}#items{max-width:calc(100vw - var(--mm) - 36px)}
+:root{--mm:164px}#top{align-items:center;gap:6px;padding:6px 8px}#top>.sp{display:none}#top>.chip,#top>.worldname{order:0}#top>#goodsbar{order:1;flex:1 1 440px;width:auto;max-width:100%;min-width:0;padding:0;height:56px;min-height:56px}#top>.speeds{order:2}#top>.navbtn:not(.worldname){order:3; min-width: 80px;}#top button{height:56px;max-height:56px;box-sizing:border-box;align-items:center;justify-content:center}#top .chip{padding:3px 8px}#top .reschip{height:56px;padding:5px 8px}#top .rate{line-height:1.1}#top .chip b{line-height:1.1}.speeds .tb{width:48px}.maptools{position:static!important;display:flex!important;align-items:center;justify-content:space-between;flex-wrap:nowrap;width:100%;max-width:none;gap:3px;background:#21190f;padding:4px 0 0;border:0}.maptools button{padding:0;font-size:20px}.maptools span{font-size:18px;text-align:center;flex:1}#mmw{bottom:8px}#mm{width:var(--mm);height:var(--mm)}#islandfacts{bottom:calc(var(--mm) + 84px)}#bar{max-width:calc(100vw - var(--mm) - 36px)}#items{max-width:calc(100vw - var(--mm) - 36px)}
 @media(max-width:760px){:root{--mm:112px}#top{gap:4px}#top>#goodsbar{flex:1 1 100%;order:4}#top .chip.pop{display:flex}#top .navbtn{padding:3px 5px}.speeds .tb{width:44px}#mmw{bottom:8px}#bar{max-width:calc(100vw - var(--mm) - 36px);width:max-content}#items{max-width:calc(100vw - 16px)}#islandfacts{bottom:calc(var(--mm) + 84px);width:220px}#hint{bottom:112px}body.items #hint{bottom:350px}}
 
 .q.done{opacity:1}.cost{row-gap:6px}.btn:disabled,.mini:disabled{opacity:.6}.wb{scroll-padding:12px}
@@ -136,7 +137,7 @@ html,body{font-size:16px;line-height:1.5}button,input,select,textarea,.rate,.qch
 .maptools{padding-top:2px;gap:0;min-height:44px}.maptools button{position:relative;isolation:isolate;background:transparent;border:0;font-size:16px!important;padding:0}.maptools button::before{content:'';position:absolute;width:24px;height:24px;left:10px;top:10px;background:#2a1d10;border:1px solid #a88b58;z-index:-1}.maptools button:hover::before{background:#5c4425}#islandfacts{bottom:calc(var(--mm) + 80px)}
 @media(max-width:760px){#top .navbtn,#top .chip b,#top .reschip,#bar .cb{font-size:16px!important}#bar{width:calc(100vw - var(--mm) - 36px);max-width:calc(100vw - var(--mm) - 36px)}#bar .cb{flex:0 0 76px;min-width:76px}#items{width:calc(100vw - 16px);max-width:calc(100vw - 16px);bottom:calc(var(--barH,80px) + 16px)}#hint{bottom:calc(var(--barH,80px) + 16px)}body.items #hint{bottom:calc(var(--barH,80px) + var(--itemsH,200px) + 24px)}}
 
-#bar{width:min(1000px,calc(100vw - var(--mm) - 88px));max-width:calc(100vw - var(--mm) - 88px)}#barToggle{position:fixed;z-index:21;left:calc(var(--barW,800px) + 16px);bottom:calc(var(--barH,80px) / 2 - 14px);width:44px;height:44px;min-width:44px;min-height:44px;border:2px solid #806343;background:#21190f;color:var(--ink);padding:0}#bar .shiptile{flex:0 0 150px;min-width:150px}.shipthumb{display:inline-flex;position:relative}.activity{position:absolute;right:-16px;bottom:0;background:#21190f;border:1px solid #806343;padding:1px}.fleetempty{display:flex;align-items:center;padding:8px}.shipname{display:grid;gap:4px;margin:10px 0}.shipname input{width:100%;min-height:44px;background:#15110b;color:var(--ink);font:inherit;padding:6px;border:2px solid #806343}
+#bar{width:min(1000px,calc(100vw - var(--mm) - 88px));max-width:calc(100vw - var(--mm) - 88px)}#barToggle{position:fixed;z-index:21;left:calc(var(--barW,800px) + 16px);bottom:calc(var(--barH,80px) / 2 - 14px);width:44px;height:44px;min-width:44px;min-height:44px;border:2px solid #806343;background:#21190f;color:var(--ink);padding:0}#bar .shiptile{flex:0 0 160px;min-width:150px}.shipthumb{display:inline-flex;position:relative}.activity{position:absolute;right:-16px;bottom:0;background:#21190f;border:1px solid #806343;padding:1px}.fleetempty{display:flex;align-items:center;padding:8px}.shipname{display:grid;gap:4px;margin:10px 0}.shipname input{width:100%;min-height:44px;background:#15110b;color:var(--ink);font:inherit;padding:6px;border:2px solid #806343}
 @media(max-width:760px){#bar{width:calc(100vw - var(--mm) - 88px);max-width:calc(100vw - var(--mm) - 88px)}}
 
 #bar{height:86px;min-height:86px;max-height:86px}#bar .cb,#bar .shiptile{height:66px;min-height:66px;max-height:66px}.fleetempty{height:66px}.reschip{gap:5px;padding:3px 6px!important}.reschip b{min-width:18px;text-align:right}
@@ -900,7 +901,7 @@ function canPlace(type,x,y){
   if(t===T.ROCK)rock++;else if(t===T.ORE)ore++;
   else if(!BUILDABLE(t))return {ok:false,why:t<=T.SHAL?'Platziere das Gebäude an Land.':'Nicht bebaubar'};
  }
- if(rock+ore>0&&!pixxoMountainSite(type,x,y))return {ok:false,why:'Platziere dieses Gebäude auf Grünland.'};
+ if(rock+ore>0&&!pixxoMountainSite(type,x,y))return {ok:false,why:'Kann hier nicht platziert werden.'};
  if(d.place==='coast'&&!pixxoCoastSide(x,y,d.w,d.h))return {ok:false,why:'Muss an der Küste stehen'};
 
  const c=type==='kontor'&&!G.blds.some(b=>b.type==='kontor')?{}:d.cost;
@@ -1152,7 +1153,7 @@ function step(dt){
   }else if(d.kind==='svc'){b.status=b.conn?'In Betrieb':'Kein Straßenanschluss'}
   else if(b.type==='haus'){
    const t=TIERS[b.tier];
-   if(!b.conn){b.mood=0;b.supplyTime=0;b.status='Kein Straßenanschluss';b.pop=Math.max(0,b.pop-t.cap/30*dt);continue}
+   if(!b.conn){b.mood=0;b.supplyTime=0;b.status='Kein Straßenanschluss';pixxoHousePopulationStep(b,0,dt,30);continue}
    let ok=0,tot=0;
    t.svc.forEach(s=>{tot++;if(b.cov[s])ok++});
    for(const g in t.goods){
@@ -1162,7 +1163,7 @@ function step(dt){
    }
    for(const [g,rate] of Object.entries({...additionalHouseGoods(b),...t.luxury}))supplyHouseGood(b,g,rate,dt);
    b.mood=ok/tot;b.supplyTime=b.mood===1?(b.supplyTime||0)+dt:0;
-   const target=pixxoHouseCapacity(b);b.pop=target>b.pop?Math.min(target,b.pop+t.cap/40*dt):Math.max(target,b.pop-t.cap/60*dt);
+   const target=pixxoHouseCapacity(b);pixxoHousePopulationStep(b,target,dt);
    b.status=b.mood>=.7?'Zufrieden':b.mood>=.4?'Unzufrieden':'Verelendet';
    tax+=houseIncome(b)/60*dt;
   }
@@ -1218,7 +1219,7 @@ function packIsland(g){return {cpu:g.cpu,gold:g.cpu?g.gold:undefined,seed:g.seed
 function unpackIsland(o,shared=null){newGame(o.seed,o.mapStyle||0,shared);G.cpu=o.cpu||null;if(G.cpu)G.gold=Number.isFinite(o.gold)?o.gold:3000;G.stock=Object.assign(G.stock,o.stock);G.nid=o.nid||1;G.quests=o.quests||{};G.gotStart=!!o.gotStart;G.nextFire=o.nextFire||900;G.cnt=Object.assign(G.cnt,o.cnt||{});G.carts=(o.carts||[]).filter(c=>c.qty>0&&Array.isArray(c.path)&&c.path.length);
  (o.roads||[]).forEach(i=>{if(i>=0&&i<G.road.length)G.road[i]=1});(o.stoneRoads||[]).forEach(i=>{if(i>=0&&i<G.road.length)G.road[i]=2});G.roads=(o.roads||[]).length;
  (o.blds||[]).forEach(s=>{const d=B[s.type];if(!d)return;const b={...s,island:activeIsland,...(s.type==='ruine'?{w:s.w||3,h:s.h||3}:buildingSize(s.type,s.rotation||0)),rotation:s.rotation||0,tier:s.tier||1,pop:s.pop||0,conn:false,acc:-1,eff:1,status:'',need:s.need||{},sat:s.sat||{},mood:0,cov:{},age:0};G.blds.push(b);G.byId.set(b.id,b);for(const [x,y] of footprintCells(b.x,b.y,b.w,b.h)){const k=IDX(x,y);G.occ[k]=b.id;if(G.tiles[k]===T.FOREST)G.tiles[k]=T.GRASS}});G.deposits=createDeposits(G.tiles,G.seed);for(const b of G.blds)if(['mine','steinbruch'].includes(b.type)&&!G.deposits.some(d=>d.type===b.type&&d.x===b.x&&d.y===b.y))G.deposits.push({type:b.type,x:b.x,y:b.y,legacy:true});G.dirty=true;return G;}
-function saveGame(){try{if(!WORLD)resetWorld();WORLD.islands[activeIsland]=G;localStorage.setItem(SAVEKEY,JSON.stringify({v:9,geometryVersion:3,archipelagoVersion:ARCHIPELAGO_VERSION,terrainVersion:PIXXO_TERRAIN_VERSION,cpuInitialized:WORLD.cpuInitialized,dayClock:WORLD.dayClock,loan:WORLD.loan,questSeen:WORLD.questSeen,geometryScale:BUILDING_SCALE,terrainBaseSize:TERRAIN_BASE_SIZE,fieldModulesVersion:2,mapWidth:MAPW,mapHeight:MAPH,islandSize:ISLAND_SIZE,fog:WORLD.fog?{cells:packFogCells(WORLD.fog.cells),islands:WORLD.fog.islands}:null,islandNames:ISLANDS.map(m=>m.customName||null),islandProfiles:typeof savedIslandProfiles==='function'?savedIslandProfiles():undefined,layout:ISLANDS.map(({ox,oy,wx,wy,x,y})=>({ox,oy,wx,wy,x,y})),tutorial:WORLD.tutorial,rootSeed:WORLD.rootSeed,gold:G.gold,time:G.time,active:activeIsland,quests:WORLD.quests,pins:WORLD.pins,highestTier:WORLD.highestTier,fleet:WORLD.fleet,routes:WORLD.routes,nextId:WORLD.nextId,islands:WORLD.islands.map(g=>g?packIsland(g):null)}));}catch(e){msg('Spielstand konnte nicht gespeichert werden.','i_alert')}}
+function saveGame(){try{if(!WORLD)resetWorld();WORLD.islands[activeIsland]=G;localStorage.setItem(SAVEKEY,JSON.stringify({v:9,geometryVersion:3,archipelagoVersion:ARCHIPELAGO_VERSION,terrainVersion:PIXXO_TERRAIN_VERSION,cpuInitialized:WORLD.cpuInitialized,dayClock:WORLD.dayClock,weather:WORLD.weather,loan:WORLD.loan,questSeen:WORLD.questSeen,geometryScale:BUILDING_SCALE,terrainBaseSize:TERRAIN_BASE_SIZE,fieldModulesVersion:2,mapWidth:MAPW,mapHeight:MAPH,islandSize:ISLAND_SIZE,fog:WORLD.fog?{cells:packFogCells(WORLD.fog.cells),islands:WORLD.fog.islands}:null,islandNames:ISLANDS.map(m=>m.customName||null),islandProfiles:typeof savedIslandProfiles==='function'?savedIslandProfiles():undefined,layout:ISLANDS.map(({ox,oy,wx,wy,x,y})=>({ox,oy,wx,wy,x,y})),tutorial:WORLD.tutorial,rootSeed:WORLD.rootSeed,gold:G.gold,time:G.time,active:activeIsland,quests:WORLD.quests,pins:WORLD.pins,highestTier:WORLD.highestTier,fleet:WORLD.fleet,routes:WORLD.routes,nextId:WORLD.nextId,islands:WORLD.islands.map(g=>g?packIsland(g):null)}));}catch(e){msg('Spielstand konnte nicht gespeichert werden.','i_alert')}}
 function loadGame(){let o;try{o=JSON.parse(localStorage.getItem(SAVEKEY))}catch{return false}if(!o||![2,3,4,5,6,7,8,9].includes(o.v))return false;setWorldSize(o.mapWidth||896,o.mapHeight||672,o.islandSize||112);const packed=o.v===2?[o]:o.islands,root=o.rootSeed||packed.find(Boolean).seed;let previousLayout;if(o.v===5){legacyLayout(root);previousLayout=ISLANDS.map(m=>({ox:m.ox,oy:m.oy}))}if(o.v>=6)preferredLayout=o.layout;activeIsland=0;newGame(root,packed.find(Boolean).mapStyle??0);resetWorld();const board=WORLD.board;WORLD.islands=ISLANDS.map(()=>null);for(let i=0;i<packed.length;i++){if(!packed[i])continue;activeIsland=i;const data=JSON.parse(JSON.stringify(packed[i]));if(o.v===5){const dx=ISLANDS[i].ox-previousLayout[i].ox,dy=ISLANDS[i].oy-previousLayout[i].oy;data.blds.forEach(b=>{b.x+=dx;b.y+=dy});data.roads=(data.roads||[]).map(k=>IDX(k%MAPW+dx,Math.floor(k/MAPW)+dy));data.ship=null;}if(o.v===4){const dx=ISLANDS[i].ox-(i%4)*112,dy=ISLANDS[i].oy-Math.floor(i/4)*112;data.blds.forEach(b=>{b.x+=dx;b.y+=dy});data.roads=(data.roads||[]).map(k=>IDX(k%448+dx,Math.floor(k/448)+dy));data.ship=null;}if(o.v<4){data.blds.forEach(b=>{b.x+=ISLANDS[i].ox;b.y+=ISLANDS[i].oy;b.id+=i*100000});data.nid=(data.nid||1)+i*100000;data.roads=(data.roads||[]).map(k=>IDX(k%112+ISLANDS[i].ox,Math.floor(k/112)+ISLANDS[i].oy));data.ship=null;}const g=unpackIsland(data,board);for(const b of g.blds)for(const [x,y] of footprintCells(b.x,b.y,b.w,b.h))if((g.tiles[IDX(x,y)]<=T.SHAL||g.tiles[IDX(x,y)]===T.ROCK)&&!['mine','steinbruch'].includes(b.type))g.tiles[IDX(x,y)]=b.type==='kontor'?T.SAND:T.GRASS;WORLD.islands[i]=g;}WORLD.cpuInitialized=!!o.cpuInitialized;WORLD.dayClock=o.dayClock&&Number.isFinite(o.dayClock.minutes)?{minutes:((o.dayClock.minutes%1440)+1440)%1440,enabled:o.dayClock.enabled!==false,system:!!o.dayClock.system}:null;WORLD.loan=o.loan||null;WORLD.questSeen=o.questSeen||[];WORLD.fog=o.fog?{cells:restoreFogCells(o.fog.cells),islands:o.fog.islands}:null;WORLD.tutorial=o.tutorial||{done:true};WORLD.pins=(o.pins||DEFAULT_PINS).filter(k=>GN[k]);WORLD.fleet=o.fleet||[];WORLD.routes=o.routes||[];WORLD.nextId=o.nextId||1;WORLD.highestTier=o.highestTier||Math.max(1,...WORLD.islands.filter(g=>g&&!g.cpu).flatMap(g=>g.blds.filter(b=>b.type==='haus').map(b=>b.tier)));WORLD.quests=o.quests||Object.assign({},...WORLD.islands.filter(Boolean).map(g=>g.quests));for(const g of WORLD.islands)if(g){if(!g.cpu){g.quests=WORLD.quests;g.gold=o.gold;}g.time=o.time;g.speed=1;}activeIsland=WORLD.islands[o.active||0]?o.active||0:WORLD.islands.findIndex(Boolean);G=WORLD.islands[activeIsland];rebuildNet();if(!WORLD.fog)initFog(WORLD.islands.map((g,i)=>g&&!g.cpu?i:-1).filter(i=>i>=0));ISLANDS.forEach((m,i)=>{const name=o.islandNames?.[i];if(typeof name==='string'&&name.trim()&&name.length<=40){m.customName=name.trim();m.name=m.customName;}});fogDirty=true;return true;}
 
 
@@ -1374,7 +1375,7 @@ function drawBuildingWarnings(ctx,x0,y0,x1,y1){
   if(bx+width<x0||bx>x1||by+height<y0||by>y1)continue;
   const n=bubbleFor(b);if(!n||!SP[n])continue;
   ctx.save();ctx.translate(bx,by);ctx.scale(size,size);
-  ctx.drawImage(SP.bubble,0,0);ctx.drawImage(SP[n],2,2,16,16);
+  ctx.drawImage(SP.bubble,0,0);drawWarningIcon(ctx,n);
   ctx.restore();
  }
 }
@@ -1406,6 +1407,7 @@ function render(){
   const m=LAND_STEPS.reduce((mask,[dx,dy],i)=>mask|(rd(x+dx,y+dy)&&roadStepAllowed(x,y,x+dx,y+dy)?1<<i:0),0);
   drawRoadTile(ctx,m,G.road[IDX(x,y)]===2,x,y);
  }
+ drawWeatherPuddles(ctx,x0,y0,x1,y1);
  drawDeposits(ctx);
  drawGoodsRoutes(ctx);
  // Baugebiet
@@ -1442,7 +1444,7 @@ function render(){
  for(const e of ENT){
   switch(e[1]){
    case 4:{ctx.drawImage(SP[e[2]],e[3],e[4]);break}
-   case 0:{const x=e[2],y=e[3],s=SP[hs(x,y,9)<.5?'tree0':'tree1'];ctx.drawImage(s,x*16+Math.floor((hs(x,y,11)-.5)*4),y*16+16-s.height);break}
+   case 0:{const x=e[2],y=e[3],s=landscapeTreeSprite(x,y);ctx.drawImage(s,x*16+Math.floor((hs(x,y,11)-.5)*4),y*16+16-s.height);break}
    case 1:drawBld(ctx,e[2]);break;
    case 2:drawWagon(ctx,e[2],e[3],e[4],e[5]??1);break;
    case 5:drawStreetPerson(ctx,e);break;
@@ -1523,7 +1525,7 @@ function updateHint(){
  }
  const building=B[UI.type];
  if(['build','move'].includes(UI.tool)&&building?.transportRange)
-  html+=` · Transport: ${building.transportRange} Straßenfelder (hellblau, gestrichelter Rand)`;
+  html+=`Reichweite: ${building.transportRange} Felder`;
  if(UI.tool==='build'){
   const rule=FIELD_RULES[UI.type];
   if(rule)html+=` · Für volle Produktion: ${rule.count} Betriebsflächen mit je ${B[rule.type].w} × ${B[rule.type].h} Kacheln anlegen`;
@@ -1595,7 +1597,7 @@ cv.addEventListener('pointerdown',e=>{
  drag={sx:e.clientX,sy:e.clientY,lx:e.clientX,ly:e.clientY,moved:false,t,mode:'pan'};
  if(right){drag.mode='pan';drag.right=true;return}
  if(UI.tool==='road'||UI.tool==='demo'||UI.tool==='upgrade'){drag.mode='planned';beginConstructionPlan(t)}
- else if(UI.tool==='build'&&B[UI.type]?.kind==='field'&&B[UI.type].w===1){drag.mode='paint';drag.last=t;UI.paintFail='';paintCell(t.x,t.y)}
+ else if(UI.tool==='build'&&B[UI.type]?.kind==='field'){drag.mode='planned';beginConstructionPlan(t)}
  else if(UI.tool==='build'&&UI.touch){drag.mode='ghost';const g=UI.gpos,dd=B[UI.type];drag.onGhost=!!(g&&t.x>=g.x&&t.x<g.x+dd.w&&t.y>=g.y&&t.y<g.y+dd.h);if(!drag.onGhost)UI.ghostT=t}
 });
 cv.addEventListener('pointermove',e=>{
@@ -1818,13 +1820,13 @@ function infoHTML(){
 }
 
 /* ----- Lager & Handel ----- */
-function openWin_store(){openWin('store','Lager',storeHTML)}
+function openWin_store(){const window=openWin('store','Lager',storeHTML);window.body.tabIndex=0;window.body.setAttribute('role','region');window.body.setAttribute('aria-label','Warenliste');}
 function storeHTML(){
  const cap=capOf();
  let h='';
  if(!whList().length)return `<p>Noch kein Kontor gebaut.</p>`;
- h+=`<table class="tbl"><tr><th></th><th>Ware</th><th class="r">Lager</th><th class="r">Kapazität / Bedarf / Bilanz</th></tr>`;
- for(const g of GOODS){
+ h+=storeFiltersHTML()+`<table id="store-goods-table" class="tbl" aria-label="Freigeschaltete Waren"><tr><th scope="col"><span class="map-key-status">Symbol</span></th><th scope="col">Ware</th><th scope="col" class="r">Lager</th><th scope="col" class="r">Bilanz</th></tr>`;
+ for(const g of GOODS.filter(g=>storeGoodMatches(g.id))){
   const id=g.id,st=G.stock[id],flow=goodsBalance(id),net=flow.net;
   h+=`<tr><td>${ic(id,2)}</td><td>${g.n}</td><td class="r"><b>${Math.floor(st)}</b><span class="small">/${cap}</span>${bar(st/cap,st/cap>.9?'#d9a441':'#6aa0d8')}</td><td title="Tatsächlich: ${rateGood('prod',id).toFixed(2)} produziert / ${rateGood('cons',id).toFixed(2)} verbraucht pro Minute" class="r ${net>0.05?'good':net<-0.05?'bad':'small'}">${flow.production.toFixed(2)} / ${flow.demand.toFixed(2)} / ${Math.abs(net)<.05?'±0':sgn(net,1)}</td>`;
   h+=`</tr>`;
@@ -2047,7 +2049,7 @@ const baseRefreshWin=refreshWin;refreshWin=function(w){if(w.id==='route')return 
 
 const originalOpenWin=openWin;openWin=function(id,title,render,pos){const w=originalOpenWin(id,title,render,pos);w.el.querySelector('[data-close]').focus();return w};
 
-function canMoveBuilding(b,x,y){if(!b)return {ok:false,why:'Gebäude nicht gefunden'};const d=B[b.type];if(islandAt(x+b.w/2,y+b.h/2)!==b.island)return {ok:false,why:'Wähle einen freien Platz auf derselben Insel.'};if(['mine','steinbruch'].includes(b.type)&&!G.deposits.some(n=>n.type===b.type&&n.x===x&&n.y===y&&!n.legacy))return {ok:false,why:'Nur auf einen passenden freien Abbauplatz verschieben.'};if(b.fire>0)return {ok:false,why:'Lösche zuerst den Brand.'};if(x<0||y<0||x+b.w>MAPW||y+b.h>MAPH)return {ok:false,why:'Außerhalb der Karte'};let rock=0,ore=0;for(const [i,j] of footprintCells(x,y,b.w,b.h)){const k=IDX(i,j),t=G.tiles[k];if(G.occ[k]&&G.occ[k]!==b.id)return {ok:false,why:'Fläche belegt'};if(G.road[k])return {ok:false,why:'Straße im Weg'};if(t===T.ROCK)rock++;else if(t===T.ORE)ore++;else if(!BUILDABLE(t))return {ok:false,why:'Platziere das Gebäude an Land.'}}if(rock+ore&&!pixxoMountainSite(b.type,x,y))return {ok:false,why:'Platziere dieses Gebäude auf Grünland.'};if(d.place==='coast'&&!pixxoCoastSide(x,y,b.w,b.h))return {ok:false,why:'Muss an der Küste stehen'};return {ok:true}}
+function canMoveBuilding(b,x,y){if(!b)return {ok:false,why:'Gebäude nicht gefunden'};const d=B[b.type];if(islandAt(x+b.w/2,y+b.h/2)!==b.island)return {ok:false,why:'Wähle einen freien Platz auf derselben Insel.'};if(['mine','steinbruch'].includes(b.type)&&!G.deposits.some(n=>n.type===b.type&&n.x===x&&n.y===y&&!n.legacy))return {ok:false,why:'Nur auf einen passenden freien Abbauplatz verschieben.'};if(b.fire>0)return {ok:false,why:'Lösche zuerst den Brand.'};if(x<0||y<0||x+b.w>MAPW||y+b.h>MAPH)return {ok:false,why:'Außerhalb der Karte'};let rock=0,ore=0;for(const [i,j] of footprintCells(x,y,b.w,b.h)){const k=IDX(i,j),t=G.tiles[k];if(G.occ[k]&&G.occ[k]!==b.id)return {ok:false,why:'Fläche belegt'};if(G.road[k])return {ok:false,why:'Straße im Weg'};if(t===T.ROCK)rock++;else if(t===T.ORE)ore++;else if(!BUILDABLE(t))return {ok:false,why:'Platziere das Gebäude an Land.'}}if(rock+ore&&!pixxoMountainSite(b.type,x,y))return {ok:false,why:'Kann hier nicht platziert werden.'};if(d.place==='coast'&&!pixxoCoastSide(x,y,b.w,b.h))return {ok:false,why:'Muss an der Küste stehen'};return {ok:true}}
 function moveBuilding(b,x,y){const r=canMoveBuilding(b,x,y);if(!r.ok)return r;for(const [i,j] of footprintCells(b.x,b.y,b.w,b.h))G.occ[IDX(i,j)]=0;b.x=x;b.y=y;b.supplyTime=0;for(const [i,j] of footprintCells(x,y,b.w,b.h)){const k=IDX(i,j);G.occ[k]=b.id;if(G.tiles[k]===T.FOREST)G.tiles[k]=T.GRASS}G.dirty=true;rebuildNet();if(b.type==='kontor'){if(!G.gotStart)startColonist(b)}return {ok:true,b}}
 function downgradeHouse(b){if(b.type!=='haus'||b.tier<=1)return false;b.tier--;b.pop=Math.min(b.pop,TIERS[b.tier].cap);b.need={};b.sat={};b.supplyTime=0;G.dirty=true;msg('Haus zu '+TIERS[b.tier].n+' zurückgestuft.','i_houses');return true}
 
@@ -2202,7 +2204,7 @@ function revealSea(x,y,r=30){if(!WORLD.fog)return;const cells=WORLD.fog.cells;fo
 function updateFog(dt){if(!WORLD.fog)return;fogClock+=dt;if(fogClock<.2)return;fogClock=0;for(const sh of WORLD.fleet){if(sh.buildLeft>0)continue;let p=freeShipPosition(sh);if(sh.route&&sh.phase==='travel'){const path=routeWaterPath(sh.at,sh.to);if(path?.length){const t=clamp(1-(sh.remaining||0)/voyageTime(sh.at,sh.to,sh.type),0,1),q=path[Math.floor(t*(path.length-1))];p={x:q[0],y:q[1]}}}if(!p)continue;revealSea(p.x,p.y);for(let i=0;i<ISLANDS.length;i++){if(WORLD.fog.islands[i])continue;const m=ISLANDS[i];if(Math.hypot(p.x-m.wx,p.y-m.wy)<Math.min(55,m.size*56)+30){WORLD.fog.islands[i]=true;fogFades.set(i,UI.vt);fogDirty=true}}}}
 function prepareFog(){if(!WORLD?.fog)return null;if(!fogCanvas||fogCanvas.width!==FOG_W){fogCanvas=document.createElement('canvas');fogCanvas.width=FOG_W;fogCanvas.height=FOG_H}if(!fogDirty&&!fogFades.size)return fogCanvas;const c=fogCanvas.getContext('2d'),image=c.createImageData(FOG_W,FOG_H),pixels=image.data;const fading=new Map();for(const [i,start] of fogFades){const alpha=Math.max(0,1-(UI.vt-start)/1.4);if(alpha===0)fogFades.delete(i);else fading.set(i,alpha)}
  for(let y=0;y<FOG_H;y++)for(let x=0;x<FOG_W;x++){const k=y*FOG_W+x,owner=islandOwners[k];let alpha=1-WORLD.fog.cells[k]/255;if(owner>=0&&WORLD.fog.islands[owner])alpha=fading.get(owner)||0;const edge=Math.min(x,y,MAPW-1-x,MAPH-1-y);if(edge<12)alpha=1;else if(edge<20)alpha=Math.max(alpha,(20-edge)/8);const color=186+Math.floor(hs(x,y,31)*10)+Math.round(Math.sin((x+y)/29)*3),p=k*4;pixels[p]=color;pixels[p+1]=color+10;pixels[p+2]=color+16;pixels[p+3]=Math.round(alpha*255)}c.putImageData(image,0,0);fogDirty=false;return fogCanvas}
-function drawWorldFog(c,x0,y0,x1,y1){const image=prepareFog();if(!image)return;c.drawImage(image,0,0,MAPW*16,MAPH*16);c.fillStyle='#bdc9d0';if(x0<0)c.fillRect(x0,y0,-x0,y1-y0);if(y0<0)c.fillRect(0,y0,MAPW*16,-y0);if(x1>MAPW*16)c.fillRect(MAPW*16,y0,x1-MAPW*16,y1-y0);if(y1>MAPH*16)c.fillRect(0,MAPH*16,MAPW*16,y1-MAPH*16)}
+function drawWorldFog(c,x0,y0,x1,y1){const image=prepareFog();if(!image)return;c.drawImage(image,0,0,MAPW*16,MAPH*16);c.fillStyle=typeof nightFogEdgeColor==='function'?nightFogEdgeColor():'#bdc9d0';if(x0<0)c.fillRect(x0,y0,-x0,y1-y0);if(y0<0)c.fillRect(0,y0,MAPW*16,-y0);if(x1>MAPW*16)c.fillRect(MAPW*16,y0,x1-MAPW*16,y1-y0);if(y1>MAPH*16)c.fillRect(0,MAPH*16,MAPW*16,y1-MAPH*16)}
 function drawFogMini(c){const image=prepareFog();if(image)c.drawImage(image,0,0,MAPW,MAPH)}
 const fogStepWorld=stepWorld;stepWorld=function(dt){fogStepWorld(dt);updateFog(dt)};
 const fogClick=clickTile;clickTile=function(t){if(UI.tool!=='sail'&&WORLD.fog){const i=islandAt(t.x,t.y);if(i>=0&&!WORLD.fog.islands[i])return}fogClick(t)};
@@ -2302,11 +2304,14 @@ const rotationMove=moveBuilding;moveBuilding=function(b,x,y){const rotation=UI.t
 
 /* Lokale Musik und Spielgeräusche */
 const AUDIO_KEY='pixxo-audio';
-const Sound={ctx:null,music:null,effects:null,master:null,next:0,beat:0,timer:null,last:new Map(),played:0,prefs:{music:.28,effects:.6,muted:false},seenShips:new Map(),danger:false};
-try{const saved=JSON.parse(localStorage.getItem(AUDIO_KEY));if(saved){for(const k of ['music','effects'])if(Number.isFinite(saved[k]))Sound.prefs[k]=Math.max(0,Math.min(1,saved[k]));Sound.prefs.muted=!!saved.muted}}catch{}
-function audioLevels(){if(!Sound.ctx)return;const t=Sound.ctx.currentTime;Sound.music.gain.setTargetAtTime(Sound.prefs.music*.35,t,.08);Sound.effects.gain.setTargetAtTime(Sound.prefs.effects*.65,t,.03);Sound.master.gain.setTargetAtTime(Sound.prefs.muted||document.hidden?0:1,t,.06)}
+const AUDIO_CHANNELS=[['music','Musik'],['effects','Geräusche'],['ambient','Ambiente']];
+const Sound={ctx:null,music:null,effects:null,ambient:null,master:null,next:0,beat:0,timer:null,last:new Map(),played:0,prefs:{music:.28,effects:.6,ambient:.5,channelMuted:{music:false,effects:false,ambient:false},muted:false},seenShips:new Map(),danger:false};
+try{const saved=JSON.parse(localStorage.getItem(AUDIO_KEY));if(saved){for(const [k] of AUDIO_CHANNELS){if(Number.isFinite(saved[k]))Sound.prefs[k]=Math.max(0,Math.min(1,saved[k]));Sound.prefs.channelMuted[k]=!!(saved.channelMuted?.[k]||saved.muted);}Sound.prefs.muted=false;}}catch{}
+function audioChannelMuted(key){return Sound.prefs.muted||Sound.prefs.channelMuted[key];}
+function audioMuteButton(key,name){const muted=audioChannelMuted(key),label=name+': '+(muted?'Aus – einschalten':'An – stummschalten');return `<button type="button" class="btn audio-channel-mute" data-audio-channel-mute="${key}" aria-pressed="${muted}" aria-label="${label}" title="${label}">${muted?'Aus':'An'}</button>`;}
+function audioLevels(){if(!Sound.ctx)return;const t=Sound.ctx.currentTime;for(const [key] of AUDIO_CHANNELS)Sound[key].gain.setTargetAtTime(audioChannelMuted(key)?0:Sound.prefs[key]*(key==='music'?.35:.65),t,.06);Sound.master.gain.setTargetAtTime(document.hidden?0:1,t,.06)}
 function audioSave(){try{localStorage.setItem(AUDIO_KEY,JSON.stringify(Sound.prefs))}catch{}audioLevels()}
-function audioStart(){try{if(!Sound.ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return;Sound.ctx=new C();Sound.master=Sound.ctx.createGain();const limiter=Sound.ctx.createDynamicsCompressor();limiter.threshold.value=-18;limiter.ratio.value=5;Sound.master.connect(limiter);limiter.connect(Sound.ctx.destination);Sound.music=Sound.ctx.createGain();Sound.effects=Sound.ctx.createGain();Sound.music.connect(Sound.master);Sound.effects.connect(Sound.master);Sound.next=Sound.ctx.currentTime+.1;audioLevels();Sound.timer=setInterval(audioTick,250)}if(Sound.ctx.state==='suspended')Sound.ctx.resume().catch(()=>{});}catch{}}
+function audioStart(){try{if(!Sound.ctx){const C=window.AudioContext||window.webkitAudioContext;if(!C)return;Sound.ctx=new C();Sound.master=Sound.ctx.createGain();const limiter=Sound.ctx.createDynamicsCompressor();limiter.threshold.value=-18;limiter.ratio.value=5;Sound.master.connect(limiter);limiter.connect(Sound.ctx.destination);for(const [key] of AUDIO_CHANNELS){Sound[key]=Sound.ctx.createGain();Sound[key].connect(Sound.master);}Sound.next=Sound.ctx.currentTime+.1;audioLevels();Sound.timer=setInterval(audioTick,250)}if(Sound.ctx.state==='suspended')Sound.ctx.resume().catch(()=>{});}catch{}}
 function audioTone(freq,time,length,volume=.12,wave='sine',bus='effects',end=null){const c=Sound.ctx;if(!c||c.state!=='running')return;const o=c.createOscillator(),g=c.createGain();o.type=wave;o.frequency.setValueAtTime(freq,time);if(end)o.frequency.exponentialRampToValueAtTime(end,time+length);g.gain.setValueAtTime(0,time);g.gain.linearRampToValueAtTime(volume,time+Math.min(.035,length*.15));g.gain.exponentialRampToValueAtTime(.0001,time+length);o.connect(g);g.connect(Sound[bus]);o.start(time);o.stop(time+length+.02);o.onended=()=>{o.disconnect();g.disconnect()}}
 function audioNoise(time,length,volume=.12,cutoff=900){const c=Sound.ctx;if(!c||c.state!=='running')return;const buffer=c.createBuffer(1,Math.ceil(c.sampleRate*length),c.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*(1-i/data.length);const source=c.createBufferSource(),filter=c.createBiquadFilter(),gain=c.createGain();source.buffer=buffer;filter.type='lowpass';filter.frequency.value=cutoff;gain.gain.value=volume;source.connect(filter);filter.connect(gain);gain.connect(Sound.effects);source.start(time);source.onended=()=>{source.disconnect();filter.disconnect();gain.disconnect()}}
 function soundEffect(kind){const c=Sound.ctx;if(!c||c.state!=='running'||Sound.prefs.muted||!Sound.prefs.effects||document.hidden)return;const now=c.currentTime,wait={road:.075,click:.08,error:.6,danger:6,ship:1,trade:.4,production:4}[kind]||.15;if(now-(Sound.last.get(kind)??-100)<wait)return;Sound.last.set(kind,now);Sound.played++;
@@ -2330,7 +2335,7 @@ function audioTick(){const c=Sound.ctx;if(!c||c.state!=='running')return;if(docu
  if(G.speed>0&&c.currentTime-(Sound.last.get('production')??0)>12&&G.blds.some(b=>b.status==='Produziert'&&!b.paused))soundEffect('production');
 }
 document.addEventListener('pointerdown',audioStart,{capture:true});document.addEventListener('keydown',audioStart,{capture:true});document.addEventListener('visibilitychange',audioLevels);
-document.addEventListener('click',e=>{if(e.target.closest('button')&&!e.target.closest('[data-audio-mute]'))soundEffect('click')});
+document.addEventListener('click',e=>{if(e.target.closest('button')&&!e.target.closest('[data-audio-channel-mute]'))soundEffect('click')});
 const audioPlace=place;place=function(...args){const r=audioPlace(...args);if(r.ok)soundEffect('build');else soundEffect('error');return r};
 const audioRoad=placeRoad;placeRoad=function(...args){const r=audioRoad(...args);if(r)soundEffect('road');return r};
 const audioRoadUpgrade=roadUpgrade;roadUpgrade=function(...args){const r=audioRoadUpgrade(...args);if(r)soundEffect('road');return r};
@@ -2341,9 +2346,9 @@ const audioUpgradePort=upgradePort;upgradePort=function(b){const level=b.tier,r=
 const audioBuildShip=buildShip;buildShip=function(...args){const r=audioBuildShip(...args);soundEffect(r===true?'build':'error');return r};
 const audioSail=sailShip;sailShip=function(...args){const r=audioSail(...args);soundEffect(r===true?'ship':'error');return r};
 const audioMessages=MSGHOOK;MSGHOOK=function(t,i){audioMessages(t,i);if(/Feuer!|zerstört|brennt/.test(t))soundEffect('danger');else if(/gelöscht|Auftrag.*erfüllt|Kontor gegründet/.test(t))soundEffect('success');else if(/Händler|Handelsschiff|gekauft|verkauft/.test(t))soundEffect('trade');else if(i==='i_alert')soundEffect('error')};
-const audioMenu=menuHTML;menuHTML=function(){return `<section class="audio-settings"><div class="sect">Ton</div><label for="music-volume">Musik <output id="music-value">${Math.round(Sound.prefs.music*100)} %</output></label><input id="music-volume" type="range" min="0" max="100" step="1" value="${Math.round(Sound.prefs.music*100)}" data-audio="music"><label for="effects-volume">Geräusche <output id="effects-value">${Math.round(Sound.prefs.effects*100)} %</output></label><input id="effects-volume" type="range" min="0" max="100" step="1" value="${Math.round(Sound.prefs.effects*100)}" data-audio="effects"><button class="btn" data-audio-mute aria-pressed="${Sound.prefs.muted}">${Sound.prefs.muted?'Ton einschalten':'Ton ausschalten'}</button></section>`+audioMenu()};
-document.addEventListener('input',e=>{const k=e.target.dataset.audio;if(!['music','effects'].includes(k))return;audioStart();Sound.prefs[k]=Number(e.target.value)/100;document.getElementById(k+'-value').textContent=e.target.value+' %';audioSave()});
-document.addEventListener('click',e=>{const b=e.target.closest('[data-audio-mute]');if(!b)return;Sound.prefs.muted=!Sound.prefs.muted;audioSave();b.setAttribute('aria-pressed',String(Sound.prefs.muted));b.textContent=Sound.prefs.muted?'Ton einschalten':'Ton ausschalten'});
+const audioMenu=menuHTML;menuHTML=function(){return '<section class="audio-settings"><div class="sect">Ton</div>'+AUDIO_CHANNELS.map(([key,name])=>`<label for="${key}-volume">${name} <output id="${key}-value">${Math.round(Sound.prefs[key]*100)} %</output></label><input id="${key}-volume" type="range" min="0" max="100" step="1" value="${Math.round(Sound.prefs[key]*100)}" data-audio="${key}">${audioMuteButton(key,name)}`).join('')+'</section>'+audioMenu()};
+document.addEventListener('input',e=>{const k=e.target.dataset.audio;if(!AUDIO_CHANNELS.some(([key])=>key===k))return;audioStart();Sound.prefs[k]=Number(e.target.value)/100;document.getElementById(k+'-value').textContent=e.target.value+' %';audioSave()});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-audio-channel-mute]');if(!b)return;const key=b.dataset.audioChannelMute,channel=AUDIO_CHANNELS.find(([k])=>k===key);if(!channel)return;Sound.prefs.channelMuted[key]=!Sound.prefs.channelMuted[key];audioSave();for(const button of document.querySelectorAll('[data-audio-channel-mute="'+key+'"]')){const muted=audioChannelMuted(key),label=channel[1]+': '+(muted?'Aus – einschalten':'An – stummschalten');button.setAttribute('aria-pressed',String(muted));button.setAttribute('aria-label',label);button.title=label;button.textContent=muted?'Aus':'An';}});
 
 
 /* Baukosten nach Anno 1800. Stein ersetzt Ziegel, Werkzeug ersetzt Stahlträger.
@@ -2558,7 +2563,7 @@ const TRANSFERRED_SAVE_2D='eyJ2Ijo5LCJmb2ciOnsiY2VsbHMiOlswLDAsMCwwLDAsMCwwLDAsM
 
 </script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_gameplay.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_hd_art.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_pixel_art.js"></script><script onload="pixxoLoadProgress()" src="assets/sprites/sprite_data.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_imported_art.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_performance.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_navigation.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_ship_ui.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_archipelago.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_research.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_bricks.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_planning.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_depots.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_clay.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_item_navigation.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_deposit_navigation.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_field_art.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_island_names.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_trade_routes.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_trade_route_ui.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_cart_fade.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_ruins.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo_world_generation.js"></script><script onload="pixxoLoadProgress()" src="assets/js/pixxo.js"></script><script src="assets/js/pixxo_diagonal_roads.js"></script><script src="assets/js/pixxo_house_variants.js"></script><script src="assets/js/pixxo_streetlife.js"></script><script src="assets/js/pixxo_daynight.js"></script><script src="assets/js/pixxo_cpu.js"></script><script>requestAnimationFrame(()=>requestAnimationFrame(()=>{try{init();}catch(error){document.getElementById("pixxo-load-status").textContent="Laden fehlgeschlagen. Lade die Seite erneut.";console.error(error);}}));
 
-</script></body></html>
+</script><script src="assets/js/pixxo_goods_presentation.js"></script><script src="assets/js/pixxo_landscape_variants.js"></script><script src="assets/js/pixxo_mountain_terraces.js"></script><script src="assets/js/pixxo_weather.js"></script><script src="assets/js/pixxo_kontor_flag.js"></script><script src="assets/js/pixxo_field_rectangle.js"></script><script src="assets/js/pixxo_start_scene.js"></script><script src="assets/js/pixxo_start.js"></script></body></html>
 
 
 
