@@ -273,7 +273,7 @@ function pixxoMiningSprite(b){
  const frame=workshopRunning(b)&&!WORK_ART.reduced.matches?Math.floor(G.time*4+b.id)%4:0,side=node.anchor?.side||'south',key='b_'+b.type+'_berg_'+side+'_'+b.w+'x'+b.h+'_'+frame;
  if(!HD_CATALOG.has(key)){const entry=IMPORTED_ENTRIES.get(b.type+'_berg_'+side),extra=12;publishPixel(key,importedPixels(entry,frame),b.w*16,b.h*16+extra,{tw:b.w,th:b.h,ex:extra,hub:null,smoke:null});}return key;
 }
-function pixxoCattleSprite(b){if(b.type!=='gehege')return null;const g=WORLD.islands[b.island]||G,owner=g.byId.get(b.fieldOwner);if(owner?.type!=='rinderhof')return null;const frame=workshopRunning(owner)&&!WORK_ART.reduced.matches?Math.floor(G.time*3+b.id)%4:0,key='b_gehege_rinder_'+frame;if(!HD_CATALOG.has(key))publishPixel(key,importedPixels(IMPORTED_ENTRIES.get('gehege_rinder'),frame),b.w*16,b.h*16,{tw:b.w,th:b.h,ex:0,hub:null,smoke:null});return rotatedSprite(key,b.rotation||0);}
+function pixxoCattleSprite(b){if(b.type!=='gehege')return null;const g=WORLD.islands[b.island]||G,owner=g.byId.get(b.fieldOwner);return owner?.type==='rinderhof'?livestockEnclosureSprite(b,true):null;}
 const pixxoWorkshopSprite=workshopSprite;workshopSprite=function(b){if(pixxoCattleSprite(b))return pixxoCattleSprite(b);return ['mine','steinbruch'].includes(b.type)?pixxoMiningSprite(b)||pixxoWorkshopSprite(b):pixxoWorkshopSprite(b);};
 const pixxoSpName=spName;spName=function(b){if(pixxoCattleSprite(b))return pixxoCattleSprite(b);return ['mine','steinbruch'].includes(b.type)?pixxoMiningSprite(b)||pixxoSpName(b):pixxoSpName(b);};
 const pixxoBubbleFor=bubbleFor;bubbleFor=function(b){return B[b.type].kind==='decor'?null:pixxoBubbleFor(b);};

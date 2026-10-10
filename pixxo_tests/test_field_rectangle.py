@@ -29,6 +29,7 @@ with sync_playwright() as p:
     def screen(tile):
         return page.evaluate("""t=>({x:innerWidth/2+((t.x+.5)*16-UI.cam.x)*UI.sc/UI.DR,y:innerHeight/2+((t.y+.5)*16-UI.cam.y)*UI.sc/UI.DR})""",tile)
     start=fixture['start']
+    assert page.locator('#hint').is_hidden()
     a=screen(start)
     page.mouse.click(a['x'],a['y'])
     assert page.evaluate('fieldModules(G.byId.get(UI.fieldOwner)).length')==1
@@ -36,6 +37,7 @@ with sync_playwright() as p:
     b=screen(end)
     page.mouse.move(a['x'],a['y']);page.mouse.down();page.mouse.move(b['x'],b['y'],steps=10)
     assert page.evaluate("constructionPlan.tool==='fields' && constructionPlan.fields.valid.length===23")
+    assert page.locator('#hint').is_hidden()
     assert page.evaluate('fieldModules(G.byId.get(UI.fieldOwner)).length')==1
     page.mouse.up()
     assert page.evaluate('fieldModules(G.byId.get(UI.fieldOwner)).length')==24
@@ -69,10 +71,22 @@ with sync_playwright() as p:
         G.quests.u_schaefer=true;const farm=G.blds.find(b=>b.type==='farm');let owner;
         for(let y=farm.y-24;y<farm.y+24&&!owner;y++)for(let x=farm.x-24;x<farm.x+24;x++)if(canPlace('schaefer',x,y).ok){owner=place('schaefer',x,y).b;break;}
         if(!owner)throw Error('Keine Schäfer-Testfläche');UI.fieldOwner=owner.id;setTool('build','gehege');
-        beginConstructionPlan({x:owner.x-15,y:owner.y-15});updateConstructionPlan({x:owner.x+15,y:owner.y+15});finishConstructionPlan();
-        const modules=fieldModules(owner),occupied=new Set();if(modules.length!==4)throw Error('Gehegelimit nicht eingehalten');
-        for(const f of modules){if(f.w!==2||f.h!==3)throw Error('Gehegegröße falsch');for(const [x,y] of footprintCells(f.x,f.y,f.w,f.h)){const k=IDX(x,y);if(occupied.has(k))throw Error('Gehege überlappen');occupied.add(k);}}
+        if(fieldRectangleEnabled())throw Error('Gehege erlaubt Rechteck');beginConstructionPlan({x:owner.x,y:owner.y});if(constructionPlan)throw Error('Gehege startet Rechteckplan');
     }""")
+    for i in range(4):
+        tile=page.evaluate("""()=>{const owner=G.byId.get(UI.fieldOwner),d=buildingSize(UI.type,UI.rotation||0);for(let y=owner.y-15;y<=owner.y+15;y++)for(let x=owner.x-15;x<=owner.x+15;x++)if(canPlace('gehege',x,y).ok){const t={x:x+Math.floor(d.w/2),y:y+Math.floor(d.h/2)};centerOn(t.x+.5,t.y+.5);return t;}throw Error('Keine gültige Gehegeposition');}""")
+        pos=screen(tile)
+        if i==3:
+            page.locator('#cv').focus();page.keyboard.press('Enter')
+        else:
+            page.mouse.click(pos['x'],pos['y'])
+        assert page.evaluate('fieldModules(G.byId.get(UI.fieldOwner)).length')==i+1,(i,tile,page.evaluate('({type:UI.type,owner:UI.fieldOwner,fail:UI.paintFail,gpos:UI.gpos,hover:UI.hover})'))
+        assert page.evaluate('constructionPlan===null')
+    page.mouse.move(pos['x'],pos['y']);page.mouse.down();page.mouse.move(pos['x']+70,pos['y']+40,steps=5)
+    assert page.evaluate('constructionPlan===null')
+    page.mouse.up()
+    assert page.evaluate('fieldModules(G.byId.get(UI.fieldOwner)).length')==4
+    page.evaluate("""()=>{const modules=fieldModules(G.byId.get(UI.fieldOwner)),occupied=new Set();for(const f of modules){if(f.w!==2||f.h!==3)throw Error('Gehegegröße falsch');for(const [x,y] of footprintCells(f.x,f.y,f.w,f.h)){const k=IDX(x,y);if(occupied.has(k))throw Error('Gehege überlappen');occupied.add(k);}}}""")
     assert not errors,errors
     print('PASS: Einzelklick, Pointer-Rechteck, Vorschau, umgekehrtes Ziehen, Gelände, Belegung, Reichweite, Flächenlimit und Abbrechen.',report)
     browser.close()

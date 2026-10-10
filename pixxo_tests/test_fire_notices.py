@@ -19,18 +19,21 @@ with sync_playwright() as p:
         for(const text of ['Alle Betriebsflächen vorhanden','Gold fehlt','Ein Brand ist ausgebrochen','Der Brand wurde gelöscht','Ein Haus ist niedergebrannt','Forschung abgeschlossen']){msg(text,'i_alert');toast(text,'i_alert');}
         check(!box.children.length&&!UI.log.length&&!UI.unreadEvents,'Andere Meldungen in Hinweisen');
         const target={id:987654,type:'haus',x:20,y:20,w:2,h:2,tier:1,fire:0},station={id:987655,type:'feuer',x:22,y:20,w:2,h:2,conn:true,paused:false,fire:0};
-        const buildings=G.blds,route=deliveryPath;G.blds=[target,station];deliveryPath=()=>[IDX(21,22),IDX(22,22)];
+        const buildings=G.blds,route=deliveryPath,audio=soundEffect,ctx=Sound.ctx,heard=[];soundEffect=kind=>heard.push(kind);G.blds=[target,station];deliveryPath=()=>[IDX(21,22),IDX(22,22)];
         try{
-            check(pixxoIgnite(target),'Brand nicht gestartet');check(!box.children.length,'Erreichbare Feuerwehr erzeugt Warnung');
+            check(pixxoIgnite(target),'Brand nicht gestartet');check(!box.children.length&&!heard.length,'Erreichbare Feuerwehr erzeugt Warnung oder Ton');
             station.paused=true;pixxoWarnUnprotectedFire(target);check(box.children.length===1&&UI.unreadEvents===1,'Ungeschützter Brand ohne Warnung');
-            pixxoWarnUnprotectedFire(target);check(box.children.length===1,'Doppelte Brandwarnung');
+            pixxoWarnUnprotectedFire(target);check(box.children.length===1&&heard.filter(k=>k==='danger').length===1,'Doppelte Brandwarnung oder falscher Ton');
+            Sound.ctx={state:'running',currentTime:120};for(let i=0;i<20;i++)audioTick();
+            check(heard.filter(k=>k==='danger').length===1,'Periodische Brandtöne trotz einmaliger Warnung');Sound.ctx=ctx;
             toggleSidebar('events');check(box.children.length===1&&UI.unreadEvents===0,'Öffnen entfernt lesbare Warnung');
             toggleSidebar('events');check(!box.children.length&&!UI.log.length&&!UI.unreadEvents,'Gelesene Liste nicht geleert');
             pixxoWarnUnprotectedFire(target);check(!box.children.length,'Gelesener Brand erneut gemeldet');
             target.fire=0;pixxoIgnite(target);check(box.children.length===1,'Neuer Brand nicht gemeldet');
             toggleSidebar('events');toggleSidebar('quest');check(!box.children.length,'Tabwechsel leert Liste nicht');
             target.fire=0;station.paused=false;deliveryPath=()=>null;pixxoIgnite(target);check(box.children.length===1,'Feuerwehr ohne Straßenweg unterdrückt Warnung');
-        }finally{G.blds=buildings;deliveryPath=route;}
+            check(heard.filter(k=>k==='danger').length===3,'Neue ungeschützte Brände ohne eigenen Warnton');
+        }finally{G.blds=buildings;deliveryPath=route;soundEffect=audio;Sound.ctx=ctx;}
         const funds=G.gold,stock=G.stock,request=nextTierReq,effect=soundEffect;let sounds=0;
         try{G.gold=0;G.stock={holz:100};nextTierReq=()=>({ok:true,cost:{gold:100,holz:5}});soundEffect=()=>sounds++;
             check(upgradeHouse(target)===false&&sounds===0,'Geldmangel erzeugt Fehler oder Fehlerton');

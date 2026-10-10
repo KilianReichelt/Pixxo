@@ -23,7 +23,53 @@ function cpuCanDevelop(type){
  if(B[type]?.kind==='prod'&&!player.production.has(type)&&!cpu.production.has(type)&&cpu.production.size>=player.production.size+3)return false;
  return true;
 }
-function cpuBuild(type){if(!cpuCanDevelop(type))return false;const retries=G.cpu.retries??={};if(retries[type]>G.cpu.age)return false;const d=B[type];if(!d||!canAfford(d.cost))return false;const essential=['haus','markt','holzfaeller','saegewerk','fischer','feuer','kartoffelhof','brennerei','steinbruch','lager'].includes(type);if(!essential&&G.gold<(d.cost.gold||0)+1200)return false;const port=G.blds.find(b=>b.type==='kontor');if(!port)return false;let sites;if(['mine','steinbruch','lehmgrube'].includes(type))sites=G.deposits.filter(n=>n.type===type&&!nodeUsed(n));else{sites=[];for(let y=Math.max(ISLANDS[activeIsland].oy+2,port.y-30);y<Math.min(ISLANDS[activeIsland].oy+ISLAND_SIZE-2,port.y+32);y++)for(let x=Math.max(ISLANDS[activeIsland].ox+2,port.x-30);x<Math.min(ISLANDS[activeIsland].ox+ISLAND_SIZE-2,port.x+32);x++)if(canPlace(type,x,y).ok){let resource=0;if(d.env)for(let dy=-d.env.r;dy<=d.env.r;dy+=2)for(let dx=-d.env.r;dx<=d.env.r;dx+=2){const nx=Math.floor(x+d.w/2+dx),ny=Math.floor(y+d.h/2+dy);if(!INMAP(nx,ny))continue;const k=IDX(nx,ny);if(d.env.t==='tree'&&G.tiles[k]===T.FOREST||d.env.t==='fish'&&G.fish[k]||d.env.t==='rock'&&[T.ROCK,T.ORE].includes(G.tiles[k]))resource++;}sites.push({x,y,score:Math.hypot(x-port.x,y-port.y)-Math.min(28,resource*1.5)+footprintCells(x,y,d.w,d.h).filter(([x,y])=>G.tiles[IDX(x,y)]===T.FOREST).length*2});}}sites.sort((a,b)=>(a.score??Math.hypot(a.x-port.x,a.y-port.y))-(b.score??Math.hypot(b.x-port.x,b.y-port.y)));for(const site of sites.slice(0,80)){if(!canPlace(type,site.x,site.y).ok||!cpuPreservesRoadCorners(site.x,site.y,d.w,d.h))continue;const mock={x:site.x,y:site.y,w:d.w,h:d.h},endpoints=ringCells(mock).filter(([x,y])=>roadTileAllowed(x,y)&&!footprintCells(mock.x,mock.y,mock.w,mock.h).some(([a,b])=>a===x&&b===y)).sort((a,b)=>Math.hypot(a[0]-cx(port),a[1]-cy(port))-Math.hypot(b[0]-cx(port),b[1]-cy(port)));let path=null;for(const [x,y] of endpoints.slice(0,4)){let candidate;const cells=footprintCells(mock.x,mock.y,mock.w,mock.h).map(([x,y])=>IDX(x,y));for(const k of cells)G.occ[k]=-1;try{const hub=cpuRoadHub(port);candidate=hub===null?null:plannedRoadPath({x:hub%MAPW,y:Math.floor(hub/MAPW)},{x,y});}finally{for(const k of cells)G.occ[k]=0;}if(candidate&&candidate.every(k=>{const x=k%MAPW,y=Math.floor(k/MAPW);return x<mock.x||x>=mock.x+mock.w||y<mock.y||y>=mock.y+mock.h;})){path=candidate;break;}}if(!path||path.length>36||G.gold<(d.cost.gold||0)+path.filter(k=>!G.road[k]).length*ROAD_COST)continue;const result=place(type,site.x,site.y);if(!result.ok)continue;for(const k of path)placeRoad(k%MAPW,Math.floor(k/MAPW));rebuildNet();delete retries[type];return result.b;}retries[type]=G.cpu.age+90;return false;}
+const CPU_BUILD_JOBS=new WeakMap(),CPU_BUILD_SCAN_BUDGET=96;
+function cpuBuild(type){
+ if(CPU_BUILD_JOBS.has(G)&&CPU_BUILD_JOBS.get(G).type!==type)return false;
+ if(!cpuCanDevelop(type)){if(CPU_BUILD_JOBS.get(G)?.type===type)CPU_BUILD_JOBS.delete(G);return false;}
+ const retries=G.cpu.retries??={};if(retries[type]>G.cpu.age)return false;
+ const d=B[type];if(!d||!canAfford(d.cost)){if(CPU_BUILD_JOBS.get(G)?.type===type)CPU_BUILD_JOBS.delete(G);return false;}
+ const essential=['haus','markt','holzfaeller','saegewerk','fischer','feuer','kartoffelhof','brennerei','steinbruch','lager'].includes(type);
+ if(!essential&&G.gold<(d.cost.gold||0)+1200){CPU_BUILD_JOBS.delete(G);return false;}
+ const port=G.blds.find(b=>b.type==='kontor');if(!port){CPU_BUILD_JOBS.delete(G);return false;}
+ let job=CPU_BUILD_JOBS.get(G);
+ if(job&&job.type!==type)return false;
+ if(!job){const meta=ISLANDS[activeIsland];job={type,port:port.id,sites:[],x0:Math.max(meta.ox+2,port.x-30),x1:Math.min(meta.ox+ISLAND_SIZE-2,port.x+32),y0:Math.max(meta.oy+2,port.y-30),y1:Math.min(meta.oy+ISLAND_SIZE-2,port.y+32),cursor:0,index:0,endpoint:0,nextAt:0};
+  if(['mine','steinbruch','lehmgrube'].includes(type)){job.sites=G.deposits.filter(n=>n.type===type&&!nodeUsed(n)).map(n=>({...n}));job.scanned=true;}
+  CPU_BUILD_JOBS.set(G,job);
+ }
+ if(job.port!==port.id){CPU_BUILD_JOBS.delete(G);return false;}
+ const now=performance.now();if(now<job.nextAt)return false;job.nextAt=now+16;
+ if(!job.scanned){
+  const width=job.x1-job.x0,total=width*(job.y1-job.y0);let budget=CPU_BUILD_SCAN_BUDGET;
+  while(job.cursor<total&&budget-->0&&performance.now()-now<3){
+   const x=job.x0+job.cursor%width,y=job.y0+Math.floor(job.cursor/width);job.cursor++;
+   if(!canPlace(type,x,y).ok)continue;let resource=0;
+   if(d.env)for(let dy=-d.env.r;dy<=d.env.r;dy+=2)for(let dx=-d.env.r;dx<=d.env.r;dx+=2){const nx=Math.floor(x+d.w/2+dx),ny=Math.floor(y+d.h/2+dy);if(!INMAP(nx,ny))continue;const k=IDX(nx,ny);if(d.env.t==='tree'&&G.tiles[k]===T.FOREST||d.env.t==='fish'&&G.fish[k]||d.env.t==='rock'&&[T.ROCK,T.ORE].includes(G.tiles[k]))resource++;}
+   job.sites.push({x,y,score:Math.hypot(x-port.x,y-port.y)-Math.min(28,resource*1.5)+footprintCells(x,y,d.w,d.h).filter(([x,y])=>G.tiles[IDX(x,y)]===T.FOREST).length*2});
+  }
+  if(job.cursor<total)return false;job.scanned=true;
+ }
+ if(!job.sorted){job.sites.sort((a,b)=>(a.score??Math.hypot(a.x-port.x,a.y-port.y))-(b.score??Math.hypot(b.x-port.x,b.y-port.y)));job.sites=job.sites.slice(0,80);job.sorted=true;return false;}
+ let budget=CPU_BUILD_SCAN_BUDGET;
+ while(job.index<job.sites.length&&budget-->0){
+  const site=job.sites[job.index],mock={x:site.x,y:site.y,w:d.w,h:d.h};
+  if(!canPlace(type,site.x,site.y).ok||!cpuPreservesRoadCorners(site.x,site.y,d.w,d.h)){job.index++;job.endpoint=0;continue;}
+  const cells=footprintCells(mock.x,mock.y,mock.w,mock.h).map(([x,y])=>IDX(x,y));
+  const endpoints=ringCells(mock).filter(([x,y])=>roadTileAllowed(x,y)&&!cells.includes(IDX(x,y))).sort((a,b)=>Math.hypot(a[0]-cx(port),a[1]-cy(port))-Math.hypot(b[0]-cx(port),b[1]-cy(port))).slice(0,4);
+  if(job.endpoint>=endpoints.length){job.index++;job.endpoint=0;continue;}
+  const [x,y]=endpoints[job.endpoint++];let path;const occupied=cells.map(k=>G.occ[k]);
+  for(const k of cells)G.occ[k]=-1;
+  // Existing limit is 36 path nodes; allow 35 diagonal segments as well.
+  try{const hub=cpuRoadHub(port);path=hub===null?null:plannedRoadPath({x:hub%MAPW,y:Math.floor(hub/MAPW)},{x,y},activeIsland,35*Math.SQRT2);}
+  finally{cells.forEach((k,i)=>G.occ[k]=occupied[i]);}
+  if(path&&path.length<=36&&path.every(k=>!cells.includes(k))&&G.gold>=(d.cost.gold||0)+path.filter(k=>!G.road[k]).length*ROAD_COST){
+   const result=place(type,site.x,site.y);if(result.ok){for(const k of path)placeRoad(k%MAPW,Math.floor(k/MAPW));rebuildNet();delete retries[type];CPU_BUILD_JOBS.delete(G);return result.b;}
+  }
+  return false; // At most one bounded route search per slice.
+ }
+ CPU_BUILD_JOBS.delete(G);retries[type]=G.cpu.age+90;return false;
+}
 const CPU_FIELD_SEARCHES=new WeakMap(),CPU_FIELD_SEARCH_BUDGET=96;
 function cpuFields(){
  let budget=CPU_FIELD_SEARCH_BUDGET;
@@ -47,17 +93,18 @@ function cpuFields(){
  return false;
 }
 function cpuDecision(){const count=type=>G.blds.filter(b=>b.type===type).length,homes=count('haus'),population=totalPop(),age=G.cpu.age;
+ if(CPU_BUILD_JOBS.has(G))return;
  for(const b of G.blds)if(b.type==='ruine'&&!b.ruinField&&canAfford(ruinRebuildCost(b))&&rebuildRuin(b))return;
- if(G.cpu.age>220&&!count('feuer')&&cpuBuild('feuer'))return;
+ if(G.cpu.age>220&&!count('feuer')&&(cpuBuild('feuer')||CPU_BUILD_JOBS.has(G)))return;
  if(cpuFields())return;
- if(G.blds.some(b=>b.fire>0)&&!count('feuer')&&cpuBuild('feuer'))return;
+ if(G.blds.some(b=>b.fire>0)&&!count('feuer')&&(cpuBuild('feuer')||CPU_BUILD_JOBS.has(G)))return;
  const pace=cpuPace(G);if(pace.cpu.score>pace.ceiling)return;
  const goals=[['haus',Math.min(6,pace.homeLimit)],['markt',1],['holzfaeller',1],['saegewerk',1],['fischer',2],['haus',Math.min(28,pace.homeLimit)],['kartoffelhof',1],['brennerei',1],['steinbruch',1],['schaefer',1],['weberei',1],['farm',1],['muehle',1],['baeckerei',1],['kapelle',1],['feuer',1],['rinderhof',1],['gerberei',1],['schuster',1],['lager',1],['mine',1],['schmelze',1],['schmiede',1],['imkerei',1],['kerzenzieherei',1],['kirche',1],['hopfen',1],['brauerei',1],['weingut',1],['kelterei',1]];
- for(const [type,desired] of goals){if(count(type)>=desired||B[type].fertility&&!islandMeta().fert.includes(B[type].fertility))continue;if(cpuBuild(type))return;}
+ for(const [type,desired] of goals){if(count(type)>=desired||B[type].fertility&&!islandMeta().fert.includes(B[type].fertility))continue;if(cpuBuild(type)||CPU_BUILD_JOBS.has(G))return;}
  for(const b of G.blds.filter(b=>b.type==='haus'&&b.tier<pace.player.tier)){const r=nextTierReq(b);const staff=workforceFor(G);if(r?.ok&&canAfford(r.cost)&&staff.supply[b.tier]-Math.ceil(b.pop)>=staff.demand[b.tier]*.85){upgradeHouse(b);return;}}
  if(population>30&&G.blds.filter(b=>def(b).kind==='prod'&&b.staffEff<.8).length&&homes<32)cpuBuild('haus');
 }
-const cpuStepWorld=stepWorld;stepWorld=function(dt){cpuStepWorld(dt);const speed=G.speed;for(const g of WORLD.islands){if(!g?.cpu)continue;withCPU(g,()=>{g.speed=speed;g.cpu.age+=dt;g.cpu.decision+=dt;step(dt);const interval=cpuPace(g).interval;if(g.cpu.decision>=interval){g.cpu.decision%=interval;cpuDecision();}g.cpu.tradeClock=(g.cpu.tradeClock||0)+dt;if(g.cpu.tradeClock>=20){g.cpu.tradeClock%=20;for(const good of GOODS){const excess=Math.max(0,(g.stock[good.id]||0)-cpuReserve(g,good.id)-25),qty=Math.min(2,excess);if(qty>0){g.stock[good.id]-=qty;g.gold+=qty*good.v*.6;}}}});}};
+const cpuStepWorld=stepWorld;stepWorld=function(dt){cpuStepWorld(dt);const speed=G.speed;for(const g of WORLD.islands){if(!g?.cpu)continue;withCPU(g,()=>{g.speed=speed;g.cpu.age+=dt;g.cpu.decision+=dt;step(dt);const pending=CPU_BUILD_JOBS.get(g);if(pending)cpuBuild(pending.type);const interval=cpuPace(g).interval;if(g.cpu.decision>=interval){g.cpu.decision%=interval;cpuDecision();}g.cpu.tradeClock=(g.cpu.tradeClock||0)+dt;if(g.cpu.tradeClock>=20){g.cpu.tradeClock%=20;for(const good of GOODS){const excess=Math.max(0,(g.stock[good.id]||0)-cpuReserve(g,good.id)-25),qty=Math.min(2,excess);if(qty>0){g.stock[good.id]-=qty;g.gold+=qty*good.v*.6;}}}});}};
 const cpuCheckQuests=checkQuests;checkQuests=function(...args){if(!G.cpu)return cpuCheckQuests(...args);};
 const cpuAfterNewWorld=afterNewWorld;afterNewWorld=function(...args){const result=cpuAfterNewWorld(...args);initCPUIslands();return result;};
 const cpuActivateIsland=activateIsland;activateIsland=function(i){return WORLD.islands[i]?.cpu?false:cpuActivateIsland(i);};

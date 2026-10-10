@@ -41,7 +41,9 @@ Musik neu komprimieren: `python scripts/compress_music.py --ffmpeg PFAD_ZU_FFMPE
 
 Der Menühintergrund verwendet `assets/start-world.png`: eine Aufnahme einer regulär entwickelten Beispielpartie mit dem echten Spielrenderer. `pixxo_tests/generate_start_world.py` und `build_showcase.js` reproduzieren die Entwicklung über normale Bau-, Produktions- und Aufstiegsfunktionen. Die Kamerafahrt lässt sich unter Einstellungen → Spiel deaktivieren; reduzierte Bewegung des Betriebssystems wird respektiert. Es gibt keinen separaten „Hintergrund anhalten“-Button.
 
-Betriebsflächen lassen sich einzeln anklicken oder als Rechteck ziehen. Nur zulässige Positionen werden angelegt; Betriebszuordnung, Gelände, Belegung, Reichweite und Flächenlimit werden für jedes Feld geprüft. Die Vorschau zeigt erlaubte Felder mit einzelnen Umrissen und zählt übersprungene Positionen. Enter setzt per Tastatur Start und Ziel; Escape bricht ab.
+Betriebsflächen mit genau 1 × 1 Kachel lassen sich einzeln anklicken oder als Rechteck ziehen. Mehrkachelige Gehege werden ausschließlich einzeln per Klick beziehungsweise Enter platziert. Nur zulässige Positionen werden angelegt; Betriebszuordnung, Gelände, Belegung, Reichweite und Flächenlimit werden für jedes Feld geprüft. Die Rechteckvorschau zeigt erlaubte Felder mit einzelnen Umrissen und zählt übersprungene Positionen. Bei 1 × 1 Feldern setzt Enter per Tastatur Start und Ziel; Escape bricht ab.
+
+Brandtöne sind an neue ungeschützte Brandwarnungen gekoppelt; die frühere Wiederholung alle 18 Sekunden für beliebige Brände auf allen Inseln entfällt. Die CPU-Bauplanung verarbeitet bis zu 96 Bauplätze oder einen begrenzten Straßenweg pro Teilabschnitt, setzt laufende Aufträge im Spieltakt fort und prüft keine Straßen außerhalb des möglichen Korridors der bisherigen maximal 36 Straßenpositionen. Diagonale Steinstraßen besitzen richtungsabhängige Pflasterreihen mit einer kachelübergreifenden, gecachten Musterphase.
 
 Die aktuellen Regeln und Prüfungen stehen in [Aktuelle Spieländerungen](Dokumentation/Aktuelle_Spieländerungen.md).
 

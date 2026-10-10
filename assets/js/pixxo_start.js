@@ -73,8 +73,7 @@ audioLevels=function(){startAudioLevels();musicSync();};
 // Replace the synthesized music scheduler while preserving event sounds.
 audioTick=function(){
  const c=Sound.ctx;if(!c||c.state!=='running'||document.hidden||!StartScreen.started||startDialog.open)return;
- const danger=WORLD.islands.some(g=>g&&g.blds.some(b=>b.fire>0));
- if(danger&&(!Sound.danger||c.currentTime-(Sound.last.get('danger')??-100)>18))soundEffect('danger');Sound.danger=danger;
+ // Fire audio belongs to a new, visible fire warning, never a periodic scan.
  for(const sh of WORLD.fleet){const old=Sound.seenShips.get(sh.id),state=sh.status;
   if(old&&old!==state&&['Im Hafen','Vor Anker'].includes(state))soundEffect('ship');
   if(old==='Im Bau'&&state!=='Im Bau')soundEffect('success');Sound.seenShips.set(sh.id,state);
@@ -289,7 +288,7 @@ cv.addEventListener('keydown',e=>{
  else if(e.key.toLowerCase()==='r'&&['build','move'].includes(UI.tool)){e.preventDefault();UI.rotation=((UI.rotation||0)+1)%4;mapKeyboardPosition();}
  else if(e.key==='Enter'||e.key===' '){
   e.preventDefault();const t=mapKeyboardPosition();
-  if(['road','demo','upgrade'].includes(UI.tool)||UI.tool==='build'&&B[UI.type]?.kind==='field'){if(constructionPlan)finishConstructionPlan();else beginConstructionPlan(t);}
+  if(['road','demo','upgrade'].includes(UI.tool)||UI.tool==='build'&&fieldRectangleEnabled()){if(constructionPlan)finishConstructionPlan();else beginConstructionPlan(t);}
   else clickTile(t);
   mapKeyboardPosition();
  }

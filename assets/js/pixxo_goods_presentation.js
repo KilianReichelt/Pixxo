@@ -5,6 +5,9 @@ for(const chain of LUXURY_CHAINS){
  GOOD_UNLOCK_TIER[chain.good]=chain.tier;
  for(const [, ,input,output] of chain.steps)for(const good of [...Object.keys(input),output])GOOD_UNLOCK_TIER[good]=Math.min(GOOD_UNLOCK_TIER[good]??chain.tier,chain.tier);
 }
+// These production buildings are already available to settlers. Their goods
+// belong to that group too, independently of the later boot consumption tier.
+Object.assign(GOOD_UNLOCK_TIER,{haeute:1,leder:1,stiefel:1});
 function goodUnlockTier(id){
  if(GOOD_UNLOCK_TIER[id])return GOOD_UNLOCK_TIER[id];
  const producers=Object.entries(B).filter(([,b])=>b.out?.[id]).map(([type])=>BUILD_TIER[type]||1);

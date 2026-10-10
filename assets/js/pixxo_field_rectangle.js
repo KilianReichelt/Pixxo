@@ -1,4 +1,5 @@
 /* Einzelklick und Rechteckauswahl benutzen dieselben verbindlichen Bauregeln. */
+function fieldRectangleEnabled(type=UI.type,rotation=UI.rotation||0){if(B[type]?.kind!=='field')return false;const d=buildingSize(type,rotation);return d.w===1&&d.h===1;}
 function fieldRectangleTargets(plan,end){
  const d=buildingSize(plan.type,plan.rotation),owner=G.byId.get(plan.owner),rule=owner&&FIELD_RULES[owner.type];
  const x0=Math.max(0,Math.min(plan.start.x,end.x)),y0=Math.max(0,Math.min(plan.start.y,end.y));
@@ -18,6 +19,7 @@ function fieldRectangleTargets(plan,end){
 const fieldRectangleBegin=beginConstructionPlan;
 beginConstructionPlan=function(t){
  if(UI.tool!=='build'||B[UI.type]?.kind!=='field')return fieldRectangleBegin(t);
+ if(!fieldRectangleEnabled()){constructionPlan=null;return;}
  constructionPlan={tool:'fields',start:{...t},end:null,island:activeIsland,type:UI.type,owner:UI.fieldOwner,rotation:UI.rotation||0};updateConstructionPlan(t);
 };
 const fieldRectangleUpdate=updateConstructionPlan;
@@ -55,4 +57,4 @@ drawGhost=function(ctx){
  ctx.restore();
 };
 const fieldRectangleInfo=infoHTML;
-infoHTML=function(){const html=fieldRectangleInfo(),b=G.byId.get(UI.sel);return html+(b&&FIELD_RULES[b.type]?'<p>Betriebsflächen: einzeln anklicken oder mit gedrückter Maustaste ein Rechteck ziehen. Unzulässige Positionen werden übersprungen. Per Tastatur setzt Enter Start und Ziel, Escape bricht ab.</p>':'');};
+infoHTML=function(){const html=fieldRectangleInfo(),b=G.byId.get(UI.sel),rule=b&&FIELD_RULES[b.type];if(!rule)return html;return html+(fieldRectangleEnabled(rule.type)?'<p>Betriebsflächen: einzeln anklicken oder mit gedrückter Maustaste ein Rechteck ziehen. Unzulässige Positionen werden übersprungen. Per Tastatur setzt Enter Start und Ziel, Escape bricht ab.</p>':'<p>Betriebsflächen: jedes Gehege einzeln per Klick platzieren. Per Tastatur setzt Enter ein Gehege, Escape bricht ab.</p>');};

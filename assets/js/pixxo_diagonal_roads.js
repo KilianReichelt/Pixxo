@@ -18,7 +18,7 @@ const diagonalRoadCache=new Map();
 const DIAGONAL_ROAD_PAD=4;
 function diagonalRoadSprite(mask,stone,x,y){
  if(!(mask&240))return pixelRoadSprite(mask,stone,x,y);
- const key=mask+':'+stone;if(diagonalRoadCache.has(key))return diagonalRoadCache.get(key);
+ const phaseX=((x%3)+3)%3*16,phaseY=((y%3)+3)%3*16,key=mask+':'+stone+(stone?':'+phaseX+':'+phaseY:'');if(diagonalRoadCache.has(key))return diagonalRoadCache.get(key);
  const size=(16+DIAGONAL_ROAD_PAD*2)*2,c=document.createElement('canvas');c.width=c.height=size;
  const g=c.getContext('2d'),image=g.createImageData(size,size),segments=LAND_STEPS.filter((_,i)=>mask&(1<<i)).map(([dx,dy])=>({a:[8,8],b:[8+dx*8,8+dy*8],start:0,length:Math.hypot(dx,dy)*8}));
  for(let py=0;py<size;py++)for(let px=0;px<size;px++){
@@ -30,9 +30,12 @@ function diagonalRoadSprite(mask,stone,x,y){
   const coverage=clamp((outer-q.distance)/(outer-inner),0,1);if(coverage<=(ROAD_BAYER[ty%4][tx%4]+.5)/16)continue;
   let rgb;
   if(stone){
-   // Weltweit gleiche Pflasterphase verhindert Sprünge an Kachelecken.
-   const row=Math.floor(ly/2),along=((lx+(row%2)*2)%4+4)%4,across=((ly%2)+2)%2;
-   const mortar=along<.4||across<.35,tone=mortar?91:128+(across<.7?14:0)+(hs(Math.floor(lx/4),row,31)>.5?7:0);rgb=[tone,tone+2,tone+3];
+   // Each arm uses its own tangent. Diagonal cobbles are genuinely rotated;
+   // the world-anchored, repeating phase keeps neighbouring tiles seamless.
+   const wx=phaseX+lx,wy=phaseY+ly,diagonal=Math.abs(q.dx)>.1&&Math.abs(q.dy)>.1,sign=q.dx*q.dy<0?-1:1;
+   const u=diagonal?wx+sign*wy:Math.abs(q.dx)>.5?wx:wy,v=diagonal?wy-sign*wx:Math.abs(q.dx)>.5?wy:-wx,width=diagonal?6:4,height=diagonal?3:2;
+   const row=Math.floor(v/height),along=((u+(row%2)*width/2)%width+width)%width,across=((v%height)+height)%height;
+   const mortar=along<.5||across<.45,tone=mortar?91:128+(across<.9?14:0)+(hs(Math.floor(u/width)%2,((row%4)+4)%4,31)>.5?7:0);rgb=[tone,tone+2,tone+3];
   }else{const v=hs(tx,ty,51),shade=v<.18?-9:v>.82?6:0;rgb=[188+shade,155+shade,109+shade];}
   image.data.set([...rgb,255],(py*size+px)*4);
  }

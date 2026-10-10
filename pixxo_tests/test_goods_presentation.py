@@ -18,18 +18,19 @@ with sync_playwright() as p:
     assert store.locator('caption').count()==0
     assert store.locator('.store-filters button').all_text_contents()==['Alle','Rohstoffe','Handwerk']
     initial=store.inner_text()
-    for name in ['Schnaps','Wachs','Holz','Bretter','Werkzeug']:
+    for name in ['Schnaps','Wachs','Holz','Bretter','Werkzeug','Häute','Leder','Lederstiefel']:
         assert name in initial,name
-    for name in ['Häute','Lederstiefel','Kerzen','Parfüm','Schmuck','Eisenerz']:
+    for name in ['Kerzen','Parfüm','Schmuck','Eisenerz']:
         assert name not in initial,name
     stock=page.evaluate('JSON.stringify(G.stock)')
+    assert page.evaluate("['haeute','leder','stiefel'].every(id=>goodUnlockTier(id)===1)")
     for tier in [1,2,3]:
         page.evaluate('(tier)=>{document.activeElement.blur();WORLD.highestTier=tier;refreshWin(WINS.store);}',tier)
         # Window renderer is stored in .render; verify actual displayed table.
         names=store.locator('tr td:nth-child(2)').all_text_contents()
         expected=page.evaluate('GOODS.filter(g=>goodVisibleInStore(g.id)).map(g=>g.n)')
         assert names==expected,(tier,names,expected)
-        if tier==2:
+        if tier in [1,2]:
             assert all(n in names for n in ['Häute','Leder','Lederstiefel'])
             assert 'Kerzen' not in names and 'Parfüm' not in names
         if tier==3:
@@ -47,8 +48,10 @@ with sync_playwright() as p:
             visible=store.locator('tr td:nth-child(2)').all_text_contents()
             if key=='raw':
                 assert 'Holz' in visible and 'Fisch' in visible and 'Bretter' not in visible and 'Schnaps' not in visible
+                assert 'Häute' in visible and 'Leder' not in visible and 'Lederstiefel' not in visible
             if key=='craft':
                 assert 'Bretter' in visible and 'Schnaps' in visible and 'Holz' not in visible and 'Fisch' not in visible
+                assert 'Leder' in visible and 'Lederstiefel' in visible and 'Häute' not in visible
     assert page.evaluate('JSON.stringify(G.stock)')==stock
     assert store.locator('th').evaluate_all("els=>els.every(e=>getComputedStyle(e).textAlign==='center')")
     assert store.locator('td.r').first.evaluate("e=>getComputedStyle(e).textAlign")=='right'

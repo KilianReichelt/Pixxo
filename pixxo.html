@@ -49,7 +49,9 @@ img.ic{display:inline-block;vertical-align:middle;image-rendering:pixelated}
 #mm{display:block;width:var(--mm);height:var(--mm);cursor:crosshair;touch-action:none}
 #hint{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;z-index:25;display:none;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center;max-width:calc(100vw - 16px);padding:6px 10px;background:#1a120aee;border:3px solid #c9a443;box-shadow:0 0 0 3px var(--edge)}
 body.items #hint{bottom:208px}
-#hint.show{display:flex}
+/* Hinweisleiste vorerst deaktiviert. Zum Wiedereinführen die nächste Regel
+   wieder einkommentieren; DOM und Aktualisierungslogik bleiben erhalten. */
+/* #hint.show{display:flex} */
 #hint .x{margin-left:6px;width:28px;height:28px;border:3px solid var(--edge);background:#6b352d;font-weight:600}
 .good{color:var(--good)}.bad{color:var(--bad)}.small{font-size:12px;color:var(--muted)}
 #toasts{position:fixed;left:50%;transform:translateX(-50%);top:calc(var(--topH) + 10px);z-index:90;display:flex;flex-direction:column;gap:6px;align-items:center;pointer-events:none;width:min(520px,calc(100vw - 16px))}
@@ -1533,7 +1535,7 @@ function updateHint(){
   if(rule)html+=` · Für volle Produktion: ${rule.count} Betriebsflächen mit je ${B[rule.type].w} × ${B[rule.type].h} Kacheln anlegen`;
   if(building?.kind==='field'){
    const owner=G.byId.get(UI.fieldOwner),ownerRule=owner&&FIELD_RULES[owner.type];
-   if(ownerRule)html+=` · ${fieldModules(owner).length} / ${ownerRule.count} Betriebsflächen${building.w===1?' · ziehen zum Anlegen':''}`;
+   if(ownerRule)html+=` · ${fieldModules(owner).length} / ${ownerRule.count} Betriebsflächen${fieldRectangleEnabled()?' · ziehen zum Anlegen':' · einzeln anklicken'}`;
   }
  }
  html+=` <button class="x" aria-label="Bauwerkzeug schließen" data-act="cancel">×</button>`;
@@ -1599,7 +1601,7 @@ cv.addEventListener('pointerdown',e=>{
  drag={sx:e.clientX,sy:e.clientY,lx:e.clientX,ly:e.clientY,moved:false,t,mode:'pan'};
  if(right){drag.mode='pan';drag.right=true;return}
  if(UI.tool==='road'||UI.tool==='demo'||UI.tool==='upgrade'){drag.mode='planned';beginConstructionPlan(t)}
- else if(UI.tool==='build'&&B[UI.type]?.kind==='field'){drag.mode='planned';beginConstructionPlan(t)}
+ else if(UI.tool==='build'&&fieldRectangleEnabled()){drag.mode='planned';beginConstructionPlan(t)}
  else if(UI.tool==='build'&&UI.touch){drag.mode='ghost';const g=UI.gpos,dd=B[UI.type];drag.onGhost=!!(g&&t.x>=g.x&&t.x<g.x+dd.w&&t.y>=g.y&&t.y<g.y+dd.h);if(!drag.onGhost)UI.ghostT=t}
 });
 cv.addEventListener('pointermove',e=>{
@@ -2332,7 +2334,7 @@ function soundEffect(kind){const c=Sound.ctx;if(!c||c.state!=='running'||Sound.p
 const MUSIC_MELODY=[74,0,69,72,77,76,74,0,72,69,67,69,72,0,69,0,70,74,77,0,76,74,72,70,69,72,76,0,74,72,69,0];
 const MUSIC_CHORDS=[[50,57,65],[48,55,64],[46,53,62],[45,52,61]];
 function audioTick(){const c=Sound.ctx;if(!c||c.state!=='running')return;if(document.hidden){Sound.next=c.currentTime+.1;return}if(Sound.next<c.currentTime-.5)Sound.next=c.currentTime+.1;while(Sound.next<c.currentTime+.65){const n=Sound.beat++,t=Sound.next,ch=MUSIC_CHORDS[Math.floor(n/8)%4],note=MUSIC_MELODY[n%32];if(Sound.prefs.music&&!Sound.prefs.muted){if(n%4===0){ch.forEach((m,i)=>audioTone(440*2**((m-69)/12),t+i*.03,2.4,.065,'triangle','music'));audioTone(440*2**((ch[0]-81)/12),t,2.5,.075,'sine','music')}if(note)audioTone(440*2**((note-69)/12),t,.72,.10,'sine','music');audioTone(440*2**((ch[n%3]+12-69)/12),t+.35,.6,.035,'triangle','music')}Sound.next+=60/76}
- if(typeof WORLD==='undefined'||!WORLD?.islands)return;const danger=WORLD.islands.some(g=>g&&g.blds.some(b=>b.fire>0));if(danger&&(!Sound.danger||c.currentTime-(Sound.last.get('danger')??-100)>18))soundEffect('danger');Sound.danger=danger;
+if(typeof WORLD==='undefined'||!WORLD?.islands)return;const danger=WORLD.islands.some(g=>g&&g.blds.some(b=>b.fire>0));if(danger&&(!Sound.danger||c.currentTime-(Sound.last.get('danger')??-100)>18))soundEffect('danger');Sound.danger=danger;
  for(const sh of WORLD.fleet){const old=Sound.seenShips.get(sh.id),state=sh.status;if(old&&old!==state&&['Im Hafen','Vor Anker'].includes(state))soundEffect('ship');if(old==='Im Bau'&&state!=='Im Bau')soundEffect('success');Sound.seenShips.set(sh.id,state)}
  if(G.speed>0&&c.currentTime-(Sound.last.get('production')??0)>12&&G.blds.some(b=>b.status==='Produziert'&&!b.paused))soundEffect('production');
 }
@@ -2347,7 +2349,7 @@ const audioUpgradeHouse=upgradeHouse;upgradeHouse=function(...args){const r=audi
 const audioUpgradePort=upgradePort;upgradePort=function(b){const level=b.tier,r=audioUpgradePort(b);if(b.tier!==level)soundEffect('upgrade');return r};
 const audioBuildShip=buildShip;buildShip=function(...args){const r=audioBuildShip(...args);soundEffect(r===true?'build':'error');return r};
 const audioSail=sailShip;sailShip=function(...args){const r=audioSail(...args);soundEffect(r===true?'ship':'error');return r};
-const audioMessages=MSGHOOK;MSGHOOK=function(t,i){audioMessages(t,i);if(/Feuer!|zerstört|brennt/.test(t))soundEffect('danger');else if(/gelöscht|Auftrag.*erfüllt|Kontor gegründet/.test(t))soundEffect('success');else if(/Händler|Handelsschiff|gekauft|verkauft/.test(t))soundEffect('trade');else if(i==='i_alert')soundEffect('error')};
+const audioMessages=MSGHOOK;MSGHOOK=function(t,i){audioMessages(t,i);if(typeof pixxoIsFireWarning==='function'&&pixxoIsFireWarning(t,i))soundEffect('danger');else if(/gelöscht|Auftrag.*erfüllt|Kontor gegründet/.test(t))soundEffect('success');else if(/Händler|Handelsschiff|gekauft|verkauft/.test(t))soundEffect('trade');else if(i==='i_alert')soundEffect('error')};
 const audioMenu=menuHTML;menuHTML=function(){return '<section class="audio-settings"><div class="sect">Ton</div>'+AUDIO_CHANNELS.map(([key,name])=>`<label for="${key}-volume">${name} <output id="${key}-value">${Math.round(Sound.prefs[key]*100)} %</output></label><input id="${key}-volume" type="range" min="0" max="100" step="1" value="${Math.round(Sound.prefs[key]*100)}" data-audio="${key}">${audioMuteButton(key,name)}`).join('')+'</section>'+audioMenu()};
 document.addEventListener('input',e=>{const k=e.target.dataset.audio;if(!AUDIO_CHANNELS.some(([key])=>key===k))return;audioStart();Sound.prefs[k]=Number(e.target.value)/100;document.getElementById(k+'-value').textContent=e.target.value+' %';audioSave()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-audio-channel-mute]');if(!b)return;const key=b.dataset.audioChannelMute,channel=AUDIO_CHANNELS.find(([k])=>k===key);if(!channel)return;Sound.prefs.channelMuted[key]=!Sound.prefs.channelMuted[key];audioSave();for(const button of document.querySelectorAll('[data-audio-channel-mute="'+key+'"]')){const muted=audioChannelMuted(key),label=channel[1]+': '+(muted?'Aus – einschalten':'An – stummschalten');button.setAttribute('aria-pressed',String(muted));button.setAttribute('aria-label',label);button.title=label;button.textContent=muted?'Aus':'An';}});
