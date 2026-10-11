@@ -19,3 +19,13 @@
 #bar .cb,#bar .cb span{font-size:.875rem!important}
 
 #bar .cb{align-items:center;justify-content:center;text-align:center}
+
+#bar.deko-category-mode{overflow:hidden!important;gap:0}
+#bar.deko-category-mode .deko-viewport{height:auto;min-height:76px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none!important;cursor:grab;user-select:none}
+#bar.deko-category-mode .deko-viewport::-webkit-scrollbar{display:none}
+#bar.deko-category-mode .deko-track{height:auto;min-height:76px}
+#bar.deko-category-mode .deko-track>.cb{flex:0 0 9rem;min-width:max-content}
+#bar.deko-category-mode.has-deko-overflow{padding-inline:60px}
+#bar.deko-category-mode .deko-viewport.is-dragging,#bar.deko-category-mode .deko-viewport.is-dragging *{cursor:grabbing!important}
+#bar .item-scroll[data-deko-scroll="left"]{left:8px}
+#bar .item-scroll[data-deko-scroll="right"]{right:8px}

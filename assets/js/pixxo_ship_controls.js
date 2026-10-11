@@ -8,15 +8,21 @@ function makeCursorBase(kind){
   const colors={'#':edge,s:'#b68a4d',o:gold,h:'#f5e5c8'};
   rows.forEach((row,y)=>[...row].forEach((pixel,x)=>{if(pixel!=='.')r(x,y,1,1,colors[pixel]);}));
  }
+ else if(kind==='text'){r(5,1,7,3,edge);r(7,2,3,12,edge);r(5,12,7,3,edge);r(6,2,5,1,gold);r(8,2,1,12,gold);r(6,13,5,1,gold);}
+ else if(kind==='window_move'){
+  // Supplied cursor_verschieben.png, using the same native cursor palette.
+  const rows=['.......##.......','......#hh#......','.....#hhhh#.....','....#hhhhhh#....','...#.##hh##.#...','..#h#.#hh#.#h#..','.#hh##.##.##hh#.','#hhhhh#..#hhhhh#','#hhhhh#..#hhhhh#','.#hh##.##.##hh#.','..#h#.#hh#.#h#..','...#.##hh##.#...','....#hhhhhh#....','.....#hhhh#.....','......#hh#......','.......##.......'];
+  rows.forEach((row,y)=>[...row].forEach((pixel,x)=>{if(pixel!=='.')r(x,y,1,1,pixel==='#'?edge:gold);}));
+ }
  else{
   // Exact 13 × 15 silhouette from cursor_hand_2.png, recolored on the native grid.
   const rows=['.##..........','#oo#.........','#oo#.........','#ooo#...###..','.#oo#.##oo##.','.#ooo#oo#oo##','..#ooo#oo#oo#','..#oooo#oooo#','.#o#oooooooo#','.#oooooooooo#','.#oooooooooo#','..#oooooooo#.','...#ooooo##..','....#oo##....','.....##......'];
   rows.forEach((row,y)=>[...row].forEach((pixel,x)=>{if(pixel!=='.')r(x,y,1,1,pixel==='#'?edge:gold);}));
  }
- publishPixel(kind==='pointer'?'i_cursor_pointer':'i_cursor_default',native,16,16);return native;
+ publishPixel({pointer:'i_cursor_pointer',window_move:'i_cursor_move',text:'i_cursor_text',default:'i_cursor_default'}[kind],native,16,16);return native;
 }
 /* Each base is drawn once. Tool cursors only combine these unchanged icons. */
-const PIXXO_CURSOR_BASES=Object.freeze({default:makeCursorBase('default'),pointer:makeCursorBase('pointer')});
+const PIXXO_CURSOR_BASES=Object.freeze({default:makeCursorBase('default'),pointer:makeCursorBase('pointer'),window_move:makeCursorBase('window_move'),text:makeCursorBase('text')});
 const PIXXO_CURSOR_ACTIONS={};
 for(const [mode,name] of Object.entries({upgrade:'i_upgrade',demo:'i_demo',build:'i_houses',road:'i_road',move:'i_move'})){
  const source=HD_CATALOG.get(name)?.pixelSource||SP[name];if(!source)continue;
@@ -31,14 +37,20 @@ if(!PIXXO_CURSOR_ACTIONS.move){
 for(const [mode,name] of Object.entries({path:'i_road',stone:'i_stoneroad',woodbridge:'bridge_icon_1',stonebridge:'bridge_icon_2'}))PIXXO_CURSOR_ACTIONS['road_'+mode]=HD_CATALOG.get(name)?.pixelSource||SP[name];
 function cursorArt(mode){
  const canvas=document.createElement('canvas');canvas.width=64;canvas.height=48;const c=canvas.getContext('2d');c.imageSmoothingEnabled=false;
- nativeDrawImage.call(c,PIXXO_CURSOR_BASES[mode==='pointer'?'pointer':'default'],0,0,32,32);
+ nativeDrawImage.call(c,PIXXO_CURSOR_BASES[mode]||PIXXO_CURSOR_BASES.default,0,0,32,32);
  const icon=PIXXO_CURSOR_ACTIONS[mode];if(icon){
   if(icon.width===24)nativeDrawImage.call(c,icon,36,20);else nativeDrawImage.call(c,icon,32,16,32,32);
  }
  return canvas;
 }
-for(const mode of ['default','pointer','buoy','upgrade','demo','build','road','move','road_path','road_stone','road_woodbridge','road_stonebridge']){const canvas=cursorArt(mode);PIXXO_CURSORS[mode]={canvas,css:`url("${canvas.toDataURL()}") ${mode==='pointer'?'10 2':'3 1'}, ${mode==='pointer'?'pointer':'default'}`};}
-const cursorStyle=document.createElement('style');cursorStyle.textContent=`body{cursor:${PIXXO_CURSORS.default.css}}button:not(:disabled),[role="button"],summary,select{cursor:${PIXXO_CURSORS.pointer.css}!important}input,textarea{cursor:text}input[type="checkbox"],input[type="radio"]{cursor:${PIXXO_CURSORS.pointer.css}}button:disabled{cursor:not-allowed}#cv{cursor:var(--pixxo-world-cursor,${PIXXO_CURSORS.default.css})}#cv:active{cursor:var(--pixxo-world-cursor,${PIXXO_CURSORS.default.css})}`;document.head.append(cursorStyle);
+for(const mode of ['default','pointer','window_move','text','buoy','upgrade','demo','build','road','move','road_path','road_stone','road_woodbridge','road_stonebridge']){const canvas=cursorArt(mode);PIXXO_CURSORS[mode]={canvas,css:`url("${canvas.toDataURL()}") ${mode==='pointer'?'10 2':mode==='window_move'||mode==='text'?'16 16':'3 1'}, ${mode==='pointer'?'pointer':mode==='window_move'?'move':'default'}`};}
+const cursorStyle=document.createElement('style');cursorStyle.textContent=`:root{--pixxo-move-cursor:${PIXXO_CURSORS.window_move.css};--pixxo-pointer-cursor:${PIXXO_CURSORS.pointer.css};--pixxo-default-cursor:${PIXXO_CURSORS.default.css}}
+html,body,body *{cursor:var(--pixxo-default-cursor)!important}
+.wt,.wt *,[style*="cursor: move"],[style*="cursor:move"],.items-viewport,.deko-viewport,.items-viewport.is-dragging,.items-viewport.is-dragging *,.deko-viewport.is-dragging,.deko-viewport.is-dragging *,#bar.deko-category-mode .deko-viewport.is-dragging,#bar.deko-category-mode .deko-viewport.is-dragging *{cursor:var(--pixxo-move-cursor)!important}
+button:not(:disabled),button:not(:disabled) *,[role="button"],[role="button"] *,a[href],a[href] *,summary,summary *,select,label,input[type="checkbox"],input[type="radio"],input[type="range"],.pixxo-scrollbar,.pixxo-scrollbar *,[role="scrollbar"],.wx,.wx *{cursor:var(--pixxo-pointer-cursor)!important}
+input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,[contenteditable=true]{cursor:${PIXXO_CURSORS.text.css}!important}
+button:disabled,button:disabled *{cursor:var(--pixxo-default-cursor)!important}
+#cv,#cv:active{cursor:var(--pixxo-world-cursor,${PIXXO_CURSORS.default.css})!important}`;document.head.append(cursorStyle);
 function updateWorldCursor(){
  let mode=UI.tool==='build'?'default':PIXXO_CURSORS[UI.tool]?UI.tool:'default';
  if(UI.tool==='road')mode='road_'+(UI.roadMode||'path');

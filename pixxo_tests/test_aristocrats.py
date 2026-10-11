@@ -21,7 +21,7 @@ with sync_playwright() as p:
       check(TIERS[2].luxury.moebel&&B.tischlerei.in.werkzeug===.25,'Citizen furniture/tool wear');
       check(JSON.stringify(B.seifensiederei.in)===JSON.stringify({blueten:1,gewuerz:1,glas:1}),'Soap recipe');
       WORLD.highestTier=3;check(unlocked('gemeinschaftshaus')&&unlocked('betonwerk')&&!unlocked('ausstellungspalast'),'Patrician bootstrap');
-      for(const tier of TIERS.filter(Boolean))check(Number.isInteger(tier.cap/pixxoHouseNeedCount({tier:tier.id})),'Fractional residents');
+      for(const tier of TIERS.filter(Boolean)){const b={tier:tier.id},needs=pixxoHouseNeeds(b);check([...needs.services,...needs.goods].every(n=>Number.isInteger(pixxoResidentsForNeed(b,n))&&pixxoResidentsForNeed(b,n)>0),'Fractional residents');}
       check(!TIERS[1].svc.includes('brunnen')&&TIERS[3].svc.includes('gemeinschaft'),'Housing needs wrong');
       check(CIVIC_CHAINS.every(c=>!B[c[0]].fertility),'Unexpected unsatisfied fertility requirement');
       const meta=ISLANDS[activeIsland],x=Math.floor(meta.wx)-38,y=Math.floor(meta.wy)+8;window.civicFixture={x,y};G.gold=1000000;

@@ -20,7 +20,7 @@ function ambientNearLand(board,x,y,min=1,max=6){
 function ambientHabitat(board,kind,x,y){
  if(!INMAP(x,y))return false;const k=IDX(x,y),t=board.tiles[k];
  if(kind==='boat'){
-  if(t>T.SHAL||board.occ[k]||board.road[k]&&!ambientBridge(board,k))return false;
+  const bridge=ambientBridge(board,k);if(t>T.SHAL||board.occ[k]||bridge?.pier||board.road[k]&&!bridge)return false;
   if(board.river?.[k]||t===T.SHAL)return true;
   let coast=ambientCoasts.get(board.tiles);if(!coast){coast=new Map();ambientCoasts.set(board.tiles,coast);}if(!coast.has(k)){if(coast.size>=20000)coast.clear();coast.set(k,ambientNearLand(board,x,y,1,6));}return coast.get(k);
  }
@@ -67,7 +67,12 @@ function ambientChunk(board,chunkX,chunkY){
  pool.chunks.set(key,entries);while(pool.chunks.size>AMBIENT_LIFE.maxChunks)pool.chunks.delete(pool.chunks.keys().next().value);return entries;
 }
 function ambientPosition(entry,board,time=ambientTime()){
- // Bridge tiles stay navigable; genuinely blocked banks still truncate a path.
+ // New supports can invalidate a cached route. Replan through the free openings.
+ if(entry.kind==='boat'&&entry.path.some(k=>ambientBridge(board,k)?.pier)){
+  const start=entry.path.find(k=>ambientHabitat(board,'boat',k%MAPW,Math.floor(k/MAPW)));
+  if(start===undefined)return null;entry.path=ambientPath(board,'boat',start%MAPW,Math.floor(start/MAPW),entry.seed);
+ }
+ // Bridge decks stay navigable; genuinely blocked banks still truncate a path.
  let length=entry.path.length;
  for(let i=0;i<length;i++){const k=entry.path[i];if(!ambientHabitat(board,entry.kind,k%MAPW,Math.floor(k/MAPW))){length=i;break;}}
  if(!length)return null;
@@ -113,7 +118,7 @@ function addAmbientLife(x0,y0,x1,y1){
     if(entry.nextCheck<=G.time){entry.nextCheck=G.time+.5;entry.clear=!ambientNearBuildings(board,Math.floor(pos.x/16),Math.floor(pos.y/16),4);}
     if(!entry.clear||board.occ[IDX(Math.floor(pos.x/16),Math.floor(pos.y/16))])continue;
    }
-   const frame=WORK_ART.reduced.matches||G.speed===0?0:Math.floor(time*(entry.kind==='boat'?6:2)+entry.seed)%(entry.kind==='boat'?AMBIENT_LIFE.boatFrames:2),name=ambientSprite(entry.kind,pos.dx,pos.dy,frame);
+   const frame=WORK_ART.reduced.matches?0:Math.floor(time*(entry.kind==='boat'?6:2)+entry.seed)%(entry.kind==='boat'?AMBIENT_LIFE.boatFrames:2),name=ambientSprite(entry.kind,pos.dx,pos.dy,frame);
    ENT.push([pos.y+4,entry.kind==='boat'?7:4,name,Math.round(pos.x)-8,Math.round(pos.y)-12]);ambientFrame.entities++;if(entry.kind==='boat')ambientFrame.boats++;
   }
  }
@@ -132,6 +137,6 @@ const ambientDrawBld=drawBld;drawBld=function(ctx,b){
 function drawAmbientBoat(ctx,e){
  ctx.drawImage(SP[e[2]],e[3],e[4]);ctx.save();ctx.beginPath();ctx.rect(e[3],e[4],16,16);ctx.clip();
  const board=ambientBoard(),x=Math.floor((e[3]+8)/16),y=Math.floor((e[4]+12)/16);
- for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(INMAP(x+dx,y+dy)){const k=IDX(x+dx,y+dy),bridge=ambientBridge(board,k);if(bridge)ctx.drawImage(bridgeSprite(bridge.dx,bridge.dy,bridge.kind,bridge.part,bridge.pier),(x+dx)*16-4,(y+dy)*16-4);}
+ for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++)if(INMAP(x+dx,y+dy)){const k=IDX(x+dx,y+dy),bridge=ambientBridge(board,k);if(bridge?.kind===2)drawStoneBridgeSpan(ctx,bridge);else if(bridge)ctx.drawImage(bridgeSprite(bridge.dx,bridge.dy,bridge.kind,bridge.part,bridge.pier,bridgeArchFor(bridge.cells,bridge.cells.indexOf(k))),(x+dx)*16-4,(y+dy)*16-4);}
  ctx.restore();
 }

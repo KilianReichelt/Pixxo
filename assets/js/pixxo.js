@@ -20,19 +20,30 @@ FIELD_CROP_SPRITES.kartoffelhof='acker_kartoffeln';
 B.imkerei.out.wachs=1;B.imkerei.d='Gewinnt Honig und Wachs.';
 TIERS[1].goods.schnaps=.018;TIERS[2].goods.stiefel=.015;TIERS[3].goods.kerzen=.012;
 for(const [g,rate] of Object.entries(TIERS[2].goods))TIERS[2].goods[g]=rate*.5;
-// Pflicht- und Zusatzversorgung zählen gleich; Luxus gibt keine Bewohnerplätze.
+const HOUSE_FLAVOR=Object.freeze({
+ 1:'Einfache Siedler mit bescheidenen Häusern. Sie arbeiten hart und freuen sich über ein warmes Feuer.',
+ 2:'Ein Haus von einfachem Wohlstand. Die Bewohner genießen gesellige Abende und ein gutes Essen.',
+ 3:'Ein Haus mit gehobener Ausstattung. Die Bewohner schätzen Kultur, Musik und ein gutes Glas Wein.',
+ 4:'Ein luxuriöses Haus. Die Bewohner erwarten Komfort, Unterhaltung und exquisite Speisen.'
+});
+// Each fulfilled need grants whole residents; luxury only grants income.
 function pixxoHouseNeeds(b){const t=TIERS[b.tier];return {services:t.svc,goods:Object.keys({...t.goods,...additionalHouseGoods(b)})};}
 function pixxoHouseNeedCount(b){const needs=pixxoHouseNeeds(b);return needs.services.length+needs.goods.length;}
-for(const tier of [1,2,3]){const count=pixxoHouseNeedCount({tier});TIERS[tier].cap=Math.ceil(TIERS[tier].cap/count)*count;}
-function pixxoResidentsPerNeed(b){return TIERS[b.tier].cap/pixxoHouseNeedCount(b);}
+const PIXXO_NEED_BONUSES=Object.freeze({3:Object.freeze({kerzen:2,feine_kleidung:2,geschirr:2,buecher:2}),4:Object.freeze({brot:1,tuch:1})});
+function pixxoResidentsForNeed(b,need){return PIXXO_NEED_BONUSES[b.tier]?.[need]??(b.tier===4?2:1);}
+function pixxoRefreshHouseCapacities(){
+ for(const tier of TIERS.filter(Boolean)){const b={tier:tier.id},needs=pixxoHouseNeeds(b);tier.cap=[...needs.services,...needs.goods].reduce((sum,need)=>sum+pixxoResidentsForNeed(b,need),0);}
+}
+pixxoRefreshHouseCapacities();
+function pixxoHouseNeedLabel(b,need,name){const t=TIERS[b.tier];return `<span class="need-name">${esc(name)}</span><span class="need-residents">(+${pixxoResidentsForNeed(b,need)} ${ic(t.icon,1)}<span class="sr-only">${esc(t.n)}</span>)</span>`;}
 function pixxoHouseCapacity(b){
  if(!b.conn||b.fire>0)return 0;
- const needs=pixxoHouseNeeds(b),fulfilled=needs.services.filter(s=>!!b.cov[s]).length+needs.goods.filter(g=>houseGoodSupplied(b,g)).length;
- return fulfilled*pixxoResidentsPerNeed(b);
+ const needs=pixxoHouseNeeds(b);
+ return needs.services.filter(s=>!!b.cov[s]).reduce((sum,s)=>sum+pixxoResidentsForNeed(b,s),0)+needs.goods.filter(g=>houseGoodSupplied(b,g)).reduce((sum,g)=>sum+pixxoResidentsForNeed(b,g),0);
 }
 function pixxoHousePopulationStep(b,target,dt,lossSeconds=60){
  const cap=TIERS[b.tier].cap;
- b.pop=Math.max(0,Math.min(cap,Math.round(Number(b.pop)||0)));target=Math.max(0,Math.min(cap,Math.round(target)));
+ b.pop=Math.max(0,Math.round(Number.isFinite(Number(b.pop))?Number(b.pop):0));target=Math.max(0,Math.min(cap,Math.round(target)));
  const direction=Math.sign(target-b.pop);
  if(!direction){b.populationProgress=0;b.populationDirection=0;return;}
  if(!(dt>0)||!Number.isFinite(dt))return;
@@ -44,7 +55,7 @@ function pixxoHousePopulationStep(b,target,dt,lossSeconds=60){
  if(b.pop===target){b.populationProgress=0;b.populationDirection=0;}
 }
 const pixxoPopulationUnpack=unpackIsland;
-unpackIsland=function(...args){const island=pixxoPopulationUnpack(...args);for(const b of island.blds)if(b.type==='haus')b.pop=Math.max(0,Math.min(TIERS[b.tier].cap,Math.round(Number(b.pop)||0)));return island;};
+unpackIsland=function(...args){const island=pixxoPopulationUnpack(...args);for(const b of island.blds)if(b.type==='haus')b.pop=Math.max(0,Math.round(Number.isFinite(Number(b.pop))?Number(b.pop):0));return island;};
 const pixxoPopulationPack=packIsland;
 packIsland=function(island){const saved=pixxoPopulationPack(island);for(const b of saved.blds)if(b.type==='haus'){const live=island.byId.get(b.id);b.populationProgress=live.populationProgress||0;b.populationDirection=live.populationDirection||0;}return saved;};
 function pixxoProductionStatus(b){
@@ -206,7 +217,7 @@ new ResizeObserver(updateDekoNavigation).observe($('#bar'));
 dekoToggle.addEventListener('click',()=>{UI.barMode=UI.barMode==='deko'?'build':'deko';UI.cat=null;setTool(null);$('#bar')._last=null;renderBar();});
 $('#bar').addEventListener('click',e=>{const button=e.target.closest('[data-deko-build]');if(button){setTool('build',button.dataset.dekoBuild);selectB(null);renderBar();}});
 // Die geführte Einführung wird im abschließend geladenen Startmodul eingerichtet.
-const pixxoInfoHTML=infoHTML;infoHTML=function(){let h=pixxoInfoHTML();const b=G.byId.get(UI.sel);if(b?.type==='haus')h+=`<div class="kv"><span>Belegung durch Versorgung</span><b>${pixxoHouseCapacity(b)} / ${TIERS[b.tier].cap}</b></div><p class="small">Jedes erfüllte Bedürfnis ermöglicht ${pixxoResidentsPerNeed(b)} Bewohner. Dienste, Grundversorgung und zusätzliche Waren zählen jeweils einmal. Luxusbedürfnisse erhöhen die Belegung nicht.</p>`;if(b?.fire>0&&pixxoEngineArrived(b))h+=`<p>Löscheinsatz · ${Math.round((b.extinguish||0)*100)} %</p>${bar(b.extinguish||0,'#78bd69')}`;return h;};
+const pixxoInfoHTML=infoHTML;infoHTML=function(){let h=pixxoInfoHTML();const b=G.byId.get(UI.sel);if(b?.type==='haus')h+=`<div class="kv"><span>Belegung durch Versorgung</span><b>${pixxoHouseCapacity(b)} / ${TIERS[b.tier].cap}</b></div>`;if(b?.fire>0&&pixxoEngineArrived(b))h+=`<p>Löscheinsatz · ${Math.round((b.extinguish||0)*100)} %</p>${bar(b.extinguish||0,'#78bd69')}`;return h;};
 
 /* Neue Welten erhalten gerade Hafenstrände und Abbauflächen im Gebirge. */
 const pixxoLocalTerrain=localTerrain;localTerrain=function(seed,profile,...args){
@@ -293,9 +304,11 @@ function miningEntranceArt(b,side,frame){
  const turn={south:0,west:1,north:2,east:3}[side]||0,rotated=document.createElement('canvas');rotated.width=turn%2?26:18;rotated.height=turn%2?18:26;const out=rotated.getContext('2d');out.imageSmoothingEnabled=false;out.translate(rotated.width/2,rotated.height/2);out.rotate(turn*Math.PI/2);out.drawImage(portal,-9,-13);
  const x=side==='west'?0:side==='east'?low.width-rotated.width:Math.floor((low.width-rotated.width)/2),y=side==='north'?12:side==='south'?low.height-rotated.height:12+Math.floor((b.h*16-rotated.height)/2);c.drawImage(rotated,x,y);return low;
 }
-// The build-site symbol keeps its front view and uses exact quarter-turns.
-for(let frame=0;frame<5;frame++)for(const [side,turn] of [['left',1],['right',3]]){
- const source=HD_CATALOG.get('stollen_front'+frame)?.pixelSource||SP['stollen_front'+frame],low=document.createElement('canvas');low.width=low.height=16;const c=low.getContext('2d');c.imageSmoothingEnabled=false;c.translate(8,8);c.rotate(turn*Math.PI/2);nativeDrawImage.call(c,source,-8,-8,16,16);publishPixel('stollen_'+side+frame,low,16,16);
+// World mine placeholders are foreshortened except for the south-facing front.
+for(let frame=0;frame<5;frame++)for(const [side,turn] of [['left',1],['right',3],['back',2]]){
+ const source=HD_CATALOG.get('stollen_front'+frame)?.pixelSource||SP['stollen_front'+frame],rotated=document.createElement('canvas');rotated.width=rotated.height=16;const c=rotated.getContext('2d');c.imageSmoothingEnabled=false;c.translate(8,8);c.rotate(turn*Math.PI/2);nativeDrawImage.call(c,source,-8,-8,16,16);
+ const low=document.createElement('canvas');low.width=low.height=16;const out=low.getContext('2d');out.imageSmoothingEnabled=false;
+ const ww=turn%2?12:16,hh=turn%2?16:12;nativeDrawImage.call(out,rotated,Math.floor((16-ww)/2),Math.floor((16-hh)/2),ww,hh);publishPixel('stollen_'+side+frame,low,16,16);
 }
 function pixxoCattleSprite(b){if(b.type!=='gehege')return null;const g=WORLD.islands[b.island]||G,owner=g.byId.get(b.fieldOwner);return livestockEnclosureSprite(b,enclosureAnimal(owner));}
 const pixxoWorkshopSprite=workshopSprite;workshopSprite=function(b){if(pixxoCattleSprite(b))return pixxoCattleSprite(b);return ['mine','steinbruch'].includes(b.type)?pixxoMiningSprite(b)||pixxoWorkshopSprite(b):pixxoWorkshopSprite(b);};

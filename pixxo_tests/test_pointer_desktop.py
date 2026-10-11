@@ -18,6 +18,15 @@ with sync_playwright() as p:
             source=reference.getpixel((x,y)) if x<reference.width else (0,0,0,0)
             expected=(0,0,0,0) if source[3]<128 else palette['edge' if source[0]<110 else 'shade' if source[0]<190 else 'gold' if source[0]<245 else 'light']
             assert tuple(pixels[(y*16+x)*4:(y*16+x)*4+4])==expected,(x,y)
+    move_ref=Image.open(root/'assets/cursors/move-reference.png').convert('RGBA')
+    move_pixels=page.evaluate('Array.from(PIXXO_CURSOR_BASES.window_move.getContext("2d").getImageData(0,0,16,16).data)')
+    for y in range(16):
+        for x in range(16):
+            source=move_ref.getpixel((x,y));expected=(0,0,0,0) if source[3]<128 else palette['edge' if source[0]<110 else 'gold']
+            assert tuple(move_pixels[(y*16+x)*4:(y*16+x)*4+4])==expected,(x,y)
+    assert page.evaluate('PIXXO_CURSORS.window_move.css.endsWith("16 16, move")')
+    move_preview=page.evaluate('''()=>{const a=document.createElement('canvas');a.width=224;a.height=112;const c=a.getContext('2d');c.imageSmoothingEnabled=false;c.fillStyle='#21190f';c.fillRect(0,0,112,112);c.fillStyle='#88a07c';c.fillRect(112,0,112,112);c.drawImage(PIXXO_CURSOR_BASES.window_move,8,8,96,96);c.drawImage(PIXXO_CURSOR_BASES.window_move,120,8,96,96);return a.toDataURL()}''')
+    (root/'pixxo_tests/move-cursor-preview.png').write_bytes(base64.b64decode(move_preview.split(',')[1]))
     assert page.evaluate('PIXXO_CURSORS.pointer.css.endsWith("10 2, pointer")')
     assert page.locator('[data-start=new]').evaluate('e=>getComputedStyle(e).cursor===PIXXO_CURSORS.pointer.css')
     page.evaluate('''()=>{const base=PIXXO_CURSOR_BASES.default.getContext('2d').getImageData(0,0,16,16).data;

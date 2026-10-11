@@ -64,10 +64,18 @@ function commitRoadPlan(plan){
  if(!whList().length)return 'Zuerst ein Kontor gründen.';if(G.gold<plan.gold)return 'Für die gesamte Straße fehlt Gold.';
  for(const k of plan.newRoads)placeRoad(k%MAPW,Math.floor(k/MAPW));if(plan.newRoads.length){rebuildNet();saveGame();renderTop(true);}return true;
 }
+function areaDemolitionRoadRemovals(targets){
+ return targets.roads.filter(k=>G.road[k]&&(!G.bridges?.[k]||isRiver(k)||!G.bridges[k].wasRoad));
+}
 function areaDemolitionHTML(){
- const targets=pendingAreaDemolition;if(!targets)return null;const population=targets.buildings.reduce((sum,b)=>sum+Math.floor(b.pop||0),0),refund=targets.buildings.reduce((sum,b)=>sum+demolitionRefund(b).gold,0)+targets.roads.length;
- const counts=new Map();for(const b of targets.buildings)counts.set(B[b.type].n,(counts.get(B[b.type].n)||0)+1);
- return `<p><b>${targets.buildings.length} Gebäude und ${targets.roads.length} Straßenfelder abreißen?</b></p><ul>${[...counts].map(([name,n])=>`<li>${n} × ${esc(name)}</li>`).join('')}</ul><p>Rückerstattung: ${refund} Gold.${population?' '+population+' Einwohner verlieren ihr Haus.':''}</p><p class="small">Kontore bleiben erhalten. Berührte Gebäude und zugehörige Betriebsflächen werden vollständig abgerissen.</p><div class="btns"><button class="btn danger" data-act="area-demolish-confirm">Bereich abreißen</button><button class="btn" data-act="area-demolish-cancel">Abbrechen</button></div>`;
+ const targets=pendingAreaDemolition;if(!targets)return null;
+ const population=targets.buildings.reduce((sum,b)=>sum+Math.floor(b.pop||0),0),refund=targets.buildings.reduce((sum,b)=>sum+demolitionRefund(b).gold,0)+areaDemolitionRoadRemovals(targets).length;
+ const counts=new Map(),bridges=new Set();let roads=0;
+ const add=name=>counts.set(name,(counts.get(name)||0)+1);
+ for(const b of targets.buildings)add(B[b.type].n);
+ for(const k of targets.roads){const bridge=G.bridges?.[k];if(!bridge){if(G.road[k])roads++;continue;}if(!bridges.has(bridge.id)){bridges.add(bridge.id);add(bridge.kind===2?'Steinbrücke':'Holzbrücke');}}
+ if(roads)counts.set('Straßenfeld',roads);
+ return `<p><b>Auswahl abreißen?</b></p><ul>${[...counts].map(([name,n])=>`<li>${n} × ${esc(name)}</li>`).join('')}</ul><div class="sect">Rückerstattung</div><div class="cost">${refund?costHTML({gold:refund}):'Keine Rückerstattung.'}</div>${population?`<p>${population} Einwohner verlieren ihr Haus.</p>`:''}<div class="btns"><button class="btn danger" data-act="area-demolish-confirm">Abreißen</button><button class="btn" data-act="area-demolish-cancel">Abbrechen</button></div>`;
 }
 function finishConstructionPlan(){
  const plan=constructionPlan;constructionPlan=null;if(!plan)return;
@@ -97,7 +105,7 @@ const areaDemolitionAct=winAct;winAct=function(id,ds){
  if(ds.act==='area-demolish-confirm'){
   const targets=pendingAreaDemolition;pendingAreaDemolition=null;closeWin('area-demolition');if(!targets||!WORLD.islands[targets.island])return;if(activeIsland!==targets.island)activateIsland(targets.island);
   for(const b of targets.buildings)if(G.byId.has(b.id)&&b.type!=='kontor')removeBld(b,true);
-  for(const k of targets.roads)if(G.road[k]&&islandAt(k%MAPW,Math.floor(k/MAPW))===targets.island){G.road[k]=0;G.roads--;G.gold+=1;PERF_ROADS.get(G.road)?.delete(k);}
+  for(const k of areaDemolitionRoadRemovals(targets))if(islandAt(k%MAPW,Math.floor(k/MAPW))===targets.island){G.road[k]=0;G.roads--;G.gold+=1;PERF_ROADS.get(G.road)?.delete(k);}
   G.dirty=true;if(UI.sel&&!G.byId.has(UI.sel))selectB(null);rebuildNet();refreshWins();renderTop(true);saveGame();soundEffect('demolish');return;
  }
  areaDemolitionAct(id,ds);

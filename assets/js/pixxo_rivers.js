@@ -70,7 +70,7 @@ const riverLoad=loadGame;loadGame=function(...args){
 function isRiver(k,g=G){return !!g?.river?.[k];}
 function riverBank(x,y,island=activeIsland){return roadTileAllowed(x,y,island)&&!isRiver(IDX(x,y));}
 function riverCrossing(bank,dx,dy,island=activeIsland){
- if(Math.abs(dx)+Math.abs(dy)!==1)return null;
+ if(!LAND_STEPS.some(([sx,sy])=>sx===dx&&sy===dy))return null;
  const cells=[bank],x=bank%MAPW,y=Math.floor(bank/MAPW);if(!riverBank(x,y,island))return null;
  for(let n=1;n<=BRIDGE_LIMIT+1;n++){const nx=x+dx*n,ny=y+dy*n;if(!INMAP(nx,ny)||islandAt(nx,ny)!==island)return null;const k=IDX(nx,ny);
   if(isRiver(k)){if(G.occ[k]||G.bridges[k]&&(G.bridges[k].dx!==dx||G.bridges[k].dy!==dy)&&(G.bridges[k].dx!==-dx||G.bridges[k].dy!==-dy))return null;cells.push(k);continue;}
@@ -79,7 +79,7 @@ function riverCrossing(bank,dx,dy,island=activeIsland){
 }
 function riverCrossingAt(k,island=activeIsland){
  const x=k%MAPW,y=Math.floor(k/MAPW),options=[];
- for(const [dx,dy] of [[1,0],[0,1]])for(let n=1;n<=BRIDGE_LIMIT;n++){const bx=x-dx*n,by=y-dy*n;if(!INMAP(bx,by))break;if(isRiver(IDX(bx,by)))continue;const span=riverCrossing(IDX(bx,by),dx,dy,island);if(span?.cells.includes(k))options.push(span);break;}
+ for(const [dx,dy] of [[1,0],[0,1],[1,1],[1,-1]])for(let n=1;n<=BRIDGE_LIMIT;n++){const bx=x-dx*n,by=y-dy*n;if(!INMAP(bx,by))break;if(isRiver(IDX(bx,by)))continue;const span=riverCrossing(IDX(bx,by),dx,dy,island);if(span?.cells.includes(k))options.push(span);break;}
  return options.sort((a,b)=>a.cells.length-b.cells.length||Math.abs(a.dx*a.dy)-Math.abs(b.dx*b.dy))[0]||null;
 }
 const riverRoadAllowed=roadTileAllowed;roadTileAllowed=function(x,y,island=activeIsland){return riverRoadAllowed(x,y,island)||INMAP(x,y)&&islandAt(x,y)===island&&isRiver(IDX(x,y))&&!G.occ[IDX(x,y)];};
@@ -138,8 +138,9 @@ const riverCommitRoad=commitRoadPlan;commitRoadPlan=function(plan){
  if(details.kind===2&&!stoneRoadUnlocked())return 'Für Steinbrücken und Straßen wird ein Steinbruch benötigt.';
  if(!canAfford(details.cost))return 'Für den gesamten Weg einschließlich Brücken fehlt Gold oder Baumaterial.';
  payCost(details.cost);
- for(const span of details.spans){const piers=bridgePierIndices(span.cells.length),id=span.cells[0]+':'+span.cells[span.cells.length-1];
-  span.cells.forEach((k,j)=>{const existing=G.bridges[k],kind=Math.max(details.kind,G.road[k]||1);G.bridges[k]={id,cells:span.cells,dx:span.dx,dy:span.dy,kind,part:j===0||j===span.cells.length-1?'ramp':'deck',pier:piers.has(j),wasRoad:existing?.wasRoad??!!G.road[k]};});
+ for(const span of details.spans){const cells=span.cells.filter(k=>isRiver(k)&&G.tiles[k]<=T.SHAL),piers=bridgePierIndices(cells.length+2),id=span.cells[0]+':'+span.cells[span.cells.length-1];
+  for(const k of span.cells)if(!cells.includes(k))delete G.bridges[k];
+  cells.forEach((k,j)=>{const existing=G.bridges[k],kind=Math.max(details.kind,G.road[k]||1);G.bridges[k]={id,cells,dx:span.dx,dy:span.dy,kind,part:j===0||j===cells.length-1?'ramp':'deck',pier:piers.has(j+1),wasRoad:existing?.wasRoad??!!G.road[k]};});
  }
  for(const k of details.changes){if(!G.road[k])G.roads++;G.road[k]=details.kind;if(G.tiles[k]===T.FOREST)G.tiles[k]=T.GRASS;PERF_ROADS.get(G.road)?.add(k);}
  G.dirty=true;rebuildNet();saveGame();renderTop(true);return true;
@@ -154,13 +155,32 @@ const riverUpgrade=roadUpgrade;roadUpgrade=function(x,y){const k=IDX(x,y),b=G.br
  if(!Object.keys(cost).length||!canAfford(cost))return false;payCost(cost);for(const n of b.cells){G.road[n]=2;if(G.bridges[n])G.bridges[n].kind=2;}G.dirty=true;return true;
 };
 const riverAreaUpgrade=areaUpgradeTargets;areaUpgradeTargets=function(...args){const target=riverAreaUpgrade(...args);if(target.type!=='road')return target;const roads=new Set(target.roads);for(const k of target.roads)for(const n of G.bridges?.[k]?.cells||[])if(G.road[n]===1)roads.add(n);target.roads=[...roads];target.cost={};for(const k of roads)for(const [g,n] of Object.entries(bridgeUpgradeTileCost(k)))target.cost[g]=(target.cost[g]||0)+n;return target;};
-const riverDemolish=demolishAt;demolishAt=function(x,y){const k=IDX(x,y),b=G.bridges?.[k];if(!b)return riverDemolish(x,y);for(const n of b.cells){if(!G.bridges[n])continue;if(isRiver(n)||!G.bridges[n].wasRoad){if(G.road[n]){G.roads--;G.gold++;}G.road[n]=0;PERF_ROADS.get(G.road)?.delete(n);}delete G.bridges[n];}G.dirty=true;return true;};
+const riverDemolish=demolishAt;demolishAt=function(x,y){
+ if(!INMAP(x,y))return false;const k=IDX(x,y),b=G.bridges?.[k];if(!b)return riverDemolish(x,y);
+ if(WORLD.islands[islandAt(x,y)]?.cpu&&!CPU_WORK)return 'Diese Insel gehört einem anderen Siedler.';
+ if(CPU_WORK){for(const n of b.cells){if(!G.bridges[n])continue;if(isRiver(n)||!G.bridges[n].wasRoad){if(G.road[n]){G.roads--;G.gold++;}G.road[n]=0;PERF_ROADS.get(G.road)?.delete(n);}delete G.bridges[n];}G.dirty=true;return true;}
+ if(WINS['area-demolition'])return false;
+ pendingAreaDemolition={island:activeIsland,rect:{x0:x,y0:y,x1:x,y1:y},buildings:[],roads:[...b.cells]};
+ openWin('area-demolition','Brücke abreißen',areaDemolitionHTML);return false;
+};
 const riverDemolitionTargets=areaDemolitionTargets;areaDemolitionTargets=function(...args){const t=riverDemolitionTargets(...args),roads=new Set(t.roads);for(const k of t.roads)for(const n of G.bridges?.[k]?.cells||[])roads.add(n);t.roads=[...roads];return t;};
-const riverWinAct=winAct;winAct=function(id,ds){const cells=ds.act==='area-demolish-confirm'?pendingAreaDemolition?.roads:null,result=riverWinAct(id,ds);if(cells)for(const k of cells)if(!G.road[k])delete G.bridges[k];return result;};
+const riverWinAct=winAct;winAct=function(id,ds){const cells=ds.act==='area-demolish-confirm'?pendingAreaDemolition?.roads:null,result=riverWinAct(id,ds);if(cells)for(const k of cells)delete G.bridges[k];return result;};
 const BRIDGE_ART_CACHE=new Map();
-function bridgeSprite(dx,dy,kind,part,pier=false){
- const key=[dx,dy,kind,part,pier].join(':');if(BRIDGE_ART_CACHE.has(key))return BRIDGE_ART_CACHE.get(key);
- const canvas=document.createElement('canvas');canvas.width=canvas.height=24;const {r,p,ln}=civicPainter(canvas),len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len,vx=-uy,vy=ux,point=(a,b)=>[12+a*ux+b*vx,11+a*uy+b*vy],extent=8*len+1;
+function bridgeArchFor(cells,index){const supports=[0,...bridgePierIndices(cells.length+2),cells.length+1].sort((a,b)=>a-b);return {tile:index+1,supports};}
+function bridgeSprite(dx,dy,kind,part,pier=false,arch=null){
+ const key=[dx,dy,kind,part,pier,arch?JSON.stringify(arch):''].join(':');if(BRIDGE_ART_CACHE.has(key))return BRIDGE_ART_CACHE.get(key);
+ const canvas=document.createElement('canvas');canvas.width=canvas.height=24;const {r,p,ln}=civicPainter(canvas),len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len,vx=-uy,vy=ux,point=(a,b)=>[12+a*ux+b*vx,(kind===2?7:11)+a*uy+b*vy],extent=8*len+1;
+ // Stone arches span the intervals between actual supports, on the visible front face.
+ if(kind===2){
+  const layout=arch||{tile:1,supports:[0,2]};
+  for(let a=-extent;a<=extent;a++){
+   const position=layout.tile+a/(16*len),right=layout.supports.find(v=>v>=position)??layout.supports.at(-1),left=[...layout.supports].reverse().find(v=>v<=position)??layout.supports[0],span=right-left;
+   const t=span?Math.max(-1,Math.min(1,(position-left)/span*2-1)):1,depth=Math.round(4+7*(1-Math.sqrt(Math.max(0,1-t*t)))),q=point(a,5);
+   r(q[0],q[1],1,depth,'#808283');r(q[0],q[1]+depth-1,1,1,'#5b5d5e');
+   if(Math.round(position*16)%5===0)r(q[0],q[1]+1,1,Math.max(1,depth-2),'#5b5d5e');
+   if(a%3===0)r(q[0],q[1]+depth-2,1,1,'#a1a3a4');
+  }
+ }
  // Stone uses the road's neutral grey cobble palette, rather than green stone.
  if(pier){r(10,13,4,9,kind===2?'#808283':'#654d31');r(10,14,1,7,kind===2?'#a1a3a4':'#bc9362');r(9,21,6,2,'#3b5959');for(let y=16;y<21;y+=3)r(11,y,3,1,kind===2?'#5b5d5e':'#47392c');}
  p([point(-extent,-5),point(extent,-5),point(extent,5),point(-extent,5)],kind===2?'#5b5d5e':'#493723');
@@ -170,12 +190,47 @@ function bridgeSprite(dx,dy,kind,part,pier=false){
  if(part==='ramp')for(const a of [-6,6]){const q=point(a,-4),z=point(a,4);ln(...q,...z,kind===2?'#a1a3a4':'#e0bd7f');}
  BRIDGE_ART_CACHE.set(key,canvas);return canvas;
 }
-const riverDrawRoad=drawRoadTile;drawRoadTile=function(ctx,mask,stone,x,y){const b=G.bridges?.[IDX(x,y)];if(b){ctx.drawImage(bridgeSprite(b.dx,b.dy,b.kind,b.part,b.pier),x*16-4,y*16-4,24,24);return;}riverDrawRoad(ctx,mask,stone,x,y);};
-const riverGhost=drawGhost;drawGhost=function(ctx){const p=constructionPlan;if(p?.tool!=='road'||!p.bridgePlan?.valid)return riverGhost(ctx);ctx.save();ctx.fillStyle=canAfford(p.bridgePlan.cost)?'rgba(235,212,149,.45)':'rgba(222,107,88,.5)';for(const k of p.newRoads)ctx.fillRect(k%MAPW*16,Math.floor(k/MAPW)*16,16,16);ctx.globalAlpha=.7;for(const span of p.bridgePlan.spans)span.cells.forEach((k,i)=>ctx.drawImage(bridgeSprite(span.dx,span.dy,p.bridgePlan.kind,i===0||i===span.cells.length-1?'ramp':'deck',bridgePierIndices(span.cells.length).has(i)),k%MAPW*16-4,Math.floor(k/MAPW)*16-4,24,24));ctx.restore();};
+const STONE_SPAN_ART=new Map();
+function stoneSpanArt(count,dx,dy){
+ const key=count+':'+dx+':'+dy;if(STONE_SPAN_ART.has(key))return STONE_SPAN_ART.get(key);
+ const a=document.createElement('canvas'),len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len,vx=-uy,vy=ux,minX=Math.min(0,(count-1)*dx*16),minY=Math.min(0,(count-1)*dy*16);
+ a.width=Math.abs((count-1)*dx*16)+24;a.height=Math.abs((count-1)*dy*16)+32;
+ const {r,p,ln}=civicPainter(a),point=(along,across)=>[12-minX+along*ux+across*vx,7-minY+along*uy+across*vy],start=-8*len-1,end=(count-1)*16*len+8*len+1,supports=[0,...bridgePierIndices(count+2),count+1].sort((x,y)=>x-y);
+ // One continuous arch face, so neither brickwork nor vaults restart at tile boundaries.
+ for(let along=start;along<=end;along+=.5){
+  const position=1+along/(16*len),right=supports.find(v=>v>=position)??supports.at(-1),left=[...supports].reverse().find(v=>v<=position)??supports[0],span=right-left,t=span?Math.max(-1,Math.min(1,(position-left)/span*2-1)):1;
+  const depth=Math.round(2+12*(1-Math.sqrt(Math.max(0,1-t*t)))),q=point(along,5),x=Math.round(q[0]),y=Math.round(q[1]);
+  r(x,y,1,depth,'#808283');r(x,y+depth-1,1,1,'#4f5152');r(x,y+depth-2,1,1,'#a1a3a4');
+  if(Math.floor(position*16)%6===0)r(x,y+1,1,Math.max(1,depth-3),'#5b5d5e');
+ }
+ for(const support of bridgePierIndices(count+2)){const q=point((support-1)*16*len,0);r(q[0]-2,q[1]+5,5,17,'#808283');r(q[0]-2,q[1]+5,1,16,'#b0b2b3');for(let y=8;y<21;y+=4)r(q[0]-1,q[1]+y,4,1,'#5b5d5e');}
+ p([point(start,-5),point(end,-5),point(end,5),point(start,5)],'#5b5d5e');p([point(start,-4),point(end,-4),point(end,4),point(start,4)],'#808283');
+ for(let along=start;along<end;along+=4){ln(...point(along,-4),...point(along,4),'#5b5d5e');const q=point(along+1,0);r(q[0],q[1],1,1,'#969899');}
+ for(const side of [-1,1]){const q=point(start,side*5),z=point(end,side*5);ln(q[0],q[1]-2,z[0],z[1]-2,'#b0b2b3');ln(q[0],q[1]-1,z[0],z[1]-1,'#787a7b');}
+ const result={canvas:a,minX,minY};STONE_SPAN_ART.set(key,result);return result;
+}
+function drawStoneBridgeSpan(ctx,b){
+ const cells=b.cells;if(!cells?.length)return;const first=cells[0],art=stoneSpanArt(cells.length,b.dx,b.dy);
+ ctx.drawImage(art.canvas,first%MAPW*16-4+art.minX,Math.floor(first/MAPW)*16-4+art.minY);
+}
+const riverDrawRoad=drawRoadTile;drawRoadTile=function(ctx,mask,stone,x,y){const b=G.bridges?.[IDX(x,y)];if(b){if(b.kind===2){if(!ctx._stoneSpanDrawn?.has(b.id)){ctx._stoneSpanDrawn?.add(b.id);drawStoneBridgeSpan(ctx,b);}return;}ctx.drawImage(bridgeSprite(b.dx,b.dy,b.kind,b.part,b.pier,bridgeArchFor(b.cells,b.cells.indexOf(IDX(x,y)))),x*16-4,y*16-4,24,24);return;}riverDrawRoad(ctx,mask,stone,x,y);};
+const riverGhost=drawGhost;drawGhost=function(ctx){const p=constructionPlan;if(p?.tool!=='road'||!p.bridgePlan?.valid)return riverGhost(ctx);ctx.save();ctx.fillStyle=canAfford(p.bridgePlan.cost)?'rgba(235,212,149,.45)':'rgba(222,107,88,.5)';for(const k of p.newRoads)ctx.fillRect(k%MAPW*16,Math.floor(k/MAPW)*16,16,16);ctx.globalAlpha=.7;for(const span of p.bridgePlan.spans){const cells=span.cells.filter(k=>isRiver(k)&&G.tiles[k]<=T.SHAL),piers=bridgePierIndices(cells.length+2);if(p.bridgePlan.kind===2)drawStoneBridgeSpan(ctx,{cells,dx:span.dx,dy:span.dy});else cells.forEach((k,i)=>ctx.drawImage(bridgeSprite(span.dx,span.dy,p.bridgePlan.kind,i===0||i===cells.length-1?'ramp':'deck',piers.has(i+1),bridgeArchFor(cells,i)),k%MAPW*16-4,Math.floor(k/MAPW)*16-4,24,24));}ctx.restore();};
 const riverDrawLand=drawLandRegion;drawLandRegion=function(ctx,x0,y0,x1,y1){riverDrawLand(ctx,x0,y0,x1,y1);if(!G.river)return;
  const phase=WORK_ART.reduced.matches?0:Math.floor(G.time*2)%8;ctx.save();ctx.fillStyle='#85b9bd';ctx.globalAlpha=.35;
  for(const k of G.riverCells||[]){const x=k%MAPW,y=Math.floor(k/MAPW);if(x*16<x0-16||y*16<y0-16||x*16>x1||y*16>y1||!isRiver(k))continue;ctx.fillRect(x*16+3+(x+phase)%8,y*16+5+(y%3),4,1);ctx.fillRect(x*16+2+(phase+3)%7,y*16+12,3,1);}
  ctx.restore();
 };
 
-const spacedBridgeUnpack=unpackIsland;unpackIsland=function(...args){const g=spacedBridgeUnpack(...args),seen=new Set();for(const bridge of Object.values(g.bridges||{})){if(seen.has(bridge.id))continue;seen.add(bridge.id);const piers=bridgePierIndices(bridge.cells.length);bridge.cells.forEach((k,i)=>{if(g.bridges[k])g.bridges[k].pier=piers.has(i);});}return g;};
+const spacedBridgeUnpack=unpackIsland;unpackIsland=function(...args){
+ const g=spacedBridgeUnpack(...args),seen=new Set();
+ for(const bridge of Object.values(g.bridges||{})){
+ if(seen.has(bridge.id))continue;seen.add(bridge.id);
+ const old=bridge.cells||[],cells=old.filter(k=>isRiver(k,g)&&g.tiles[k]<=T.SHAL),piers=bridgePierIndices(cells.length+2);
+ for(const k of old)if(!cells.includes(k))delete g.bridges[k];
+ cells.forEach((k,i)=>{const part=g.bridges[k];if(part){part.cells=cells;part.part=i===0||i===cells.length-1?'ramp':'deck';part.pier=piers.has(i+1);}});
+ }
+ return g;
+};
+
+const stoneSpanDrawLand=drawLandRegion;
+drawLandRegion=function(ctx,...args){const previous=ctx._stoneSpanDrawn;ctx._stoneSpanDrawn=new Set();try{return stoneSpanDrawLand(ctx,...args);}finally{ctx._stoneSpanDrawn=previous;}};

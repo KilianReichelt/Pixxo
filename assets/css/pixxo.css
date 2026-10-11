@@ -42,3 +42,20 @@
  #bar.deko-mode{width:calc(100vw - 72px);max-width:calc(100vw - 72px);bottom:calc(var(--mm) + 84px)}
  body:has(#bar.deko-mode) #barModes{bottom:calc(var(--mm) + 84px)}
 }
+
+/* House needs use two columns only when there are at least six entries. */
+.needgroup .needs:has(>.nd:nth-child(6)){grid-template-columns:repeat(2,minmax(0,1fr));column-gap:12px}
+.needgroup .needs>.nd{min-width:0;overflow-wrap:anywhere}
+.needgroup .needs>.nd>.ic{flex-shrink:0}
+
+.needgroup .need-residents{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.needgroup .needs>.nd{flex-wrap:wrap}
+
+.gold-rate{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+
+.needgroup .needs>.nd:has(>.need-residents){display:grid;grid-template-columns:auto minmax(0,1fr) max-content;align-items:center;column-gap:6px}
+.needgroup .needs>.nd:has(>.need-residents):has(>.ic){grid-template-columns:16px auto minmax(0,1fr) max-content}
+.needgroup .need-name{min-width:0;overflow-wrap:anywhere}
+.needgroup .need-residents{justify-self:end}
+
+body.game-paused,body.game-paused *,body.game-paused *::before,body.game-paused *::after{animation-play-state:paused!important}

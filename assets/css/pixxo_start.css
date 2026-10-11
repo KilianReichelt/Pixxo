@@ -130,3 +130,8 @@ body.reduced-motion *,body.reduced-motion *::before,body.reduced-motion *::after
 #pixxo-start .start-motion-setting input{flex:0 0 24px;width:24px;height:24px}
 .return-confirm-actions{display:flex;gap:12px;flex-wrap:wrap}.return-confirm-actions .btn{flex:1;min-width:120px;white-space:normal}
 @media(max-width:380px){#pixxo-start .start-settings-card .audio-settings{grid-template-columns:minmax(90px,1fr) minmax(50px,1fr) 44px}}
+
+/* A single shade with cutouts keeps the tutorial and its current targets clear. */
+#tour-shade{position:fixed;inset:0;width:100%;height:100%;z-index:799;pointer-events:none}
+#tour-shade[hidden]{display:none}
+body.start-open #tour-shade{visibility:hidden}

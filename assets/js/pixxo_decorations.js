@@ -93,6 +93,8 @@ const groupedDecorRenderBar=renderBar;
 renderBar=function(...args){
  const bar=$('#bar');bar.classList.toggle('deko-category-mode',UI.barMode==='deko');
  if(UI.barMode!=='deko'){const focused=document.activeElement?.dataset?.cat,result=groupedDecorRenderBar(...args);document.documentElement.style.setProperty('--barH',bar.offsetHeight+'px');for(const button of bar.querySelectorAll('[data-cat]')){button.setAttribute('aria-pressed',String(UI.cat===button.dataset.cat));button.setAttribute('aria-controls','items-viewport');}if(focused)bar.querySelector('[data-cat="'+focused+'"]')?.focus();return result;}
+ if(dekoCategoryDrag)return;
+ const previousScroll=bar.querySelector('.deko-viewport')?.scrollLeft||0;
  const originalCats=CATS.slice(),focused=document.activeElement?.dataset?.cat;
  const categoryIcons=['eiche','bank','heuwagen','kistenstapel','steinmauer','lichterbogen'];
  CATS.splice(0,CATS.length,...DEKO_GROUPS.map((group,i)=>({id:'deko_'+group.id,n:group.n,icon:'b_deko_'+categoryIcons[i]})));
@@ -100,8 +102,33 @@ renderBar=function(...args){
  try{groupedDecorRenderBar(...args);}finally{UI.barMode='deko';CATS.splice(0,CATS.length,...originalCats);}
  bar.classList.remove('deko-mode');bar.classList.add('deko-category-mode');document.documentElement.style.setProperty('--barH',bar.offsetHeight+'px');
  for(const group of DEKO_GROUPS){const button=bar.querySelector('[data-cat="deko_'+group.id+'"]');if(button){button.dataset.dekoCategory=group.id;button.setAttribute('aria-pressed',String(UI.cat==='deko_'+group.id));button.setAttribute('aria-label',group.n);button.setAttribute('aria-controls','items-viewport');}}
+ wrapDekoCategories(previousScroll);
  if(focused)bar.querySelector('[data-cat="'+focused+'"]')?.focus();
  dekoToggle.classList.add('on');dekoToggle.setAttribute('aria-pressed','true');dekoToggle.setAttribute('aria-label','Baukategorien anzeigen');dekoToggle.innerHTML=ic('i_houses',1.5);dekoToggle.dataset.icon='i_houses';
  const viewport=$('#items .items-viewport');if(viewport)viewport.setAttribute('aria-label','Dekorationen');
  for(const button of $('#items').querySelectorAll('[data-item-scroll]'))button.setAttribute('aria-label',button.dataset.itemScroll==='left'?'Vorherige Dekorationen anzeigen':'Weitere Dekorationen anzeigen');
 };
+
+let dekoCategoryDrag=null,dekoCategorySuppressClick=false;
+function wrapDekoCategories(scroll=0){
+ const bar=$('#bar');if(!bar.querySelector('.deko-viewport')){
+ const cards=bar.innerHTML;bar.innerHTML=`<button type="button" class="item-scroll" data-deko-scroll="left" aria-label="Vorherige Dekokategorien anzeigen" aria-controls="deko-viewport" hidden>←</button><div id="deko-viewport" class="deko-viewport" role="group" aria-label="Dekokategorien" tabindex="0"><div class="deko-track">${cards}</div></div><button type="button" class="item-scroll" data-deko-scroll="right" aria-label="Weitere Dekokategorien anzeigen" aria-controls="deko-viewport" hidden>→</button>`;
+ }
+ bar.querySelector('.deko-viewport').scrollLeft=scroll;updateDekoNavigation();
+}
+const dekoCategoryBar=$('#bar');
+dekoCategoryBar.addEventListener('pointerdown',e=>{
+ if(!e.isPrimary||e.button!==0||e.target.closest('[data-deko-scroll]'))return;
+ const viewport=e.target.closest('.deko-viewport');if(!viewport||viewport.scrollWidth<=viewport.clientWidth)return;
+ dekoCategorySuppressClick=false;dekoCategoryDrag={pointer:e.pointerId,viewport,x:e.clientX,scroll:viewport.scrollLeft,dragged:false};
+});
+dekoCategoryBar.addEventListener('pointermove',e=>{
+ const d=dekoCategoryDrag;if(!d||d.pointer!==e.pointerId)return;const dx=e.clientX-d.x;if(!d.dragged&&Math.abs(dx)<6)return;
+ if(!d.dragged){d.dragged=true;d.viewport.setPointerCapture(e.pointerId);d.viewport.classList.add('is-dragging');}
+ e.preventDefault();d.viewport.scrollLeft=d.scroll-dx;updateDekoNavigation();
+});
+function finishDekoCategoryDrag(e){const d=dekoCategoryDrag;if(!d||d.pointer!==e.pointerId)return;dekoCategoryDrag=null;dekoCategorySuppressClick=d.dragged;d.viewport.classList.remove('is-dragging');if(d.viewport.hasPointerCapture(e.pointerId))d.viewport.releasePointerCapture(e.pointerId);}
+for(const event of ['pointerup','pointercancel','lostpointercapture'])dekoCategoryBar.addEventListener(event,finishDekoCategoryDrag);
+dekoCategoryBar.addEventListener('pointerleave',()=>{if(dekoCategoryDrag&&!dekoCategoryDrag.dragged)dekoCategoryDrag=null;});
+dekoCategoryBar.addEventListener('click',e=>{if(dekoCategorySuppressClick&&e.detail!==0){dekoCategorySuppressClick=false;e.preventDefault();e.stopImmediatePropagation();}},true);
+dekoCategoryBar.addEventListener('dragstart',e=>{if(e.target.closest('.deko-viewport'))e.preventDefault();});

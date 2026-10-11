@@ -3,14 +3,23 @@ const DAY_LENGTH_SECONDS=1200;
 let DAY_CLOUD_SPRITE=null,DAY_CLOUD_PATTERN=null;
 function dayCloudSprite(){
  if(DAY_CLOUD_SPRITE)return DAY_CLOUD_SPRITE;
- const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d');
- for(const [x,y,r] of [[36,53,44],[66,51,38],[51,79,33],[187,169,55],[213,190,37],[171,199,42]])for(const dx of [-256,0,256])for(const dy of [-256,0,256]){const glow=g.createRadialGradient(x+dx,y+dy,r*.12,x+dx,y+dy,r);glow.addColorStop(0,'rgba(22,37,48,.48)');glow.addColorStop(.5,'rgba(22,37,48,.27)');glow.addColorStop(1,'rgba(22,37,48,0)');g.fillStyle=glow;g.fillRect(x+dx-r,y+dy-r,r*2,r*2);}
- DAY_CLOUD_SPRITE=c;return c;
+ const a=document.createElement('canvas');a.width=a.height=512;const c=a.getContext('2d');
+ for(const cloud of [{x:100,y:110,r:34,stretch:1.5},{x:332,y:180,r:75,stretch:1.35},{x:160,y:370,r:52,stretch:1.8}])for(const [ox,oy,f] of [[0,0,1],[-.48,.12,.72],[.45,-.12,.64]]){
+  c.save();c.translate(cloud.x+ox*cloud.r,cloud.y+oy*cloud.r);c.scale(cloud.stretch,1);const radius=cloud.r*f,g=c.createRadialGradient(0,0,radius*.12,0,0,radius);
+  g.addColorStop(0,'rgba(24,35,46,.42)');g.addColorStop(.48,'rgba(24,35,46,.25)');g.addColorStop(1,'rgba(24,35,46,0)');c.fillStyle=g;c.fillRect(-radius,-radius,radius*2,radius*2);c.restore();
+ }
+ // Quantised opacity and a two-pixel grid make the shadow edges visibly pixelated.
+ const image=c.getImageData(0,0,512,512),data=image.data;
+ for(let y=0;y<512;y+=2)for(let x=0;x<512;x+=2){const sample=((y+1)*512+x+1)*4,alpha=Math.min(192,Math.round(data[sample+3]*1.2/24)*24);for(let dy=0;dy<2;dy++)for(let dx=0;dx<2;dx++){const i=((y+dy)*512+x+dx)*4;data[i]=24;data[i+1]=35;data[i+2]=46;data[i+3]=alpha;}}
+ c.putImageData(image,0,0);DAY_CLOUD_SPRITE=a;return a;
 }
 function drawDayClouds(ctx,x0,y0,x1,y1){
- const light=1-nightAmount();if(light<=.01)return;
+ const daylight=1-nightAmount();if(daylight<=.01)return;
  const time=WORK_ART.reduced.matches?0:G.time,pattern=DAY_CLOUD_PATTERN||(DAY_CLOUD_PATTERN=ctx.createPattern(dayCloudSprite(),'repeat'));
- pattern.setTransform(new DOMMatrix().translate(time*.8,time*.22).scale(4));ctx.save();ctx.imageSmoothingEnabled=true;ctx.globalAlpha=.2*light;ctx.fillStyle=pattern;ctx.fillRect(x0,y0,x1-x0,y1-y0);ctx.restore();
+ ctx.save();ctx.imageSmoothingEnabled=false;
+ for(const [scale,speedX,speedY,opacity,offset] of [[3,.75,.19,.5,0],[2,.45,.12,.28,811]]){
+  pattern.setTransform(new DOMMatrix().translate(offset+time*speedX,offset*.37+time*speedY).scale(scale));ctx.globalAlpha=opacity*daylight;ctx.fillStyle=pattern;ctx.fillRect(x0,y0,x1-x0,y1-y0);
+ }ctx.restore();
 }
 function dayClock(){if(!WORLD)return {minutes:720,enabled:true,system:false};return WORLD.dayClock??={minutes:720,enabled:true,system:false};}
 function dayMinutes(){const c=dayClock();if(c.system){const now=new Date();return now.getHours()*60+now.getMinutes()+now.getSeconds()/60;}return c.minutes;}

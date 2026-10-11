@@ -24,7 +24,7 @@ function kontorFlagSprite(tier,frame){
 const kontorWorkshopSprite=workshopSprite;
 workshopSprite=function(b){
  if(b.type!=='kontor')return kontorWorkshopSprite(b);
- const time=WORLD?.islands[b.island]?.time??G.time,frame=G.speed>0&&!b.paused&&b.fire<=0&&!WORK_ART.reduced.matches?Math.floor(time*5+b.id)%8:0;
+ const time=WORLD?.islands[b.island]?.time??G.time,frame=!b.paused&&b.fire<=0&&!WORK_ART.reduced.matches?Math.floor(time*5+b.id)%8:0;
  return rotatedSprite(kontorFlagSprite(b.tier,frame),b.rotation||0);
 };
 // Warm pixel lamps and sagging fairy lights on the market stalls, at night only.

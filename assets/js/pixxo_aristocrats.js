@@ -28,17 +28,17 @@ for(const [id,n,cat,input,out,cycle,workers,good] of CIVIC_CHAINS){
 for(const [id] of CIVIC_GOODS)STORE_GOOD_CATEGORIES.set(id,Object.values(B).some(b=>b.kind==='prod'&&b.cat==='roh'&&b.out?.[id])?'raw':'craft');
 Object.assign(B,{
  brunnen:{n:'Brunnen',cat:'wohnen',kind:'svc',svc:'brunnen',r:20,w:1,h:1,cost:{gold:150,stein:8,bretter:2},upk:3,req:0,d:'Senkt das Brandrisiko angeschlossener Gebäude in Reichweite um 50 %.'},
- garten:{n:'Garten',cat:'wohnen',kind:'svc',svc:'garten',r:24,w:3,h:3,cost:{gold:350,bretter:8,stein:4},upk:5,req:0,d:'Senkt den Verbrauch von Brot, Honig und Apfelmost benachbarter, angeschlossener Häuser einmalig um 15 %.'},
+ garten:{n:'Garten',cat:'wohnen',kind:'svc',svc:'garten',r:24,w:3,h:3,cost:{gold:350,bretter:8,stein:4},upk:5,req:0,d:'Senkt den Verbrauch von Brot, Honig und Apfelmost benachbarter, angeschlossener Häuser um 15 %.'},
  gemeinschaftshaus:{n:'Gemeinschaftshaus',cat:'wohnen',kind:'svc',svc:'gemeinschaft',r:32,w:4,h:4,cost:{gold:1800,bretter:22,ziegel:18,werkzeug:6},upk:35,req:0,d:'Erfüllt das Wohnbedürfnis Gemeinschaft für Patrizier und Aristokraten.'}
 });
 Object.assign(SVCN,{brunnen:'Brunnen',garten:'Garten',gemeinschaft:'Gemeinschaft'});
 // Available before the first patrician upgrade, whose next-tier requirements include this service.
 for(const [id,tier] of [['brunnen',1],['garten',2],['gemeinschaftshaus',2]]){BUILD_TIER[id]=tier;BUILD_SIZES[id]={w:B[id].w,h:B[id].h};BASE_GEOMETRY[id]={w:B[id].w,h:B[id].h};}
 TIERS[3].svc.push('gemeinschaft');
-TIERS.push({id:4,n:'Aristokraten',cap:36,tax:15,goods:{...TIERS[3].goods,feine_kleidung:.012,geschirr:.01,buecher:.012},svc:['markt','kirche','gemeinschaft'],luxury:{parfuem:.006,schmuck:.005,moebel:.006},icon:'i_t4'});
+TIERS.push({id:4,n:'Aristokraten',cap:22,tax:8,goods:{...TIERS[3].goods,feine_kleidung:.012,geschirr:.01,buecher:.012},svc:['markt','kirche','gemeinschaft'],luxury:{parfuem:.006,schmuck:.005,moebel:.006},icon:'i_t4'});
 HN[4]='Aristokratenhaus';
 UPG[4]={gold:1100,bretter:24,ziegel:24,beton:20,glas:12,werkzeug:10};
-for(const tier of TIERS.filter(Boolean)){const count=pixxoHouseNeedCount({tier:tier.id});tier.cap=Math.ceil(tier.cap/count)*count;}
+pixxoRefreshHouseCapacities();
 // Retain definitions and save data until grand projects are ready for release.
 const CIVIC_PROJECTS_ENABLED=false;
 const CIVIC_PROJECTS={

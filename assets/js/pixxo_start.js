@@ -110,10 +110,7 @@ function startRender(page='home'){
   '<label class="start-motion-setting"><input type="checkbox" data-start-preference="skipTutorials" '+(StartPrefs.skipTutorials?'checked':'')+'>Tutorials zu Spielbeginn überspringen</label><p id="start-music-status" role="status"></p></section></div>';
  }
  if(page==='credits'){
-  title='Credits';content='<section><h2>Idee und Entwicklung</h2><p>Pixxo wurde von <strong>Kilian Reichelt</strong> erstellt.</p></section>'+
-   '<section><h2>Spielmusik</h2><p>BGM: Open World Field BGM Series Vol.01 — Vacuous BGM</p>'+
-   '<p>Alle zwölf Titel begleiten deine Partie als Hintergrundmusik.</p>'+
-   '<a href="https://vacuous2409.itch.io/open-world-field-bgm-series-vol01" target="_blank" rel="noopener noreferrer">Musik von Vacuous BGM auf itch.io (neuer Tab)</a></section>';
+  title='Credits';content=startCreditsHTML();
  }
  if(page==='confirm'){
   title='Neues Spiel starten?';content='<p>Deine bisherige Partie wird durch eine neue Inselwelt ersetzt. Exportiere sie vorher im Spielmenü, wenn du sie behalten möchtest.</p>'+
@@ -202,6 +199,7 @@ startReturnConfirm.addEventListener('click',e=>{const action=e.target.closest('[
 const startWinAct=winAct;
 winAct=function(id,ds){
  if(ds.act==='start-home'){showStartReturnConfirm();return;}
+ if(ds.act==='start-credits'){openWin('credits','Credits',startCreditsHTML);return;}
  if(ds.act?.startsWith('start-')){startShow(ds.act.slice(6));return;}
  if(ds.act==='tutorial-open'){WORLD.tutorial={version:2,step:0};closeWin('menu');openTutorial();saveGame();return;}startWinAct(id,ds);
 };
@@ -209,7 +207,7 @@ requestNewGame=function(){startShow('confirm');};
 const TOUR_STEPS=[
  {title:'Beginn deiner Reise',text:'Das Kontor ist Hafen und gemeinsames Lager deiner Insel. Es ist der Ausgangspunkt für deine Straßen und Produktion.',target:'port'},
  {title:'Die Karte erkunden',text:'Ziehe die Karte um dich umzusehen. Die Minikarte hilft dir dich beser zu orientieren und hilft dir dabei, zwischen weiter entfernten Punkten zu springen.',target:'#mmw'},
- {title:'Baukategorien und Bauplätze',text:'In dieser Leiste findest du alle Baukategorien. Wähle ein Gebäude und setze es auf einen gültigen Bauplatz. Aber Achtung: Jedes GEbäude benötigt Artbeitskräfte und kostet dich laufend Unterhalt, baue also mit Bedacht.',target:'#bar',cat:'roh'},
+ {title:'Baukategorien und Bauplätze',text:'In dieser Leiste findest du alle Baukategorien. Wähle ein Gebäude und setze es auf einen gültigen Bauplatz. Aber Achtung: Jedes Gebäude benötigt Artbeitskräfte und kostet dich laufend Unterhalt, baue also mit Bedacht.',target:'#bar',cat:'roh'},
  {title:'Holz und Bretter herstellen',text:'Zu beginn wirst du einen Holzfäller brauchen. Ein Holzfäller braucht Bäume in seiner Umgebung. Das Sägewerk verarbeitet das Holz zu Brettern.',target:'[data-b="holzfaeller"]',cat:'roh',goal:()=>['holzfaeller','saegewerk'].every(t=>G.blds.some(b=>b.type===t))},
  {title:'Straßen verbinden deine Siedlung',text:'Verbinde deine Gebäude mit Straßen untereinander und mit dem Kontor. Nur so können Waren zwischen ihnen transportiert werden.',target:'[data-tool="road"]',goal:()=>['holzfaeller','saegewerk'].every(t=>G.blds.some(b=>b.type===t&&b.conn))},
  {title:'Häuser und Marktplatz',text:'Deine ersten Siedler benötigen Waren welche sie sich auf dem Marktplatz besorgen, sorge also dafür, dass sie Zugang dazu haben.',target:'[data-cat="wohnen"]',cat:'wohnen',goal:()=>G.blds.some(b=>b.type==='markt'&&b.conn)&&G.blds.filter(b=>b.type==='haus'&&b.conn).length>=2},
@@ -225,9 +223,18 @@ const TOUR_STEPS=[
 ];
 const tutorialPanel=document.createElement('section');
 tutorialPanel.id='pixxo-tour';tutorialPanel.hidden=true;tutorialPanel.setAttribute('role','region');tutorialPanel.setAttribute('aria-labelledby','tour-title');document.body.append(tutorialPanel);
+const tutorialShade=document.createElement('div');
+tutorialShade.id='tour-shade';tutorialShade.hidden=true;tutorialShade.setAttribute('aria-hidden','true');document.body.append(tutorialShade);
 const tutorialOutline=document.createElement('div');tutorialOutline.id='tour-outline';tutorialOutline.hidden=true;tutorialOutline.setAttribute('aria-hidden','true');document.body.append(tutorialOutline);
 let tourWindow=null,tourPreviousCat=null,tourPreviousMode=null,tourIsCollapsed=false;
-function tutorialHighlightsClear(){tutorialOutline.hidden=true;document.querySelectorAll('.tour-target').forEach(el=>el.classList.remove('tour-target'));}
+const tutorialInertState=new Map();
+function tutorialRestoreInteraction(){for(const [el,inert] of tutorialInertState)el.inert=inert;tutorialInertState.clear();}
+function tutorialFocusInteraction(target){
+ tutorialRestoreInteraction();const step=tutorialStep(),keep=[tutorialPanel,tutorialShade,tutorialOutline,cv,target,step.win&&WINS[step.win]?.el].filter(Boolean);
+ const visit=el=>{if(keep.some(k=>k===el||k.contains(el)))return;if(keep.some(k=>el.contains(k))){for(const child of el.children)visit(child);return;}if('inert' in el){tutorialInertState.set(el,el.inert);el.inert=true;}};
+ for(const child of document.body.children)visit(child);
+}
+function tutorialHighlightsClear(){tutorialRestoreInteraction();tutorialShade.hidden=true;tutorialOutline.hidden=true;document.querySelectorAll('.tour-target').forEach(el=>el.classList.remove('tour-target'));}
 function tutorialStep(){return TOUR_STEPS[Math.max(0,Math.min(TOUR_STEPS.length-1,WORLD?.tutorial?.step||0))];}
 function tutorialCleanup(){
  tutorialHighlightsClear();if(tourWindow&&WINS[tourWindow])closeWin(tourWindow);tourWindow=null;
@@ -247,7 +254,7 @@ function tutorialRender(){
   '<div id="tour-content" '+(tourIsCollapsed?'hidden':'')+'><h2 id="tour-title" tabindex="-1">'+step.title+'</h2><p>'+step.text+'</p>'+
   (step.action==='map'?'<button class="btn" data-tour="map">Karte per Tastatur erkunden</button>':'')+
   (state.step===0?'<button class="btn" data-tour="port">Kontor zeigen</button>':'')+
-  '<p id="tour-goal" role="status">'+(step.goal?(step.goal()?'✓ Ziel erreicht.':'Optional: Probiere diesen Schritt aus. Du kannst auch direkt weitergehen.'):'')+'</p></div>'+
+  '</div>'+
   '<div class="tour-actions" '+(tourIsCollapsed?'hidden':'')+'><button class="btn" data-tour="back" '+(state.step===0?'disabled':'')+'>Zurück</button><button class="btn primary" data-tour="next">'+(state.step===TOUR_STEPS.length-1?'Losspielen':'Weiter')+'</button></div>'+
   '<button class="btn tour-skip" data-tour="skip">Tutorial überspringen</button>';
 }
@@ -260,7 +267,12 @@ function tutorialUpdate(){
  if(r&&r.width&&r.height&&r.left<innerWidth&&r.top<innerHeight&&r.left+r.width>0&&r.top+r.height>0){
   tutorialOutline.hidden=false;Object.assign(tutorialOutline.style,{left:Math.max(3,r.left-4)+'px',top:Math.max(3,r.top-4)+'px',width:Math.min(innerWidth-6,r.width+8)+'px',height:Math.min(innerHeight-6,r.height+8)+'px'});
  }else tutorialOutline.hidden=true;
- if(step.goal){const label=document.getElementById('tour-goal'),text=step.goal()?'✓ Ziel erreicht.':'Optional: Probiere diesen Schritt aus. Du kannst auch direkt weitergehen.';if(label&&label.textContent!==text)label.textContent=text;}
+ tutorialFocusInteraction(target);
+ const holes=[tutorialPanel.getBoundingClientRect()];
+ if(!tutorialOutline.hidden)holes.push(tutorialOutline.getBoundingClientRect());
+ if(step.win&&WINS[step.win])holes.push(WINS[step.win].el.getBoundingClientRect());
+ tutorialShade.hidden=false;tutorialShade.setAttribute('viewBox','0 0 '+innerWidth+' '+innerHeight);
+ tutorialShade.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 '+innerWidth+' '+innerHeight+'"><defs><mask id="tour-focus-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="'+innerWidth+'" height="'+innerHeight+'"><rect width="'+innerWidth+'" height="'+innerHeight+'" fill="white"/>'+holes.map(h=>'<rect x="'+Math.max(0,h.left-2)+'" y="'+Math.max(0,h.top-2)+'" width="'+(h.width+4)+'" height="'+(h.height+4)+'" fill="black"/>').join('')+'</mask></defs><rect width="'+innerWidth+'" height="'+innerHeight+'" fill="black" fill-opacity=".72" mask="url(#tour-focus-mask)"/></svg>';
 }
 function tutorialFinish(done=false){
  WORLD.tutorial.done=done;WORLD.tutorial.dismissed=!done;tutorialPanel.hidden=true;tutorialCleanup();
@@ -272,6 +284,7 @@ openTutorial=function(){
  if(WORLD.tutorial?.version!==2)WORLD.tutorial={version:2,step:0};
  if(WORLD.tutorial.done||WORLD.tutorial.dismissed)return;
  if(tutorialPanel.hidden){tourResumeSpeed=G.speed;startSetSpeed(0);}
+ cancelConstructionPlan();setTool(null);drag=null;ptr.clear();
  tutorialPanel.hidden=false;tourIsCollapsed=false;tutorialEnter();tutorialPanel.querySelector('[data-tour="next"]')?.focus();
 };
 const tourStartNew=startNew;
@@ -327,3 +340,22 @@ document.addEventListener('keydown',e=>{
  }
 });
 startRender();startDialog.showModal();document.body.classList.add('start-open');musicUnlock();
+
+function startCreditsHTML(){return '<section><h2>Idee und Entwicklung</h2><p>Pixxo wurde von <strong>Kilian Reichelt</strong> erstellt.</p></section>'+
+   '<section><h2>Spielmusik</h2><p>BGM: Open World Field BGM Series Vol.01 — Vacuous BGM</p>'+
+   '<p>Alle zwölf Titel begleiten deine Partie als Hintergrundmusik.</p>'+
+   '<a href="https://vacuous2409.itch.io/open-world-field-bgm-series-vol01" target="_blank" rel="noopener noreferrer">Musik von Vacuous BGM auf itch.io (neuer Tab)</a></section>';}
+
+// The tutorial explains construction; world edits resume after closing it.
+function tutorialBlocksConstruction(){return !tutorialPanel.hidden&&StartScreen.started&&!startDialog.open;}
+for(const event of ['pointerdown','pointermove','pointerup','click','dblclick'])window.addEventListener(event,e=>{
+ if(tutorialBlocksConstruction()&&e.target===cv&&UI.tool){e.preventDefault();e.stopImmediatePropagation();}
+},{capture:true,passive:false});
+window.addEventListener('keydown',e=>{
+ if(tutorialBlocksConstruction()&&e.target===cv&&UI.tool&&['Enter',' '].includes(e.key)){e.preventDefault();e.stopImmediatePropagation();}
+},{capture:true});
+const tutorialClickTile=clickTile;
+clickTile=function(...args){if(tutorialBlocksConstruction()&&UI.tool)return;return tutorialClickTile(...args);};
+const tutorialBeginPlan=beginConstructionPlan,tutorialFinishPlan=finishConstructionPlan;
+beginConstructionPlan=function(...args){if(tutorialBlocksConstruction())return false;return tutorialBeginPlan(...args);};
+finishConstructionPlan=function(...args){if(tutorialBlocksConstruction())return false;return tutorialFinishPlan(...args);};

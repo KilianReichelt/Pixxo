@@ -133,7 +133,7 @@ revealSea=function(x,y,r=30){
 let simulationAccumulator=0,lastWorldRender=-Infinity;
 frame=function(now){
  if(document.hidden){lastT=now;simulationAccumulator=0;requestAnimationFrame(frame);return;}
- const dt=clamp((now-lastT)/1000,0,.1);lastT=now;UI.vt+=dt;
+ const dt=clamp((now-lastT)/1000,0,.1);lastT=now;if(G.speed>0)UI.vt+=dt;document.body.classList.toggle('game-paused',G.speed===0);
  if(G.speed>0){simulationAccumulator+=dt;while(simulationAccumulator>=.05){let remaining=.05*G.speed;while(remaining>0){const tick=Math.min(remaining,.2);stepWorld(tick);remaining-=tick;}simulationAccumulator-=.05;}}else simulationAccumulator=0;
  clampCam();if(now-lastWorldRender>=1000/60-.5){render();lastWorldRender=now;}uiAcc+=dt;mmAcc+=dt;
  if(mmAcc>.2){mmAcc=0;drawMini();if(UI.tool)updateHint();}
