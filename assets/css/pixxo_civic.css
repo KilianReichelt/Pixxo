@@ -30,3 +30,13 @@
 .win[data-id="project"] .tag.status-error{background:#572c25;border-color:#e5a080;color:#ffe6cf}
 @media(max-width:480px){.project-hero{grid-template-columns:88px minmax(0,1fr);gap:8px}.project-hero img{height:112px}.project-stages li{flex-direction:column;gap:2px}.project-materials :is(th,td){padding:6px 2px}.project-materials .px{width:16px;height:16px}.project-footer .btn{width:100%}}
 @media(prefers-reduced-motion:reduce){.win[data-id="project"] *{animation:none!important;transition:none!important}}
+
+/* Missing fertility: muted building, readable native goods badge and red cross. */
+#items .bi.fertility-missing{position:relative;filter:none;opacity:1}
+#items .bi.fertility-missing>:not(.fertility-warning){filter:grayscale(1);opacity:.55}
+#items .bi .fertility-warning{position:absolute;top:4px;left:4px;width:32px;height:32px;display:grid;place-items:center;pointer-events:none;filter:none;opacity:1;background:#241b10;border:2px solid #c8ae79}
+#items .bi .fertility-warning img{width:24px;height:24px;max-width:none;max-height:none;filter:none;image-rendering:pixelated}
+.fertility-cross{position:absolute;left:18px;top:17px;width:12px;height:12px;background:#241b10;clip-path:polygon(0 0,33% 0,50% 17%,67% 0,100% 0,100% 33%,83% 50%,100% 67%,100% 100%,67% 100%,50% 83%,33% 100%,0 100%,0 67%,17% 50%,0 33%)}
+.fertility-cross::after{content:"";position:absolute;inset:2px;background:#ff7161;clip-path:inherit}
+
+#items .bi .fertility-warning{left:auto;right:4px;border:0;background:transparent}

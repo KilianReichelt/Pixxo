@@ -1,0 +1,591 @@
+{
+  "scene": {
+    "population": 864,
+    "buildings": 74,
+    "roads": 452,
+    "viewport": [
+      1920,
+      1080
+    ],
+    "gpuHint": 12
+  },
+  "measurements": {
+    "zooms": [
+      {
+        "zoom": 1,
+        "render": {
+          "mean": 7.7974999999976715,
+          "p95": 9.799999999813735,
+          "max": 10.100000000093132
+        },
+        "subsystems": {
+          "drawOcean": {
+            "ms": 0.10000000009313226,
+            "calls": 40
+          },
+          "drawLandRegion": {
+            "ms": 93.49999999906868,
+            "calls": 40
+          },
+          "drawRoadTile": {
+            "ms": 43.700000000651926,
+            "calls": 15200
+          },
+          "drawDeposits": {
+            "ms": 17.899999999441206,
+            "calls": 40
+          },
+          "addStreetPeople": {
+            "ms": 2.300000000745058,
+            "calls": 40
+          },
+          "drawBld": {
+            "ms": 11.399999999441206,
+            "calls": 2400
+          },
+          "drawBuildingWarnings": {
+            "ms": 6.999999999068677,
+            "calls": 40
+          },
+          "drawFieldWorkers": {
+            "ms": 0.3000000002793968,
+            "calls": 40
+          },
+          "drawDayClouds": {
+            "ms": 1.0000000004656613,
+            "calls": 40
+          },
+          "drawNight": {
+            "ms": 0.19999999972060323,
+            "calls": 40
+          },
+          "drawWorldFog": {
+            "ms": 1.3000000002793968,
+            "calls": 40
+          },
+          "bubbleFor": {
+            "ms": 1.8999999980442226,
+            "calls": 2320
+          },
+          "spName": {
+            "ms": 0,
+            "calls": 0
+          },
+          "streetPeople": {
+            "ms": 0.3000000002793968,
+            "calls": 120
+          },
+          "minimapRoadCells": {
+            "ms": 0.10000000009313226,
+            "calls": 40
+          },
+          "drawBeachSurf": {
+            "ms": 22.499999998603016,
+            "calls": 40
+          }
+        },
+        "entities": 1201
+      },
+      {
+        "zoom": 0.75,
+        "render": {
+          "mean": 8.442500000004657,
+          "p95": 10.699999999720603,
+          "max": 10.800000000279397
+        },
+        "subsystems": {
+          "drawOcean": {
+            "ms": 0.2999999993480742,
+            "calls": 40
+          },
+          "drawLandRegion": {
+            "ms": 103.39999999990687,
+            "calls": 40
+          },
+          "drawRoadTile": {
+            "ms": 43.20000000251457,
+            "calls": 17360
+          },
+          "drawDeposits": {
+            "ms": 14.799999998882413,
+            "calls": 40
+          },
+          "addStreetPeople": {
+            "ms": 2.099999999627471,
+            "calls": 40
+          },
+          "drawBld": {
+            "ms": 11.199999999254942,
+            "calls": 2680
+          },
+          "drawBuildingWarnings": {
+            "ms": 5.800000000279397,
+            "calls": 40
+          },
+          "drawFieldWorkers": {
+            "ms": 0.40000000037252903,
+            "calls": 40
+          },
+          "drawDayClouds": {
+            "ms": 0.7000000001862645,
+            "calls": 40
+          },
+          "drawNight": {
+            "ms": 0,
+            "calls": 40
+          },
+          "drawWorldFog": {
+            "ms": 1.7000000001862645,
+            "calls": 40
+          },
+          "bubbleFor": {
+            "ms": 2.200000001117587,
+            "calls": 2480
+          },
+          "spName": {
+            "ms": 0,
+            "calls": 0
+          },
+          "streetPeople": {
+            "ms": 0.09999999962747097,
+            "calls": 120
+          },
+          "minimapRoadCells": {
+            "ms": 0.10000000009313226,
+            "calls": 40
+          },
+          "drawBeachSurf": {
+            "ms": 28.500000001862645,
+            "calls": 40
+          }
+        },
+        "entities": 1475
+      },
+      {
+        "zoom": 0.5,
+        "render": {
+          "mean": 136.59000000000233,
+          "p95": 158.10000000009313,
+          "max": 164.59999999962747
+        },
+        "subsystems": {
+          "drawOcean": {
+            "ms": 0.10000000009313226,
+            "calls": 40
+          },
+          "drawLandRegion": {
+            "ms": 5109.300000001211,
+            "calls": 40
+          },
+          "drawRoadTile": {
+            "ms": 49.79999999841675,
+            "calls": 18000
+          },
+          "drawDeposits": {
+            "ms": 27.00000000046566,
+            "calls": 40
+          },
+          "addStreetPeople": {
+            "ms": 2.8000000002793968,
+            "calls": 40
+          },
+          "drawBld": {
+            "ms": 15.999999998603016,
+            "calls": 2880
+          },
+          "drawBuildingWarnings": {
+            "ms": 7.600000001490116,
+            "calls": 40
+          },
+          "drawFieldWorkers": {
+            "ms": 0.19999999972060323,
+            "calls": 40
+          },
+          "drawDayClouds": {
+            "ms": 0.2999999998137355,
+            "calls": 40
+          },
+          "drawNight": {
+            "ms": 0.09999999962747097,
+            "calls": 40
+          },
+          "drawWorldFog": {
+            "ms": 2.9999999990686774,
+            "calls": 40
+          },
+          "bubbleFor": {
+            "ms": 2.1999999997206032,
+            "calls": 2880
+          },
+          "spName": {
+            "ms": 0,
+            "calls": 0
+          },
+          "streetPeople": {
+            "ms": 0.10000000009313226,
+            "calls": 120
+          },
+          "minimapRoadCells": {
+            "ms": 0,
+            "calls": 40
+          },
+          "drawBeachSurf": {
+            "ms": 45.00000000046566,
+            "calls": 40
+          }
+        },
+        "entities": 1869
+      },
+      {
+        "zoom": 0.451,
+        "render": {
+          "mean": 155.79249999999303,
+          "p95": 175.5,
+          "max": 177
+        },
+        "subsystems": {
+          "drawOcean": {
+            "ms": 0,
+            "calls": 40
+          },
+          "drawLandRegion": {
+            "ms": 5968.399999999907,
+            "calls": 40
+          },
+          "drawRoadTile": {
+            "ms": 46.30000000074506,
+            "calls": 18000
+          },
+          "drawDeposits": {
+            "ms": 27.90000000037253,
+            "calls": 40
+          },
+          "addStreetPeople": {
+            "ms": 2.6000000000931323,
+            "calls": 40
+          },
+          "drawBld": {
+            "ms": 17.79999999841675,
+            "calls": 2880
+          },
+          "drawBuildingWarnings": {
+            "ms": 6.899999999906868,
+            "calls": 40
+          },
+          "drawFieldWorkers": {
+            "ms": 0.20000000018626451,
+            "calls": 40
+          },
+          "drawDayClouds": {
+            "ms": 0.7000000001862645,
+            "calls": 40
+          },
+          "drawNight": {
+            "ms": 0,
+            "calls": 40
+          },
+          "drawWorldFog": {
+            "ms": 2.1000000000931323,
+            "calls": 40
+          },
+          "bubbleFor": {
+            "ms": 1.6999999987892807,
+            "calls": 2880
+          },
+          "spName": {
+            "ms": 0,
+            "calls": 0
+          },
+          "streetPeople": {
+            "ms": 0.10000000009313226,
+            "calls": 120
+          },
+          "minimapRoadCells": {
+            "ms": 0,
+            "calls": 40
+          },
+          "drawBeachSurf": {
+            "ms": 42.999999998603016,
+            "calls": 40
+          }
+        },
+        "entities": 831
+      },
+      {
+        "zoom": 0.4,
+        "render": {
+          "mean": 14.440000000002328,
+          "p95": 41.299999999813735,
+          "max": 41.89999999990687
+        },
+        "subsystems": {
+          "drawOcean": {
+            "ms": 0,
+            "calls": 40
+          },
+          "drawLandRegion": {
+            "ms": 9.000000001862645,
+            "calls": 40
+          },
+          "drawRoadTile": {
+            "ms": 118.19999999832362,
+            "calls": 18000
+          },
+          "drawDeposits": {
+            "ms": 25.599999997764826,
+            "calls": 40
+          },
+          "addStreetPeople": {
+            "ms": 2.1000000000931323,
+            "calls": 40
+          },
+          "drawBld": {
+            "ms": 11.099999996833503,
+            "calls": 2880
+          },
+          "drawBuildingWarnings": {
+            "ms": 5.599999999627471,
+            "calls": 40
+          },
+          "drawFieldWorkers": {
+            "ms": 0.20000000018626451,
+            "calls": 40
+          },
+          "drawDayClouds": {
+            "ms": 1,
+            "calls": 40
+          },
+          "drawNight": {
+            "ms": 0,
+            "calls": 40
+          },
+          "drawWorldFog": {
+            "ms": 0.6999999997206032,
+            "calls": 40
+          },
+          "bubbleFor": {
+            "ms": 1.2000000001862645,
+            "calls": 2880
+          },
+          "spName": {
+            "ms": 0,
+            "calls": 0
+          },
+          "streetPeople": {
+            "ms": 0,
+            "calls": 120
+          },
+          "minimapRoadCells": {
+            "ms": 0,
+            "calls": 40
+          },
+          "drawBeachSurf": {
+            "ms": 194.00000000046566,
+            "calls": 40
+          }
+        },
+        "entities": 908
+      },
+      {
+        "zoom": 0.2,
+        "render": {
+          "mean": 13.8625,
+          "p95": 47.5,
+          "max": 70.39999999990687
+        },
+        "subsystems": {
+          "drawOcean": {
+            "ms": 0,
+            "calls": 40
+          },
+          "drawLandRegion": {
+            "ms": 44.40000000083819,
+            "calls": 40
+          },
+          "drawRoadTile": {
+            "ms": 50.400000002700835,
+            "calls": 18040
+          },
+          "drawDeposits": {
+            "ms": 14.799999999348074,
+            "calls": 40
+          },
+          "addStreetPeople": {
+            "ms": 3.2000000001862645,
+            "calls": 40
+          },
+          "drawBld": {
+            "ms": 14.099999997299165,
+            "calls": 2920
+          },
+          "drawBuildingWarnings": {
+            "ms": 6.2999999998137355,
+            "calls": 40
+          },
+          "drawFieldWorkers": {
+            "ms": 0.3000000002793968,
+            "calls": 40
+          },
+          "drawDayClouds": {
+            "ms": 0.5000000004656613,
+            "calls": 40
+          },
+          "drawNight": {
+            "ms": 0.19999999925494194,
+            "calls": 40
+          },
+          "drawWorldFog": {
+            "ms": 0.8999999999068677,
+            "calls": 40
+          },
+          "bubbleFor": {
+            "ms": 1.4999999986030161,
+            "calls": 2920
+          },
+          "spName": {
+            "ms": 0,
+            "calls": 0
+          },
+          "streetPeople": {
+            "ms": 0.10000000009313226,
+            "calls": 120
+          },
+          "minimapRoadCells": {
+            "ms": 0,
+            "calls": 40
+          },
+          "drawBeachSurf": {
+            "ms": 268.89999999757856,
+            "calls": 40
+          }
+        },
+        "entities": 1013
+      },
+      {
+        "zoom": 0.05,
+        "render": {
+          "mean": 24.517499999993014,
+          "p95": 102.20000000018626,
+          "max": 104.29999999981374
+        },
+        "subsystems": {
+          "drawOcean": {
+            "ms": 0,
+            "calls": 40
+          },
+          "drawLandRegion": {
+            "ms": 132.40000000130385,
+            "calls": 40
+          },
+          "drawRoadTile": {
+            "ms": 115.29999999888241,
+            "calls": 18040
+          },
+          "drawDeposits": {
+            "ms": 16.800000000745058,
+            "calls": 40
+          },
+          "addStreetPeople": {
+            "ms": 2.6000000005587935,
+            "calls": 40
+          },
+          "drawBld": {
+            "ms": 13.799999999348074,
+            "calls": 2920
+          },
+          "drawBuildingWarnings": {
+            "ms": 5.59999999916181,
+            "calls": 40
+          },
+          "drawFieldWorkers": {
+            "ms": 0.19999999972060323,
+            "calls": 40
+          },
+          "drawDayClouds": {
+            "ms": 0.8000000007450581,
+            "calls": 40
+          },
+          "drawNight": {
+            "ms": 0.10000000009313226,
+            "calls": 40
+          },
+          "drawWorldFog": {
+            "ms": 0.599999999627471,
+            "calls": 40
+          },
+          "bubbleFor": {
+            "ms": 1.5000000009313226,
+            "calls": 2920
+          },
+          "spName": {
+            "ms": 0,
+            "calls": 0
+          },
+          "streetPeople": {
+            "ms": 0,
+            "calls": 120
+          },
+          "minimapRoadCells": {
+            "ms": 0,
+            "calls": 40
+          },
+          "drawBeachSurf": {
+            "ms": 538.7999999984168,
+            "calls": 40
+          }
+        },
+        "entities": 751
+      }
+    ],
+    "simulation": {
+      "mean": 1.0125,
+      "p95": 1.5,
+      "max": 1.5
+    },
+    "mini": {
+      "mean": 0.16000000000931322,
+      "p95": 0.3000000002793968,
+      "max": 0.3000000002793968
+    },
+    "top": {
+      "mean": 0.6200000000186264,
+      "p95": 1.8999999999068677,
+      "max": 1.8999999999068677
+    }
+  },
+  "frames": [
+    {
+      "p95Ms": 208.40000000000146,
+      "maxMs": 277.7999999999993,
+      "p95Fps": 4.79846449136273,
+      "meanFps": 6.632091363690586,
+      "frames": 100,
+      "zoom": 0.5
+    },
+    {
+      "p95Ms": 187.40000000000146,
+      "maxMs": 194.29999999999563,
+      "p95Fps": 5.336179295624292,
+      "meanFps": 6.143374063903272,
+      "frames": 100,
+      "zoom": 0.451
+    },
+    {
+      "p95Ms": 7.099999999998545,
+      "maxMs": 13.700000000004366,
+      "p95Fps": 140.84507042256408,
+      "meanFps": 144.07145944386482,
+      "frames": 100,
+      "zoom": 0.4
+    },
+    {
+      "p95Ms": 14,
+      "maxMs": 14.099999999998545,
+      "p95Fps": 71.42857142857143,
+      "meanFps": 117.81338360033823,
+      "frames": 100,
+      "zoom": 0.2
+    }
+  ],
+  "environment": "isolated headless Chrome, Full HD, device scale 1"
+}

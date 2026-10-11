@@ -23,3 +23,16 @@
 #road-plan-summary[data-error="true"]{border-color:#e5a080;background:#572c25;color:#ffe6cf}
 @media(max-width:760px){#items{min-width:min(var(--population-min-width,0px),calc(100vw - 16px))}}
 @media(prefers-reduced-motion:reduce){#items .bi::after{transition:none;animation:none}}
+
+#production-preview{position:fixed;z-index:25;box-sizing:border-box;width:max-content;max-width:480px;padding:8px;border:2px solid #b69a65;background:#302719;color:#ffeac5;font-size:1rem;line-height:1.5;overflow:auto}
+#production-preview[hidden]{display:none}
+#production-preview strong{display:block;font-size:1rem;margin-bottom:4px}
+#production-preview .production-graph-scroll{max-width:min(460px,calc(100vw - 36px));overflow:auto}
+#production-preview svg{display:block;image-rendering:pixelated}
+#production-preview:focus-visible,#production-preview .production-graph-scroll:focus-visible{outline:3px solid #ffe3a0;outline-offset:-3px}
+#items .bi .fertility-warning{z-index:1}
+
+.production-node{cursor:inherit}
+.production-node:focus-visible{outline:none}
+.production-node:focus-visible>circle:first-of-type{stroke:#ffe3a0;stroke-width:4}
+#production-node-name{max-width:min(460px,calc(100vw - 36px));overflow-wrap:anywhere}

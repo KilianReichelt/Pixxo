@@ -7,6 +7,13 @@ const PIXXO_MUSIC=[
  'Track09_Quiet Wanderer.wav','Track10_Starlit Expanse.wav',
  'Track11_Embers of the Far Hills.wav','Track12_Return to the Horizon.wav'
 ];
+const START_PREFS_KEY='pixxo_start_preferences';
+const StartPrefs={reducedMotion:false,skipTutorials:false};
+try{const prefs=JSON.parse(localStorage.getItem(START_PREFS_KEY)||'{}');for(const key of Object.keys(StartPrefs))StartPrefs[key]=prefs[key]===true;}catch{}
+const systemReducedMotion=WORK_ART.reduced;
+WORK_ART.reduced={get matches(){return StartPrefs.reducedMotion||systemReducedMotion.matches;}};
+function startSavePrefs(){try{localStorage.setItem(START_PREFS_KEY,JSON.stringify(StartPrefs));}catch{}document.body.classList.toggle('reduced-motion',StartPrefs.reducedMotion);}
+startSavePrefs();
 const StartScreen={ready:false,started:false,page:'home',returnToGame:false};
 const startDialog=document.createElement('dialog');
 startDialog.id='pixxo-start';startDialog.setAttribute('aria-labelledby','start-title');document.body.append(startDialog);
@@ -53,14 +60,14 @@ function musicNext(){
 }
 function musicSync(){
  if(!musicUnlocked)return;musicEnsure();musicPlayer.volume=Sound.prefs.music*.65;
- if(document.hidden||audioChannelMuted('music')||!Sound.prefs.music){musicPlayer.pause();return;}
+ if(audioChannelMuted('music')||!Sound.prefs.music){musicPlayer.pause();return;}
  if(!musicPlayer.paused||musicPending||musicAwaitingGesture||failedMusic.size===PIXXO_MUSIC.length)return;
  musicPending=true;const source=musicPlayer.src;
  musicPlayer.play().catch(error=>{
   if(error.name==='NotAllowedError'){musicAwaitingGesture=true;musicStatus();}
  }).finally(()=>{
   musicPending=false;
-  if(document.hidden||audioChannelMuted('music')||!Sound.prefs.music)musicPlayer.pause();
+  if(audioChannelMuted('music')||!Sound.prefs.music)musicPlayer.pause();
   else if(source!==musicPlayer.src)musicSync();
  });
 }
@@ -98,9 +105,9 @@ function startRender(page='home'){
    content+='<label for="start-'+key+'-volume">'+name+' <output id="start-'+key+'-value">'+value+' %</output></label>'+
     '<input id="start-'+key+'-volume" type="range" min="0" max="100" value="'+value+'" data-start-audio="'+key+'">'+audioMuteButton(key,name);
   }
-  content+='<p id="start-music-status" role="status"></p></section>'+
-   '<section><h2>Spiel</h2><label class="start-motion-setting"><input type="checkbox" data-start-background '+(!sceneryUserPaused&&!sceneryReduced.matches?'checked':'')+' '+(sceneryReduced.matches?'disabled':'')+'>Bewegter Hintergrund</label>'+
-  (StartScreen.started?'<button class="btn" data-start="tutorial">Tutorial neu starten</button>':'')+'</section></div>';
+  content+='</section>'+
+   '<section><h2>Spiel</h2><label class="start-motion-setting"><input type="checkbox" data-start-preference="reducedMotion" '+(StartPrefs.reducedMotion?'checked':'')+'>Bewegung reduzieren</label>'+
+  '<label class="start-motion-setting"><input type="checkbox" data-start-preference="skipTutorials" '+(StartPrefs.skipTutorials?'checked':'')+'>Tutorials zu Spielbeginn überspringen</label><p id="start-music-status" role="status"></p></section></div>';
  }
  if(page==='credits'){
   title='Credits';content='<section><h2>Idee und Entwicklung</h2><p>Pixxo wurde von <strong>Kilian Reichelt</strong> erstellt.</p></section>'+
@@ -141,7 +148,8 @@ function startPlay(fresh=false){
  try{
   if(!StartScreen.started){if(fresh)localStorage.removeItem(SAVEKEY);StartScreen.started=true;startOriginalInit();}
   else if(fresh){musicQueue=musicShuffle(musicIndex);musicNext();UI.unreadEvents=0;$('#toasts').replaceChildren();updateEventBadge();startNew();}
-  else if(WORLD.tutorial?.version===2&&!WORLD.tutorial.done&&!WORLD.tutorial.dismissed)openTutorial();
+  else if(WORLD.tutorial?.version===2&&!WORLD.tutorial.done&&!WORLD.tutorial.dismissed){if(StartPrefs.skipTutorials)WORLD.tutorial.dismissed=true;else openTutorial();}
+  if(StartPrefs.skipTutorials&&!tutorialPanel.hidden)tutorialFinish();
   if(!StartScreen.loading){if(!tutorialPanel.hidden)tutorialPanel.querySelector('[data-tour="next"]')?.focus();else cv.focus();}
  }catch(error){startShow();const p=document.createElement('p');p.setAttribute('role','alert');p.textContent='Die Partie konnte nicht gestartet werden. '+error.message;startDialog.querySelector('.start-card').append(p);console.error(error);}
 }
@@ -152,7 +160,7 @@ function startContinue(){
  // Let the browser paint the overlay before synchronous save loading begins.
  requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>{
   for(const [el,inert] of held)el.inert=inert;
-  try{startPlay();render();}finally{StartScreen.loading=false;document.body.removeAttribute('aria-busy');pixxoLoaded(()=>{if(startDialog.open)startDialog.querySelector('button:not(:disabled)')?.focus();else if(!tutorialPanel.hidden)tutorialPanel.querySelector('[data-tour="next"]')?.focus();else cv.focus();});}
+  try{startPlay();render();}finally{StartScreen.loading=false;document.body.removeAttribute('aria-busy');pixxoLoaded(()=>{const focused=document.activeElement;if(focused&&focused!==document.body&&focused!==screen)return;if(startDialog.open)startDialog.querySelector('button:not(:disabled)')?.focus();else if(!tutorialPanel.hidden)tutorialPanel.querySelector('[data-tour="next"]')?.focus();else cv.focus();});}
  },0)));
 }
 const saveFeedback=document.createElement('dialog');saveFeedback.id='save-feedback';saveFeedback.className='save-feedback';saveFeedback.setAttribute('aria-labelledby','save-feedback-title');saveFeedback.setAttribute('aria-describedby','save-feedback-text');saveFeedback.innerHTML='<h2 id="save-feedback-title">Gespeichert</h2><p id="save-feedback-text" role="status" aria-atomic="true"></p><button type="button" class="btn" data-save-feedback-close autofocus>OK</button>';document.body.append(saveFeedback);
@@ -174,7 +182,7 @@ startDialog.addEventListener('click',e=>{
  }
 });
 startDialog.addEventListener('input',e=>{
- if(e.target.matches('[data-start-background]')){scenerySetMotion(e.target.checked);return;}
+ const preference=e.target.dataset.startPreference;if(Object.hasOwn(StartPrefs,preference)){StartPrefs[preference]=e.target.checked;startSavePrefs();return;}
  const key=e.target.dataset.startAudio;if(!AUDIO_CHANNELS.some(([k])=>k===key))return;
  Sound.prefs[key]=Number(e.target.value)/100;document.getElementById('start-'+key+'-value').textContent=e.target.value+' %';audioSave();
 });
@@ -187,9 +195,13 @@ menuHTML=function(){
  content=content.replace(/class="btn" data-act="new"/,'class="btn danger" data-act="new"');
  return '<div class="btns"><button class="btn primary" data-act="start-home">Startmenü</button><button class="btn" data-act="start-settings">Einstellungen</button><button class="btn" data-act="start-credits">Credits</button></div>'+content;
 };
+const startReturnConfirm=document.createElement('dialog');startReturnConfirm.id='start-return-confirm';startReturnConfirm.className='save-feedback';startReturnConfirm.setAttribute('aria-labelledby','start-return-title');startReturnConfirm.setAttribute('aria-describedby','start-return-text');
+startReturnConfirm.innerHTML='<h2 id="start-return-title">Zum Startmenü zurückkehren?</h2><p id="start-return-text">Deine Partie wird gespeichert.</p><div class="return-confirm-actions"><button type="button" class="btn" data-return="cancel" autofocus>Abbrechen</button><button type="button" class="btn primary" data-return="confirm">Zum Startmenü</button></div>';document.body.append(startReturnConfirm);
+function showStartReturnConfirm(){if(!startReturnConfirm.open)startReturnConfirm.showModal();startReturnConfirm.querySelector('[data-return="cancel"]').focus();}
+startReturnConfirm.addEventListener('click',e=>{const action=e.target.closest('[data-return]')?.dataset.return;if(!action)return;startReturnConfirm.close();if(action==='confirm')startShow('home');});
 const startWinAct=winAct;
 winAct=function(id,ds){
- if(ds.act==='start-home'){if(!confirm('Möchtest du wirklich zum Startmenü zurückkehren? Deine Partie wird gespeichert.'))return;startShow('home');return;}
+ if(ds.act==='start-home'){showStartReturnConfirm();return;}
  if(ds.act?.startsWith('start-')){startShow(ds.act.slice(6));return;}
  if(ds.act==='tutorial-open'){WORLD.tutorial={version:2,step:0};closeWin('menu');openTutorial();saveGame();return;}startWinAct(id,ds);
 };
@@ -263,7 +275,7 @@ openTutorial=function(){
  tutorialPanel.hidden=false;tourIsCollapsed=false;tutorialEnter();tutorialPanel.querySelector('[data-tour="next"]')?.focus();
 };
 const tourStartNew=startNew;
-startNew=function(...args){tutorialPanel.hidden=true;tutorialCleanup();const result=tourStartNew(...args);WORLD.tutorial={version:2,step:0};openTutorial();saveGame();return result;};
+startNew=function(...args){tutorialPanel.hidden=true;tutorialCleanup();const result=tourStartNew(...args);if(StartPrefs.skipTutorials&&!tutorialPanel.hidden)tutorialFinish();WORLD.tutorial={version:2,step:0,dismissed:StartPrefs.skipTutorials};openTutorial();saveGame();return result;};
 tutorialPanel.addEventListener('click',e=>{
  const action=e.target.closest('[data-tour]')?.dataset.tour;if(!action)return;
  if(action==='skip'){tutorialFinish();return;}
@@ -275,7 +287,7 @@ tutorialPanel.addEventListener('click',e=>{
 });
 setInterval(tutorialUpdate,200);
 cv.tabIndex=0;
-cv.setAttribute('aria-label','Spielkarte. Pfeiltasten verschieben, Plus und Minus zoomen. Enter wählt oder baut in der Kartenmitte. Bei Straßen und Betriebsflächen: Enter setzt Start und Ziel. R dreht das Bauwerkzeug, Escape beendet es.');
+cv.setAttribute('aria-label','Spielkarte. Pfeiltasten verschieben, Plus und Minus zoomen. Enter wählt oder baut in der Kartenmitte. Bei angewähltem freien Schiff setzt Enter auf Wasser das Fahrtziel. Bei Straßen und Betriebsflächen: Enter setzt Start und Ziel. R dreht das Bauwerkzeug, Escape beendet es.');
 const mapCursor=document.createElement('div');mapCursor.id='map-key-cursor';mapCursor.setAttribute('aria-hidden','true');document.body.append(mapCursor);
 const mapKeyStatus=document.createElement('p');mapKeyStatus.id='map-key-status';mapKeyStatus.className='map-key-status';mapKeyStatus.setAttribute('role','status');document.body.append(mapKeyStatus);
 function mapKeyboardPosition(){

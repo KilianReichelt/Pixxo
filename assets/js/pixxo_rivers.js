@@ -129,6 +129,8 @@ function updateRiverPlanSummary(){let el=document.getElementById('road-plan-summ
 const riverUpdatePlan=updateConstructionPlan;updateConstructionPlan=function(t){riverUpdatePlan(t);const p=constructionPlan;if(p?.tool==='road'){p.mode=UI.roadMode||'path';p.bridgePlan=riverPlanDetails(p);p.newRoads=p.bridgePlan.changes;p.gold=p.bridgePlan.cost.gold||0;updateHint();updateRiverPlanSummary();}};
 const riverFinishPlan=finishConstructionPlan;finishConstructionPlan=function(...args){const result=riverFinishPlan(...args);updateRiverPlanSummary();return result;};
 const riverCancelPlan=cancelConstructionPlan;cancelConstructionPlan=function(...args){const result=riverCancelPlan(...args);UI.paintFail='';updateRiverPlanSummary();return result;};
+// Include the bank intervals when distributing supports; adjacent supports never touch.
+function bridgePierIndices(cellCount){const water=cellCount-2;if(water<=2)return new Set();const count=Math.max(1,Math.floor(water/3)),indices=new Set();for(let i=1;i<=count;i++)indices.add(Math.round(i*(water+1)/(count+1)));return indices;}
 const riverCommitRoad=commitRoadPlan;commitRoadPlan=function(plan){
  const details=riverPlanDetails(plan);if(!details.valid)return 'Plane eine vollständige Überquerung von Ufer zu Ufer.';
  if(activeIsland!==plan.island||plan.path.some(k=>!roadTileAllowed(k%MAPW,Math.floor(k/MAPW),plan.island)))return 'Die Baufläche hat sich geändert. Bitte erneut planen.';
@@ -136,8 +138,8 @@ const riverCommitRoad=commitRoadPlan;commitRoadPlan=function(plan){
  if(details.kind===2&&!stoneRoadUnlocked())return 'Für Steinbrücken und Straßen wird ein Steinbruch benötigt.';
  if(!canAfford(details.cost))return 'Für den gesamten Weg einschließlich Brücken fehlt Gold oder Baumaterial.';
  payCost(details.cost);
- for(const span of details.spans){const water=span.cells.length-2,id=span.cells[0]+':'+span.cells[span.cells.length-1];
-  span.cells.forEach((k,j)=>{const existing=G.bridges[k],kind=Math.max(details.kind,G.road[k]||1);G.bridges[k]={id,cells:span.cells,dx:span.dx,dy:span.dy,kind,part:j===0||j===span.cells.length-1?'ramp':'deck',pier:water>2&&j>0&&j<span.cells.length-1&&(j===Math.ceil(water/2)||water>5&&j%3===0),wasRoad:existing?.wasRoad??!!G.road[k]};});
+ for(const span of details.spans){const piers=bridgePierIndices(span.cells.length),id=span.cells[0]+':'+span.cells[span.cells.length-1];
+  span.cells.forEach((k,j)=>{const existing=G.bridges[k],kind=Math.max(details.kind,G.road[k]||1);G.bridges[k]={id,cells:span.cells,dx:span.dx,dy:span.dy,kind,part:j===0||j===span.cells.length-1?'ramp':'deck',pier:piers.has(j),wasRoad:existing?.wasRoad??!!G.road[k]};});
  }
  for(const k of details.changes){if(!G.road[k])G.roads++;G.road[k]=details.kind;if(G.tiles[k]===T.FOREST)G.tiles[k]=T.GRASS;PERF_ROADS.get(G.road)?.add(k);}
  G.dirty=true;rebuildNet();saveGame();renderTop(true);return true;
@@ -156,20 +158,24 @@ const riverDemolish=demolishAt;demolishAt=function(x,y){const k=IDX(x,y),b=G.bri
 const riverDemolitionTargets=areaDemolitionTargets;areaDemolitionTargets=function(...args){const t=riverDemolitionTargets(...args),roads=new Set(t.roads);for(const k of t.roads)for(const n of G.bridges?.[k]?.cells||[])roads.add(n);t.roads=[...roads];return t;};
 const riverWinAct=winAct;winAct=function(id,ds){const cells=ds.act==='area-demolish-confirm'?pendingAreaDemolition?.roads:null,result=riverWinAct(id,ds);if(cells)for(const k of cells)if(!G.road[k])delete G.bridges[k];return result;};
 const BRIDGE_ART_CACHE=new Map();
-function bridgeSprite(dx,dy,kind,part,pier=false){const key=[dx,dy,kind,part,pier].join(':');if(BRIDGE_ART_CACHE.has(key))return BRIDGE_ART_CACHE.get(key);
- const canvas=document.createElement('canvas');canvas.width=canvas.height=48;const {r,p,ln}=civicPainter(canvas),len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len,vx=-uy,vy=ux,point=(a,b)=>[24+a*ux+b*vx,22+a*uy+b*vy],extent=16*len+1;
- if(pier){r(20,26,8,17,kind===2?'#657d7b':'#654d31');r(20,27,2,15,kind===2?'#a6b1a1':'#bc9362');r(18,41,12,3,'#3b5959');for(let y=30;y<41;y+=4)r(22,y,6,1,kind===2?'#455d5c':'#47392c');}
- p([point(-extent,-10),point(extent,-10),point(extent,10),point(-extent,10)],kind===2?'#444c49':'#493723');
- p([point(-extent,-8),point(extent,-8),point(extent,8),point(-extent,8)],kind===2?'#b6b3a0':'#b18854');
- for(let a=-extent;a<extent;a+=4){const q=point(a,-8),z=point(a,8);ln(...q,...z,kind===2?'#777e73':'#735535');if(kind===2){const q=point(a+1,a%8===0?0:-4),z=point(a+3,a%8===0?0:-4);ln(...q,...z,'#dad3b4');}}
- for(const side of [-1,1]){const q=point(-extent,side*10),z=point(extent,side*10);ln(q[0],q[1]-3,z[0],z[1]-3,kind===2?'#dad0ae':'#d2ad70');ln(q[0],q[1]-2,z[0],z[1]-2,kind===2?'#8f9786':'#8a6940');for(let a=-extent+3;a<extent;a+=10){const q=point(a,side*10);r(q[0]-1,q[1]-5,2,8,kind===2?'#c6c5ab':'#b8945e');}}
- if(part==='ramp'){for(const a of [-12,12]){const q=point(a,-8),z=point(a,8);ln(...q,...z,kind===2?'#e1d6b5':'#e0bd7f');}}
+function bridgeSprite(dx,dy,kind,part,pier=false){
+ const key=[dx,dy,kind,part,pier].join(':');if(BRIDGE_ART_CACHE.has(key))return BRIDGE_ART_CACHE.get(key);
+ const canvas=document.createElement('canvas');canvas.width=canvas.height=24;const {r,p,ln}=civicPainter(canvas),len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len,vx=-uy,vy=ux,point=(a,b)=>[12+a*ux+b*vx,11+a*uy+b*vy],extent=8*len+1;
+ // Stone uses the road's neutral grey cobble palette, rather than green stone.
+ if(pier){r(10,13,4,9,kind===2?'#808283':'#654d31');r(10,14,1,7,kind===2?'#a1a3a4':'#bc9362');r(9,21,6,2,'#3b5959');for(let y=16;y<21;y+=3)r(11,y,3,1,kind===2?'#5b5d5e':'#47392c');}
+ p([point(-extent,-5),point(extent,-5),point(extent,5),point(-extent,5)],kind===2?'#5b5d5e':'#493723');
+ p([point(-extent,-4),point(extent,-4),point(extent,4),point(-extent,4)],kind===2?'#808283':'#b18854');
+ for(let a=-extent;a<extent;a+=2){const q=point(a,-4),z=point(a,4);ln(...q,...z,kind===2?'#5b5d5e':'#735535');if(kind===2){const q=point(a+1,a%4===0?0:-2);r(q[0],q[1],1,1,'#969899');}}
+ for(const side of [-1,1]){const q=point(-extent,side*5),z=point(extent,side*5);ln(q[0],q[1]-2,z[0],z[1]-2,kind===2?'#b0b2b3':'#d2ad70');ln(q[0],q[1]-1,z[0],z[1]-1,kind===2?'#787a7b':'#8a6940');for(let a=-extent+2;a<extent;a+=5){const q=point(a,side*5);r(q[0],q[1]-3,1,4,kind===2?'#969899':'#b8945e');}}
+ if(part==='ramp')for(const a of [-6,6]){const q=point(a,-4),z=point(a,4);ln(...q,...z,kind===2?'#a1a3a4':'#e0bd7f');}
  BRIDGE_ART_CACHE.set(key,canvas);return canvas;
 }
 const riverDrawRoad=drawRoadTile;drawRoadTile=function(ctx,mask,stone,x,y){const b=G.bridges?.[IDX(x,y)];if(b){ctx.drawImage(bridgeSprite(b.dx,b.dy,b.kind,b.part,b.pier),x*16-4,y*16-4,24,24);return;}riverDrawRoad(ctx,mask,stone,x,y);};
-const riverGhost=drawGhost;drawGhost=function(ctx){const p=constructionPlan;if(p?.tool!=='road'||!p.bridgePlan?.valid)return riverGhost(ctx);ctx.save();ctx.fillStyle=canAfford(p.bridgePlan.cost)?'rgba(235,212,149,.45)':'rgba(222,107,88,.5)';for(const k of p.newRoads)ctx.fillRect(k%MAPW*16,Math.floor(k/MAPW)*16,16,16);ctx.globalAlpha=.7;for(const span of p.bridgePlan.spans)span.cells.forEach((k,i)=>ctx.drawImage(bridgeSprite(span.dx,span.dy,p.bridgePlan.kind,i===0||i===span.cells.length-1?'ramp':'deck',span.cells.length>4&&i===Math.ceil((span.cells.length-2)/2)),k%MAPW*16-4,Math.floor(k/MAPW)*16-4,24,24));ctx.restore();};
+const riverGhost=drawGhost;drawGhost=function(ctx){const p=constructionPlan;if(p?.tool!=='road'||!p.bridgePlan?.valid)return riverGhost(ctx);ctx.save();ctx.fillStyle=canAfford(p.bridgePlan.cost)?'rgba(235,212,149,.45)':'rgba(222,107,88,.5)';for(const k of p.newRoads)ctx.fillRect(k%MAPW*16,Math.floor(k/MAPW)*16,16,16);ctx.globalAlpha=.7;for(const span of p.bridgePlan.spans)span.cells.forEach((k,i)=>ctx.drawImage(bridgeSprite(span.dx,span.dy,p.bridgePlan.kind,i===0||i===span.cells.length-1?'ramp':'deck',bridgePierIndices(span.cells.length).has(i)),k%MAPW*16-4,Math.floor(k/MAPW)*16-4,24,24));ctx.restore();};
 const riverDrawLand=drawLandRegion;drawLandRegion=function(ctx,x0,y0,x1,y1){riverDrawLand(ctx,x0,y0,x1,y1);if(!G.river)return;
  const phase=WORK_ART.reduced.matches?0:Math.floor(G.time*2)%8;ctx.save();ctx.fillStyle='#85b9bd';ctx.globalAlpha=.35;
  for(const k of G.riverCells||[]){const x=k%MAPW,y=Math.floor(k/MAPW);if(x*16<x0-16||y*16<y0-16||x*16>x1||y*16>y1||!isRiver(k))continue;ctx.fillRect(x*16+3+(x+phase)%8,y*16+5+(y%3),4,1);ctx.fillRect(x*16+2+(phase+3)%7,y*16+12,3,1);}
  ctx.restore();
 };
+
+const spacedBridgeUnpack=unpackIsland;unpackIsland=function(...args){const g=spacedBridgeUnpack(...args),seen=new Set();for(const bridge of Object.values(g.bridges||{})){if(seen.has(bridge.id))continue;seen.add(bridge.id);const piers=bridgePierIndices(bridge.cells.length);bridge.cells.forEach((k,i)=>{if(g.bridges[k])g.bridges[k].pier=piers.has(i);});}return g;};

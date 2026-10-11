@@ -1,0 +1,36 @@
+/* New desktop frames apply only to windows. Other elements keep their original styles. */
+:root{
+ --pixxo-frame-line:#b3a789;
+ --pixxo-frame-caps:url('../ui/frame-cap-tl.svg'),url('../ui/frame-cap-tr.svg'),url('../ui/frame-cap-br.svg'),url('../ui/frame-cap-bl.svg');
+ --pixxo-cap-size:12px;
+}
+body :is(.win:not([data-id="route"]),.start-card,.save-feedback,#pixxo-tour,#trade-route-dialog,.new-game-dialog,.clock-popup){
+ border:1px solid var(--pixxo-frame-line)!important;
+ border-radius:0!important;
+ box-shadow:4px 4px 0 #0d080380!important;
+ background-color:#21190f!important;
+ background-image:none!important;
+}
+/* Corners stay above opaque title bars and never intercept input. */
+body :is(.win:not([data-id="route"]),.start-card,.save-feedback,#pixxo-tour,#trade-route-dialog,.new-game-dialog,.clock-popup)::after{
+ content:'';position:absolute;inset:-1px;z-index:4;pointer-events:none;
+ background-image:var(--pixxo-frame-caps);
+ background-position:left top,right top,right bottom,left bottom;
+ background-size:var(--pixxo-cap-size) var(--pixxo-cap-size);
+ background-repeat:no-repeat;image-rendering:pixelated;
+}
+body .wt{border-bottom:0;box-shadow:none}
+/* The production-chain preview is an independent popup window. */
+body #production-preview{
+ border:1px solid var(--pixxo-frame-line)!important;
+ border-radius:0;box-shadow:4px 4px 0 #0d080380!important;
+ background-image:var(--pixxo-frame-caps);
+ background-position:left top,right top,right bottom,left bottom;
+ background-size:var(--pixxo-cap-size) var(--pixxo-cap-size);
+ background-repeat:no-repeat;background-origin:border-box;image-rendering:pixelated;
+}
+/* Existing focus outlines and selection indicators remain functional. */
+@media(forced-colors:active){
+ body :is(.win:not([data-id="route"]),.start-card,.save-feedback,#pixxo-tour,#trade-route-dialog,.new-game-dialog,.clock-popup,#production-preview){border-color:CanvasText!important;box-shadow:none!important}
+ body :is(.win:not([data-id="route"]),.start-card,.save-feedback,#pixxo-tour,#trade-route-dialog,.new-game-dialog,.clock-popup)::after{display:none}
+}

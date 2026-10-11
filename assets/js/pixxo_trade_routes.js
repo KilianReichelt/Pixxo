@@ -1,5 +1,7 @@
 /* Stationsrouten: Frachträume behalten ihre Position über alle Häfen hinweg. */
 function emptyTradeSlot(){return {load:null,unload:null};}
+function tradeShipIds(r){return Array.isArray(r.ships)?r.ships:[r.ship].filter(id=>id!=null);}
+function tradeSlotCount(r){return Math.max(0,...tradeShipIds(r).map(id=>SHIPS[WORLD.fleet.find(s=>s.id===id)?.type]?.slots||0));}
 function tradeStations(r){
  if(Array.isArray(r.stations))return r.stations;
  const count=SHIPS[WORLD.fleet.find(s=>s.id===r.ship)?.type||'clipper'].slots;
@@ -11,16 +13,16 @@ function tradeRouteLegs(r){const stations=tradeStations(r);return stations.map((
 function assignTradeCargoSlots(sh,r){
  const used=new Set();for(const c of sh.cargo){if(Number.isInteger(c.slot)&&c.slot>=0&&c.slot<SHIPS[sh.type].slots&&!used.has(c.slot)){used.add(c.slot);continue;}delete c.slot;}
  const station=tradeStations(r).find(s=>s.island===sh.at);
- for(const c of sh.cargo)if(c.slot===undefined){let j=station?.slots.findIndex((s,j)=>!used.has(j)&&s.load?.good===c.good);if(!(j>=0))j=Array.from({length:SHIPS[sh.type].slots},(_,i)=>i).find(i=>!used.has(i));if(j!==undefined){c.slot=j;used.add(j);}}
+ for(const c of sh.cargo)if(c.slot===undefined){let j=station?.slots.findIndex((s,j)=>j<SHIPS[sh.type].slots&&!used.has(j)&&s.load?.good===c.good);if(!(j>=0))j=Array.from({length:SHIPS[sh.type].slots},(_,i)=>i).find(i=>!used.has(i));if(j!==undefined){c.slot=j;used.add(j);}}
 }
 function beginTradeOperations(sh,station,mode){
- sh.phase=mode;sh.routePending=station.slots.map(s=>s[mode]?.qty||0);
+ sh.phase=mode;sh.routePending=station.slots.map((s,j)=>j<SHIPS[sh.type].slots?s[mode]?.qty||0:0);
 }
 function performTradeOperations(sh,r,station,mode){
  const g=WORLD.islands[station.island];let moved=0,blocked=false;
  if(!Array.isArray(sh.routePending))sh.routePending=station.slots.map(s=>s[mode]?.qty||0);
  station.slots.forEach((s,j)=>{
-  const order=s[mode],pending=sh.routePending[j]||0;if(!order||!pending)return;
+  const order=s[mode],pending=sh.routePending[j]||0;if(j>=SHIPS[sh.type].slots||!order||!pending)return;
   let c=sh.cargo.find(c=>c.slot===j),n=0;
   if(mode==='unload'){
    if(c?.good!==order.good){sh.routePending[j]=0;return;}
@@ -44,6 +46,10 @@ function departTradeShip(sh,r,index){
 }
 function stepTradeShip(sh,r,dt){
  const stations=tradeStations(r);assignTradeCargoSlots(sh,r);if(stations.length<2){sh.status='Route benötigt mindestens zwei Stationen';return;}
+ if(sh.routeApproach){
+  const a=sh.routeApproach;a.remaining=Math.max(0,a.remaining-dt);if(a.remaining>0)return;
+  sh.at=a.island;delete sh.routeApproach;delete sh.anchor;sh.remaining=0;sh.phase='unload';sh.routeStopIndex=stations.findIndex(s=>s.island===sh.at);
+ }
  if(sh.remaining>0){sh.remaining=Math.max(0,sh.remaining-dt);if(sh.remaining>0)return;}
  if(sh.phase==='travel'){
   sh.at=sh.to;sh.routeStopIndex=sh.routeNextIndex??stations.findIndex(s=>s.island===sh.at);delete sh.routeNextIndex;delete sh.anchor;
@@ -77,32 +83,43 @@ function validateTradeRoute(draft,ship,id){
   if(!WORLD.islands[station.island]?.dock||WORLD.islands[station.island].cpu)return 'Jede Station benötigt ein eigenes Kontor mit Hafen.';
   if(station.island===next.island)return 'Direkt aufeinanderfolgende Stationen müssen unterschiedliche Inseln sein.';
   if(!routeWaterPath(station.island,next.island))return 'Zwischen '+ISLANDS[station.island].name+' und '+ISLANDS[next.island].name+' fehlt ein Wasserweg.';
-  if(station.slots.length!==SHIPS[ship.type].slots)return 'Die Zahl der Frachträume passt nicht zum Schiff.';
+  if(station.slots.length!==tradeSlotCount(draft))return 'Die Zahl der Frachträume passt nicht zum größten Schiff.';
   for(const slot of station.slots)for(const mode of ['unload','load'])if(slot[mode]){orders++;const o=slot[mode];if(!GN[o.good]||!Number.isInteger(o.qty)||o.qty<1||o.qty>50)return 'Jeder Warenauftrag benötigt eine Menge zwischen 1 und 50 t.';}
  }
  if(!orders)return 'Wähle mindestens einen Lade- oder Entladeauftrag.';
- const origin=ship.route===id&&ship.phase==='travel'?ship.to:ship.at;
+ const origin=ship.routeApproach?.island??(ship.route===id&&ship.phase==='travel'?ship.to:ship.at);
  if(!draft.stations.some(s=>s.island===origin)&&!routeWaterPath(origin,draft.stations[0].island))return 'Das Schiff kann den Routenstart nicht erreichen.';
  return null;
 }
 function commitTradeRoute(draft,id){
- const ship=WORLD.fleet.find(s=>s.id===draft.ship),error=validateTradeRoute(draft,ship,id);if(error)return error;
- let r=WORLD.routes.find(r=>r.id===id);if(!r){r={id:WORLD.nextId++};WORLD.routes.push(r);}
- const sailing=ship.route===r.id&&ship.phase==='travel';
- for(const s of WORLD.fleet)if(s.route===r.id){
-  if(s===ship&&sailing){delete s.routePending;delete s.routeStopIndex;delete s.routeNextIndex;continue;}
-  if(s.phase==='travel'){const duration=voyageTime(s.at,s.to,s.type),path=routeWaterPath(s.at,s.to);s.manualTrip={path,duration,remaining:s.remaining};s.status='Unterwegs';}else s.status='Im Hafen';
-  s.route=null;s.phase='idle';s.remaining=0;for(const c of s.cargo)delete c.slot;delete s.routePending;delete s.routeStopIndex;delete s.routeNextIndex;
+ const ids=tradeShipIds(draft);if(!ids.length||new Set(ids).size!==ids.length)return 'Wähle mindestens ein Schiff aus.';
+ const ships=ids.map(id=>WORLD.fleet.find(s=>s.id===id));
+ for(const ship of ships){const error=validateTradeRoute(draft,ship,id);if(error)return error;}
+ const approaches=new Map();
+ for(const ship of ships){
+  if(ship.route===id||!ship.anchor||typeof seaPath!=='function')continue;
+  const island=draft.stations.some(s=>s.island===ship.at)?ship.at:draft.stations[0].island,dock=WORLD.islands[island].dock;
+  if(Math.hypot(ship.anchor.x-dock.x,ship.anchor.y-dock.y)<=1)continue;
+  const path=seaPath(ship.anchor,dock);if(!path)return 'Das Schiff kann den ersten Hafen nicht erreichen.';
+  const duration=Math.max(2,seaPathLength(path)/3/SHIPS[ship.type].speed);approaches.set(ship,{island,path,duration,remaining:duration});
  }
- Object.assign(r,JSON.parse(JSON.stringify(draft)),{name:draft.name.trim()||'Handelsroute',paused:false});
+ let r=WORLD.routes.find(r=>r.id===id);if(!r){r={id:WORLD.nextId++};WORLD.routes.push(r);}
+ const sailing=new Set(ships.filter(s=>s.route===r.id&&(s.phase==='travel'||s.routeApproach)));
+ for(const s of WORLD.fleet)if(s.route===r.id){
+  if(sailing.has(s)){delete s.routePending;delete s.routeStopIndex;delete s.routeNextIndex;continue;}
+  if(s.routeApproach){const a=s.routeApproach;s.manualTrip={path:a.path,duration:a.duration,remaining:a.remaining};delete s.routeApproach;s.status='Unterwegs';}
+  else if(s.phase==='travel'){const duration=voyageTime(s.at,s.to,s.type),path=routeWaterPath(s.at,s.to);s.manualTrip={path,duration,remaining:s.remaining};s.status='Unterwegs';}else s.status='Im Hafen';
+  s.route=null;s.phase='idle';s.remaining=0;if(!ships.includes(s))for(const c of s.cargo)delete c.slot;delete s.routePending;delete s.routeStopIndex;delete s.routeNextIndex;
+ }
+ Object.assign(r,JSON.parse(JSON.stringify(draft)),{ships:ids.slice(),ship:ids[0],name:draft.name.trim()||'Handelsroute',paused:false});
  r.from=r.stations[0].island;r.to=r.stations[1].island;r.out=r.stations[0].slots.map(s=>s.load).filter(Boolean);r.back=r.stations[1].slots.map(s=>s.load).filter(Boolean);
- ship.route=r.id;if(!sailing){ship.phase='unload';ship.remaining=0;ship.routeStopIndex=r.stations.findIndex(s=>s.island===ship.at);}delete ship.anchor;delete ship.routePending;assignTradeCargoSlots(ship,r);
+ for(const ship of ships){ship.route=r.id;if(!sailing.has(ship)){ship.phase='unload';ship.remaining=0;ship.routeStopIndex=r.stations.findIndex(s=>s.island===ship.at);}if(approaches.has(ship)){ship.routeApproach=approaches.get(ship);ship.phase='approach';ship.status='Unterwegs zum ersten Hafen';}delete ship.anchor;delete ship.routePending;assignTradeCargoSlots(ship,r);}
  saveGame();return true;
 }
 /* Eine Route darf im Hafen mit Restladung beendet werden. */
 const stationWinAct=winAct;winAct=function(id,ds){
  if(ds.act==='route-delete'){
-  const ships=WORLD.fleet.filter(s=>s.route===+ds.id);if(ships.some(s=>s.phase==='travel')){msg('Die Route kann nach der Ankunft im Hafen beendet werden.','i_alert');return;}
+  const ships=WORLD.fleet.filter(s=>s.route===+ds.id);if(ships.some(s=>s.phase==='travel'||s.routeApproach)){msg('Die Route kann nach der Ankunft im Hafen beendet werden.','i_alert');return;}
   WORLD.routes=WORLD.routes.filter(r=>r.id!==+ds.id);for(const sh of ships){sh.route=null;sh.phase='idle';sh.remaining=0;sh.status='Im Hafen';for(const c of sh.cargo)delete c.slot;delete sh.routePending;delete sh.routeStopIndex;delete sh.routeNextIndex;}
   refreshWins();renderTop(true);saveGame();return;
  }

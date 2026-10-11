@@ -8,3 +8,6 @@ Pixxo_lokal.zip
 # Uncompressed local audio masters; the game uses compressed/*.mp3 only.
 /assets/music/*.wav
 /Pixxo_lokal.neu.zip
+
+# Isolated browser test dependencies
+/pixxo_tests/.runtime/

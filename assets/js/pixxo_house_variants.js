@@ -1,5 +1,5 @@
-/* Die gewählte Hausform bleibt beim Aufstieg, Drehen und Laden erhalten. */
-function houseVariant(b){if(!Number.isInteger(b.visualVariant)||b.visualVariant<0||b.visualVariant>2)b.visualVariant=Math.floor(hs(b.id,b.island||0,WORLD?.rootSeed||G.seed)*3);return b.visualVariant;}
+/* Die Hausform wird beim Aufstieg gewählt und bleibt beim Drehen und Laden erhalten. */
+function houseVariant(b){if(!Number.isInteger(b.visualVariant)||b.visualVariant<0||b.visualVariant>=(b.tier>=2?4:3))b.visualVariant=Math.floor(hs(b.id,b.island||0,WORLD?.rootSeed||G.seed)*(b.tier>=2?4:3));return b.visualVariant;}
 const variantPlace=place;place=function(...args){const result=variantPlace(...args);if(result.ok&&result.b.type==='haus')result.b.visualVariant=Math.floor(Math.random()*3);return result;};
 const HOUSE_VARIANT_BASES=new Map();
 function houseVariantSprite(b){
@@ -29,3 +29,5 @@ function houseVariantSprite(b){
 }
 const houseVariantSpName=spName;spName=function(b){return b.type==='haus'?houseVariantSprite(b):houseVariantSpName(b);};
 const houseVariantWorkshop=workshopSprite;workshopSprite=function(b){return b.type==='haus'?houseVariantSprite(b):houseVariantWorkshop(b);};
+
+const variantUpgradeHouse=upgradeHouse;upgradeHouse=function(b){const previous=b?.tier,result=variantUpgradeHouse(b);if(result===true&&b.tier!==previous)b.visualVariant=Math.floor(Math.random()*4);return result;};

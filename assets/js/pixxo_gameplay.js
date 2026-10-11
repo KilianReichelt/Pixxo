@@ -8,9 +8,9 @@ for(const d of Object.values(B))if(d.kind==='prod')d.transportRange=36;
 const LUXURY_CHAINS=[
  {tier:1,good:'honig',name:'Honig',rate:.0125,bonus:1.2,steps:[['imkerei','Imkerei',{},'honig',45,12,'b_farm']]},
  {tier:1,good:'most',name:'Apfelmost',rate:.0125,bonus:1.8,steps:[['obsthof','Obsthof',{},'aepfel',30,10,'b_weingut'],['mosterei','Mosterei',{aepfel:1},'most',45,15,'b_kelterei']]},
- {tier:2,good:'seife',name:'Seife',rate:.01,bonus:2.2,steps:[['schweinehof','Schweinehof',{},'talg',30,15,'b_schaefer'],['seifensiederei','Seifensiederei',{talg:1,holz:1},'seife',45,25,'b_brauerei']]},
- {tier:2,good:'moebel',name:'Möbel',rate:.008,bonus:2.6,steps:[['tischlerei','Tischlerei',{bretter:1},'moebel',45,30,'b_weberei']]},
- {tier:3,good:'parfuem',name:'Parfüm',rate:.006,bonus:3.4,steps:[['blumenhof','Blumenhof',{},'blueten',30,20,'b_hopfen'],['parfuemerie','Parfümerie',{blueten:1,most:1},'parfuem',60,45,'b_kelterei']]},
+ {tier:2,good:'seife',name:'Seife',rate:.01,bonus:2.2,steps:[['schweinehof','Schweinehof',{},'talg',30,15,'b_schaefer'],['seifensiederei','Seifensiederei',{blueten:1,gewuerz:1,glas:1},'seife',45,25,'b_brauerei']]},
+ {tier:2,good:'moebel',name:'Möbel',rate:.008,bonus:2.6,steps:[['tischlerei','Tischlerei',{bretter:1,werkzeug:.25},'moebel',45,30,'b_weberei']]},
+ {tier:3,good:'parfuem',name:'Parfüm',rate:.006,bonus:3.4,steps:[['blumenhof','Blumenhof',{},'blueten',30,20,'b_hopfen'],['parfuemerie','Parfümerie',{blueten:1,most:1,glas:1},'parfuem',60,45,'b_kelterei']]},
  {tier:3,good:'schmuck',name:'Schmuck',rate:.005,bonus:3.8,steps:[['goldwaescherei','Goldwäscherei',{},'goldstaub',60,25,'b_mine'],['juwelier','Juwelier',{goldstaub:1,eisen:1},'schmuck',60,50,'b_schmiede']]}
 ];
 const NEW_GOODS={honig:['Honig',24],most:['Apfelmost',30],aepfel:['Äpfel',12],talg:['Talg',16],seife:['Seife',45],moebel:['Möbel',55],blueten:['Blüten',18],parfuem:['Parfüm',85],goldstaub:['Goldstaub',55],schmuck:['Schmuck',110]};
@@ -19,11 +19,14 @@ for(const tier of TIERS.filter(Boolean))tier.luxury={};
 for(const chain of LUXURY_CHAINS){TIERS[chain.tier].luxury[chain.good]=chain.rate;
  for(const [id,n,input,output,cycle,upk,art] of chain.steps){
   B[id]={n,cat:Object.keys(input).length?'veredel':'roh',w:2,h:2,kind:'prod',cost:{gold:chain.tier*250,bretter:chain.tier*4,...(chain.tier>1?{stein:chain.tier*3}:{})},upk,cycle,in:input,out:{[output]:1},req:0,transportRange:36,workforce:{tier:chain.tier,count:chain.tier*4},d:`Produziert ${GN[output].n}. Benötigt ein Lager oder einen Abnehmer innerhalb von 36 Straßenfeldern.`};
-  BUILD_TIER[id]=chain.tier;BUILD_SIZES[id]={w:2,h:2};
+  BUILD_TIER[id]=id==='blumenhof'?2:chain.tier;BUILD_SIZES[id]={w:2,h:2};
+  if(id==='blumenhof')B[id].workforce={tier:2,count:8};
   // Vorhandene Handwerksdarstellung in eigener Größe, mit eindeutiger Warenmarkierung.
   mkB('b_'+id,2,2,16,s=>{yard(s,'cob');HOUSE(s,4,4,24,18,12,RAMPS.plaster,TX.n(chain.tier,.1),chain.tier===3?RAMPS.slate:RAMPS.roof,TX.shingle(chain.tier));DOOR(s,12,s.H-12,5,8);WIN(s,6,s.H-21,4,4);BARREL(s,24,s.H-9,5,7);P(s,R(23,s.H-12,7,7),chain.tier===3?RAMPS.gold:RAMPS.cloth,()=>2);});
  }
 }
+// Barrel wood and tool wear connect existing supply chains without changing output rates.
+B.kelterei.in={trauben:1,bretter:.25};B.kelterei.d='Verarbeitet Trauben zu Wein. Benötigt Bretter für Fässer.';
 for(const [id] of Object.entries(NEW_GOODS))mk(id,16,16,s=>{P(s,R(3,3,10,11),RAMPS.wood,()=>1);P(s,R(5,5,6,7),id==='schmuck'||id==='goldstaub'?RAMPS.gold:id==='blueten'||id==='parfuem'?RAMPS.red:RAMPS.sack,()=>2);});
 function luxuryBonus(b,g){return Math.max(0,b.pop)*(LUXURY_CHAINS.find(c=>c.tier===b.tier&&c.good===g)?.bonus||0);}
 const oldExtraHouseIncome=extraHouseIncome;
@@ -131,9 +134,9 @@ function unpackFogRLE(saved){if(saved?.encoding!=='rle')return Uint8Array.from(s
 const largeRestoreFog=restoreFogCells;restoreFogCells=function(saved){return saved?.encoding==='rle'?unpackFogRLE(saved):largeRestoreFog(saved);};
 const largeLocalTerrain=localTerrain;localTerrain=function(seed,profile,style){if(!TERRAIN_BASE_SIZE)return largeLocalTerrain(seed,profile,style);const size=ISLAND_SIZE,scale=size/TERRAIN_BASE_SIZE;ISLAND_SIZE=TERRAIN_BASE_SIZE;let original;try{original=largeLocalTerrain(seed,profile,style);}finally{ISLAND_SIZE=size;}const result={tiles:new Uint8Array(size*size),fish:new Uint8Array(size*size),massif:new Uint8Array(size*size)};for(let y=0;y<size;y++)for(let x=0;x<size;x++){const from=Math.floor(y/scale)*TERRAIN_BASE_SIZE+Math.floor(x/scale),to=y*size+x;for(const key of ['tiles','fish','massif'])result[key][to]=original[key][from];}return result;};
 // Ein begrenzter Geländecache verhindert sehr große Canvas-Flächen pro Insel.
-const LAND_CHUNK=16,LAND_CACHE_LIMIT=128;
+const LAND_CHUNK=16,LAND_CACHE_LIMIT=512;
 buildLand=function(){if(land?._tiles===G.tiles)return;land={_tiles:G.tiles,parts:[],chunks:new Map()};mmBase=document.createElement('canvas');mmBase.width=MAPW;mmBase.height=MAPH;const context=mmBase.getContext('2d'),image=context.createImageData(MAPW,MAPH),colors=[[31,79,134],[61,131,192],[216,194,122],[90,154,60],[47,106,42],[122,129,144],[160,96,60]];for(let k=0;k<G.tiles.length;k++){const color=colors[G.tiles[k]],p=k*4;image.data[p]=color[0];image.data[p+1]=color[1];image.data[p+2]=color[2];image.data[p+3]=255;}context.putImageData(image,0,0);};
-function terrainChunk(chunkX,chunkY){const key=chunkX+':'+chunkY;let image=land.chunks.get(key);if(image){land.chunks.delete(key);land.chunks.set(key,image);return image;}const minX=chunkX*LAND_CHUNK,minY=chunkY*LAND_CHUNK,maxX=Math.min(MAPW-1,minX+LAND_CHUNK-1),maxY=Math.min(MAPH-1,minY+LAND_CHUNK-1);image=document.createElement('canvas');image.width=(maxX-minX+1)*32;image.height=(maxY-minY+1)*32;const g=image.getContext('2d');g.scale(2,2);g.imageSmoothingEnabled=false; const tt=(x,y)=>INMAP(x,y)?G.tiles[IDX(x,y)]:T.DEEP;
+function terrainChunk(chunkX,chunkY){const key=chunkX+':'+chunkY;let image=land.chunks.get(key);if(image){land.chunks.delete(key);land.chunks.set(key,image);return image;}const minX=chunkX*LAND_CHUNK,minY=chunkY*LAND_CHUNK,maxX=Math.min(MAPW-1,minX+LAND_CHUNK-1),maxY=Math.min(MAPH-1,minY+LAND_CHUNK-1);image=document.createElement('canvas');image.width=(maxX-minX+1)*16;image.height=(maxY-minY+1)*16;const g=image.getContext('2d');g.imageSmoothingEnabled=false; const tt=(x,y)=>INMAP(x,y)?G.tiles[IDX(x,y)]:T.DEEP;
  const isW=t=>t<=T.SHAL,isR=t=>t===T.ROCK||t===T.ORE;
  for(let y=minY;y<=maxY;y++)for(let x=minX;x<=maxX;x++){
   const t=tt(x,y),px=(x-minX)*16,py=(y-minY)*16;
@@ -173,7 +176,15 @@ function terrainChunk(chunkX,chunkY){const key=chunkX+':'+chunkY;let image=land.
 
  land.chunks.set(key,image);while(land.chunks.size>LAND_CACHE_LIMIT)land.chunks.delete(land.chunks.keys().next().value);return image;
 }
-drawLandRegion=function(ctx,x0,y0,x1,y1){if(!land||land._tiles!==G.tiles)buildLand();const size=LAND_CHUNK*16;for(let y=Math.max(0,Math.floor(y0/size));y<=Math.min(Math.ceil(MAPH/LAND_CHUNK)-1,Math.floor(y1/size));y++)for(let x=Math.max(0,Math.floor(x0/size));x<=Math.min(Math.ceil(MAPW/LAND_CHUNK)-1,Math.floor(x1/size));x++){const image=terrainChunk(x,y);nativeDrawImage.call(ctx,image,x*size,y*size,image.width/2,image.height/2);}};
+drawLandRegion=function(ctx,x0,y0,x1,y1){
+ if(!land||land._tiles!==G.tiles)buildLand();
+ const size=LAND_CHUNK*16,deadline=performance.now()+5;
+ for(let y=Math.max(0,Math.floor(y0/size));y<=Math.min(Math.ceil(MAPH/LAND_CHUNK)-1,Math.floor(y1/size));y++)for(let x=Math.max(0,Math.floor(x0/size));x<=Math.min(Math.ceil(MAPW/LAND_CHUNK)-1,Math.floor(x1/size));x++){
+  // Keep every visible chunk resident. Missing chunks fill in within a bounded frame budget.
+  if(!land.chunks.has(x+':'+y)&&performance.now()>=deadline){const w=Math.min(LAND_CHUNK,MAPW-x*LAND_CHUNK),h=Math.min(LAND_CHUNK,MAPH-y*LAND_CHUNK);nativeDrawImage.call(ctx,mmBase,x*LAND_CHUNK,y*LAND_CHUNK,w,h,x*size,y*size,w*16,h*16);continue;}
+  const image=terrainChunk(x,y);nativeDrawImage.call(ctx,image,x*size,y*size,image.width,image.height);
+ }
+};
 configureBuildingScale(1.5);
 
 

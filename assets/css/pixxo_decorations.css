@@ -1,0 +1,21 @@
+#bar.deko-category-mode .cb span{white-space:nowrap}
+#bar.deko-category-mode .cb[aria-pressed=true] span{text-decoration:underline;text-underline-offset:4px}
+/* Kategorie- und Objektwahl verwenden in beiden Modi dieselbe responsive Leiste. */
+#bar{overflow-x:auto;overflow-y:hidden;height:auto;min-height:96px;max-height:none;box-sizing:border-box}
+#bar .cb{height:auto;min-height:76px;max-height:none}
+#bar.deko-category-mode .cb{flex:1 0 min(9rem,100%);min-width:max-content}
+#bar.deko-category-mode .cb>.ic{width:32px!important;height:32px!important;object-fit:contain;flex-shrink:0}
+#bar.deko-category-mode .cb span{line-height:1.25!important}
+@media(max-width:760px){
+ #bar{width:calc(100vw - 72px);max-width:calc(100vw - 72px);bottom:calc(var(--mm) + 84px)}
+ #barModes{bottom:calc(var(--mm) + 84px)}
+ #items{bottom:calc(var(--mm) + var(--barH,96px) + 92px)}
+ body.items #hint{bottom:calc(var(--mm) + var(--barH,96px) + var(--itemsH,200px) + 100px)}
+}
+#bar .cb,#bar .cb span,#items .bi b,#items .bi .cost,#items .bi .sz{font-size:1rem!important}
+@media(max-width:760px){
+ #items,#items .items-viewport{max-height:calc(100dvh - var(--topH) - var(--barH,96px) - var(--mm) - 108px)}
+}
+#bar .cb,#bar .cb span{font-size:.875rem!important}
+
+#bar .cb{align-items:center;justify-content:center;text-align:center}

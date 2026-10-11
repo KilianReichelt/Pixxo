@@ -1,8 +1,8 @@
 /* Native 16 px/tile artwork. See SPRITE_STANDARDS.md before adding sprites. */
-const NATIVE_ART_RULES=Object.freeze({tile:16,houseWidth:48,houseHeight:48,iconWidth:16,iconHeight:15});
+const NATIVE_ART_RULES=Object.freeze({tile:16,houseWidth:48,houseHeight:48,iconWidth:16,iconHeight:16});
 const NATIVE_GOOD_IDS=['schnaps','haeute','leder','stiefel','wachs','kerzen',...CIVIC_GOODS.map(g=>g[0])];
 function nativeGoodArt(id){
- const a=document.createElement('canvas');a.width=16;a.height=15;const {r,p,ln}=civicPainter(a);
+ const a=document.createElement('canvas');a.width=16;a.height=16;const {r,p,ln}=civicPainter(a);
  const edge='#382e23',light='#f1d6a0';
  if(id==='schnaps'){r(6,0,4,2,edge);r(7,0,2,1,'#bf9a62');r(6,2,4,3,'#718863');p([[5,4],[10,4],[12,7],[12,13],[10,14],[4,14],[3,12],[3,7]],edge);r(4,7,7,6,'#4f7355');r(5,6,5,1,'#83a26d');r(4,8,1,4,'#a8bc84');r(6,8,4,4,'#deca93');r(7,9,2,2,'#7c633d');r(5,13,6,1,'#78946b');}
  else if(id==='haeute'){p([[2,1],[5,3],[8,1],[11,3],[14,1],[13,6],[15,9],[12,10],[13,14],[9,12],[6,14],[3,12],[0,14],[2,9],[0,6],[3,5]],edge);p([[3,3],[5,4],[8,3],[11,4],[12,3],[11,6],[13,8],[10,9],[11,12],[8,10],[6,12],[4,10],[2,11],[4,8],[2,6],[4,6]],'#c0a070');p([[6,4],[9,4],[10,7],[8,10],[5,8]],'#725337');r(4,5,2,1,'#e0bf8a');r(10,8,1,2,'#95724b');}
@@ -20,6 +20,10 @@ function nativeGoodArt(id){
  return a;
 }
 function nativeCivicArt(type,frame=0,variant=0){
+ if(['zementwerk','betonwerk','glashuette','kalkbrennerei'].includes(type))return nativeFactoryArt(type,frame);
+ if(type==='gemeinschaftshaus')return nativeCommunityArt(frame);
+ if(type==='garten')return nativeGardenArt(frame);
+ if(type==='haus4')return nativeTownHouseArt(4,variant);
  const home=type==='haus4',d=home?B.haus:B[type],w=home?48:d.w*16,h=home?48:d.h*16+12,a=document.createElement('canvas');a.width=w;a.height=h;
  const {r,ln,p}=civicPainter(a),windows=[];a._nightWindows=windows;
  const pane=(x,y,ww=5,hh=6)=>{r(x-1,y-1,ww+2,hh+2,'#4a3b2d');r(x,y,ww,hh,'#42657b');r(x,y,1,hh,'#7da8b0');r(x+ww-1,y+hh-2,1,2,'#567f95');r(x-1,y+hh,ww+2,1,'#e6cfa0');windows.push({x,y,w:ww,h:hh});};
@@ -45,7 +49,17 @@ function nativeCivicArt(type,frame=0,variant=0){
   for(const x of [5,37]){r(x,44,6,3,'#936b42');r(x-1,42,7,2,'#507c48');r(x,41,1,1,'#d7a2a3');r(x+4,41,1,1,'#f0d380');}
   r(37,4,3,9,'#82623e');r(37,4,4,1,'#d1bc8b');
  }else if(type==='brunnen'){
-  const x=w/2,y=h-15;for(const dx of [-9,7]){r(x+dx,15,2,y-11,'#65472e');r(x+dx,15,1,y-11,'#bb965d');}roof(x-12,4,24,12,'#936a43');r(x-9,17,19,2,'#d5b07a');r(x,19,1,16,'#d4c598');r(x-3,31+(frame%3),6,6,'#967442');r(x-2,32+(frame%3),4,1,'#c9b17c');p([[x-11,y],[x-7,y-4],[x+7,y-4],[x+11,y],[x+9,y+9],[x-9,y+9]],'#5f6351');p([[x-8,y],[x-5,y-2],[x+5,y-2],[x+8,y],[x+5,y+3],[x-5,y+3]],'#365f77');r(x-5+(frame%2),y,9,1,'#91c5cd');r(x-9,y+4,18,1,'#c6bd91');r(x-9,y+8,18,1,'#938e70');
+  // One tile: roof, winch, dark water and a round stone curb remain legible.
+  p([[1,23],[4,21],[12,21],[15,23],[13,27],[3,27]],'#58604e');
+  r(3,24,10,2,'#b2ae8b');r(5,26,6,1,'#777c66');
+  p([[2,20],[5,18],[11,18],[14,20],[12,23],[4,23]],'#c8c19a');
+  p([[4,20],[6,19],[10,19],[12,20],[10,22],[6,22]],'#345b6b');
+  r(5+(frame%2),20,5,1,'#72969c');
+  r(2,10,2,12,'#65472e');r(2,10,1,11,'#b08b55');r(12,10,2,12,'#65472e');r(12,10,1,10,'#b08b55');
+  r(4,12,8,2,'#c09d66');r(8,13,1,6,'#c9ba8a');r(7,17,3,3,'#8d7148');r(7,17,3,1,'#d3b780');
+  p([[0,10],[3,4],[7,2],[9,2],[13,4],[16,10]],'#493a2b');
+  p([[1,9],[4,5],[7,3],[9,3],[12,5],[15,9]],'#976d43');
+  ln(4,5,12,5,'#c19a64');ln(2,8,14,8,'#725032');r(1,10,14,1,'#c6a372');
  }else if(type==='garten'){
   for(let j=0;j<3;j++)for(let i=0;i<3;i++){const x=4+i*13,y=17+j*11;r(x,y,11,7,'#60492e');for(let k=0;k<3;k++){r(x+2+k*3,y+2,1,4,'#729849');r(x+1+k*3,y+2,3,1,j%2?'#91b35c':'#d9b669');r(x+2+k*3,y+4,1,1,i%2?'#d08a9d':'#a9c467');}}for(let x=2;x<w-2;x+=7)r(x,h-10,1,7,'#bb965f');r(2,h-6,w-4,1,'#7e5b36');r(8,18,1,1,'#e8cca0');r(34,29,1,1,'#bc7895');worker(8+frame,h-20);
  }else{
@@ -69,7 +83,7 @@ function nativeCivicArt(type,frame=0,variant=0){
 }
 const nativeProjectArt=civicBuildingArt;
 const legacyCivicGoodArt=civicGoodArt;
-civicGoodArt=function(id){return NATIVE_GOOD_IDS.includes(id)?nativeGoodArt(id):legacyCivicGoodArt(id);};
+civicGoodArt=function(id){return id==='i_t4'?nativeAristocratIcon():NATIVE_GOOD_IDS.includes(id)?nativeGoodArt(id):legacyCivicGoodArt(id);};
 civicBuildingArt=function(type,frame=0,stage=null,variant=0){
  if(!CIVIC_PROJECTS[type])return nativeCivicArt(type,frame,variant);
  return nativeProjectArt(type,frame,stage);
@@ -79,11 +93,24 @@ for(const name of [...HD_CATALOG.keys()])if(name.startsWith('civic_')){HD_CATALO
 for(const type of CIVIC_ART_TYPES){const art=civicBuildingArt(type,0,CIVIC_PROJECTS[type]?0:null);publishPixel(typeSprite(type),art.low,art.w,art.h,art.meta);}
 const nativeHome=civicBuildingArt('haus4');publishPixel('b_haus4',nativeHome.low,nativeHome.w,nativeHome.h,nativeHome.meta);
 for(let tier=1;tier<=3;tier++){const source=HD_CATALOG.get('b_haus'+tier)?.pixelSource;if(source?.width===48&&source.height===63){source._nightWindows=[{x:11,y:36,w:5,h:6,cross:true},{x:31,y:36,w:5,h:6,cross:true}];if(tier>=2)source._nightWindows.push({x:11,y:24,w:5,h:5,cross:true},{x:31,y:24,w:5,h:5,cross:true});if(tier===3)source._nightWindows.push({x:22,y:19,w:4,h:3});}}
-for(const id of NATIVE_GOOD_IDS)publishPixel(id,nativeGoodArt(id),16,15);
+for(const id of NATIVE_GOOD_IDS)publishPixel(id,nativeGoodArt(id),16,16);
 // Normalize remaining legacy goods once; all future registrations are checked.
-for(const good of GOODS){if(NATIVE_GOOD_IDS.includes(good.id))continue;const source=HD_CATALOG.get(good.id)?.pixelSource||SP[good.id];if(!source)continue;const low=document.createElement('canvas');low.width=16;low.height=15;const c=low.getContext('2d');c.imageSmoothingEnabled=false;nativeDrawImage.call(c,source,0,0,16,15);publishPixel(good.id,low,16,15);}
+for(const good of GOODS){if(NATIVE_GOOD_IDS.includes(good.id))continue;const source=HD_CATALOG.get(good.id)?.pixelSource||SP[good.id];if(!source)continue;const low=document.createElement('canvas');low.width=16;low.height=16;const c=low.getContext('2d');c.imageSmoothingEnabled=false;nativeDrawImage.call(c,source,0,0,16,16);publishPixel(good.id,low,16,16);}
 const nativePublishPixel=publishPixel;
-publishPixel=function(name,low,w,h,meta){if(GN[name]&&(low.width>16||low.height>15||w>16||h>15))throw Error('Waren-Icon '+name+' überschreitet das verbindliche 16 × 15 Pixelraster.');return nativePublishPixel(name,low,w,h,meta);};
+publishPixel=function(name,low,w,h,meta){if(GN[name]&&(low.width>16||low.height>16||w>16||h>16))throw Error('Waren-Icon '+name+' überschreitet das verbindliche 16 × 16 Pixelraster.');return nativePublishPixel(name,low,w,h,meta);};
+publishPixel('i_t4',nativeAristocratIcon(),16,16);
+const MUTED_GOOD_IDS=['tuch','hopfen','bier','trauben','gewuerz','aepfel','seife','blueten','parfuem','goldstaub','schmuck'];
+const MUTED_GOOD_ORIGINALS=new Map();
+for(const id of MUTED_GOOD_IDS){
+ const source=HD_CATALOG.get(id).pixelSource;MUTED_GOOD_ORIGINALS.set(id,source);
+ const a=document.createElement('canvas');a.width=a.height=16;const c=a.getContext('2d');nativeDrawImage.call(c,source,0,0);
+ const image=c.getImageData(0,0,16,16),d=image.data;
+ for(let i=0;i<d.length;i+=4){if(!d[i+3]||Math.max(d[i],d[i+1],d[i+2])<80)continue;
+  const luminance=d[i]*.2126+d[i+1]*.7152+d[i+2]*.0722;
+  for(let channel=0;channel<3;channel++)d[i+channel]=Math.round((d[i+channel]*.58+luminance*.42)*.9+4);
+ }
+ c.putImageData(image,0,0);publishPixel(id,a,16,16);
+}
 NIGHT_WINDOWS.clear();HOUSE_VARIANT_BASES.clear();
 function buildingPreviewSprite(b){
  const type=b.type==='haus'&&b.tier===4?'haus4':b.type;
@@ -95,3 +122,16 @@ function buildingPreviewSprite(b){
  const g=WORLD?.islands[b.island??activeIsland]||G,time=g?.time,globalTime=G?.time,reduced=WORK_ART.reduced;
  try{if(g)g.time=0;if(G)G.time=0;WORK_ART.reduced={matches:true};return spName(b);}finally{if(g)g.time=time;if(G)G.time=globalTime;WORK_ART.reduced=reduced;}
 }
+
+/* Native pencil used by the compact ship-name action. */
+{
+ const pencil=document.createElement('canvas');pencil.width=pencil.height=16;const q=civicPainter(pencil);
+ for(let i=0;i<9;i++)q.r(3+i,10-i,4,4,'#21190f');
+ for(let i=0;i<8;i++){q.r(4+i,11-i,2,2,'#e0bb7e');q.r(4+i,11-i,1,1,'#fff0c6');}
+ q.r(11,2,2,2,'#bc7e71');q.r(3,13,2,1,'#e0bb7e');q.r(2,14,1,1,'#21190f');
+ publishPixel('i_ship_edit',pencil,16,16);
+}
+
+// The one-tile well has no facing: its upright elevation stays upright when rotated.
+const nativeWellRotation=rotatedSprite;
+rotatedSprite=function(name,rotation=0){return name==='b_brunnen'||name.startsWith('civic_brunnen_')||name.startsWith('preview_brunnen_')?name:nativeWellRotation(name,rotation);};

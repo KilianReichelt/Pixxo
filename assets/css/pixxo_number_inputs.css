@@ -1,0 +1,13 @@
+input[type="number"]{appearance:textfield;-moz-appearance:textfield}
+input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.pixxo-number-control{position:relative;display:inline-flex;align-items:stretch;width:100%;min-width:44px;vertical-align:middle;box-sizing:border-box}
+.pixxo-number-control>input{width:100%!important;min-width:44px!important;height:52px;min-height:52px!important;box-sizing:border-box;padding-right:36px!important;margin:0}
+.pixxo-number-steps{position:absolute;right:2px;top:2px;bottom:2px;width:28px;display:grid;grid-template-rows:1fr 1fr}
+.pixxo-number-step{display:grid;place-items:center;min-width:28px;min-height:24px;box-sizing:border-box;padding:0;border:0;border-left:1px solid #c8ae79;background:#493723;color:#ffe3a0;font:inherit;font-size:1rem}
+.pixxo-number-step+button{border-top:1px solid #c8ae79}
+.pixxo-number-step:hover:not(:disabled){background:#615031}
+.pixxo-number-step:focus-visible{outline:3px solid #ffe3a0;outline-offset:-3px}
+.pixxo-number-step svg{image-rendering:pixelated;shape-rendering:crispEdges}
+.pixxo-number-step:disabled{opacity:.5}
+
+.pixxo-number-control>input{flex:1 1 auto!important}

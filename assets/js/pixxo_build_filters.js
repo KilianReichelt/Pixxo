@@ -1,6 +1,6 @@
 /* Population relevance is distinct from unlock tier: prepare aristocrat chains as patricians. */
 const BUILD_RELEVANCE={...BUILD_TIER};
-for(const [id] of CIVIC_CHAINS)BUILD_RELEVANCE[id]=4;
+for(const [id] of CIVIC_CHAINS)BUILD_RELEVANCE[id]=['sandgrube','kalkbrennerei','glashuette'].includes(id)?2:4;
 Object.assign(BUILD_RELEVANCE,{rathaus:3,ausstellungspalast:4,garten:2,gemeinschaftshaus:3,brunnen:1});
 function buildingPopulationTier(type){return BUILD_RELEVANCE[type]||1;}
 const ROAD_MODES=[['path','Weg',1],['stone','Straße',2],['woodbridge','Holzbrücke',1],['stonebridge','Steinbrücke',2]];
@@ -29,7 +29,7 @@ const populationRenderItems=renderItems;renderItems=function(...args){
  const enabled=highest>=2&&tiers.size>1;
  if(!enabled||!tiers.has(UI.populationFilter))UI.populationFilter=0;
  for(const card of cards){const tier=buildingPopulationTier(card.dataset.b);card.dataset.popTier=tier;card.hidden=!!UI.populationFilter&&tier!==UI.populationFilter;
-  card.querySelector('.population-badge')?.remove();const suffix=' · '+TIERS[tier].n,label=card.getAttribute('aria-label')||'';if(!label.includes(suffix))card.setAttribute('aria-label',label+suffix);if(!card.title.includes(suffix))card.title+=suffix;
+  card.querySelector('.population-badge')?.remove();const suffix=' · '+TIERS[tier].n,label=card.getAttribute('aria-label')||'';if(!label.includes(suffix))card.setAttribute('aria-label',label+suffix);card.removeAttribute('title');
  }
  let filter=document.getElementById('population-filters');if(enabled){if(!filter){filter=document.createElement('div');filter.id='population-filters';filter.setAttribute('role','group');filter.setAttribute('aria-label','Gebäude nach Bevölkerungsstufe filtern');filter.tabIndex=0;box.before(filter);}
   const selected=UI.populationFilter||0,html=[[0,'Alle'],...TIERS.filter(t=>t&&t.id<=highest&&tiers.has(t.id)).map(t=>[t.id,t.n])].map(([tier,label])=>`<button type="button" data-population-filter="${tier}" data-pop-tier="${tier}" aria-controls="items-viewport" aria-pressed="${selected===tier}">${label}</button>`).join('');

@@ -18,10 +18,10 @@ dialog#pixxo-start{position:fixed;inset:0;width:100%;max-width:none;height:100%;
 #pixxo-start [hidden]{display:none}
 #pixxo-start .start-card{position:relative;z-index:1;min-width:0;width:min(100%,480px);margin:auto;padding:32px 24px;background:#21190f;border:2px solid #a88b58;box-shadow:0 8px 0 #17110d;overflow-wrap:anywhere}
 #pixxo-start .start-scenery{position:fixed;inset:0;overflow:hidden;pointer-events:none}
-#pixxo-start .start-scenery img{position:absolute;left:50%;top:50%;width:max(140vw,210vh);height:max(93.333vw,140vh);max-width:none;image-rendering:pixelated;animation:scenery-drift 150s ease-in-out infinite alternate;transform:translate(-53%,-53%)}
+#pixxo-start .start-scenery img{position:absolute;left:50%;top:50%;width:100%;height:100%;object-fit:cover;max-width:none;image-rendering:pixelated;animation:none;transform:translate(-50%,-50%)}
 #pixxo-start .scenery-shade{position:absolute;inset:0;background:linear-gradient(180deg,#17110d66,#17110d88);box-shadow:inset 0 0 160px #17110d99}
 #pixxo-start .scenery-paused img{animation-play-state:paused}
-@keyframes scenery-drift{0%{transform:translate(-53%,-53%)}35%{transform:translate(-57%,-43%)}70%{transform:translate(-46%,-57%)}100%{transform:translate(-43%,-47%)}}
+
 #pixxo-start[open]{display:flex;flex-direction:column;justify-content:safe center;align-items:stretch}
 #pixxo-start .pixxo-logo{display:block;width:min(300px,85%);margin:0 auto 28px}
 #pixxo-start h1{font-size:1.5rem;line-height:1.25;margin:0 0 20px}
@@ -51,7 +51,7 @@ dialog#pixxo-start{position:fixed;inset:0;width:100%;max-width:none;height:100%;
 #pixxo-start .start-settings-card p{margin:8px 0;font-size:.875rem}
 #pixxo-start .start-settings-card .start-back{margin-top:12px}
 #pixxo-start .start-settings-card .btn{padding:8px 10px}
-#pixxo-start .start-settings-card .audio-settings{grid-template-columns:minmax(76px,1fr) minmax(50px,1fr) 44px;gap:4px 8px;align-items:center}
+#pixxo-start .start-settings-card .audio-settings{grid-template-columns:minmax(120px,1fr) minmax(90px,1fr) 44px;gap:4px 8px;align-items:center}
 #pixxo-start .start-settings-card .audio-settings :is(h2,p){grid-column:1/-1}
 #pixxo-start .start-settings-card .audio-channel-mute{padding:4px;min-width:44px}
 #pixxo-start .start-settings-card .audio-settings label{font-size:.875rem;gap:4px;min-height:44px;align-items:center}
@@ -124,3 +124,9 @@ body.map-key-focus:not(.start-open) #map-key-cursor{display:block}
 }
 @media(prefers-reduced-motion:reduce){body *,body *::before,body *::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 @media(max-height:700px){#pixxo-tour{max-height:calc(100dvh - var(--topH) - 20px);overflow:auto}}
+
+body.reduced-motion *,body.reduced-motion *::before,body.reduced-motion *::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+#pixxo-start .start-motion-setting{font-size:.875rem;line-height:1.5;cursor:pointer}
+#pixxo-start .start-motion-setting input{flex:0 0 24px;width:24px;height:24px}
+.return-confirm-actions{display:flex;gap:12px;flex-wrap:wrap}.return-confirm-actions .btn{flex:1;min-width:120px;white-space:normal}
+@media(max-width:380px){#pixxo-start .start-settings-card .audio-settings{grid-template-columns:minmax(90px,1fr) minmax(50px,1fr) 44px}}

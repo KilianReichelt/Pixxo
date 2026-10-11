@@ -198,7 +198,7 @@ function updateDekoNavigation(){
  const track=viewport.querySelector('.deko-track'),overflow=track.scrollWidth>box.clientWidth-12;box.classList.toggle('has-deko-overflow',overflow);
  const max=Math.max(0,viewport.scrollWidth-viewport.clientWidth);for(const button of box.querySelectorAll('[data-deko-scroll]')){button.hidden=!overflow;button.disabled=button.dataset.dekoScroll==='left'?viewport.scrollLeft<=1:viewport.scrollLeft>=max-1;}
 }
-function scrollDekoItems(direction){const viewport=$('#bar').querySelector('.deko-viewport');if(viewport)viewport.scrollBy({left:direction*Math.max(180,Math.floor(viewport.clientWidth*.8)),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});}
+function scrollDekoItems(direction){const viewport=$('#bar').querySelector('.deko-viewport');if(viewport)viewport.scrollBy({left:direction*Math.max(180,Math.floor(viewport.clientWidth*.8)),behavior:WORK_ART.reduced.matches?'auto':'smooth'});}
 $('#bar').addEventListener('click',e=>{const button=e.target.closest('[data-deko-scroll]');if(button&&!button.disabled)scrollDekoItems(button.dataset.dekoScroll==='left'?-1:1);});
 $('#bar').addEventListener('scroll',updateDekoNavigation,true);
 $('#bar').addEventListener('keydown',e=>{if(!e.target.matches('.deko-viewport'))return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();scrollDekoItems(e.key==='ArrowLeft'?-1:1);}else if(e.key==='Home'||e.key==='End'){e.preventDefault();e.target.scrollLeft=e.key==='Home'?0:e.target.scrollWidth;updateDekoNavigation();}});

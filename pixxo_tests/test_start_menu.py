@@ -36,10 +36,9 @@ with sync_playwright() as p:
     assert page.locator("#pixxo-start a").get_attribute("href") == "https://vacuous2409.itch.io/open-world-field-bgm-series-vol01"
     page.keyboard.press("Escape")
     page.locator('[data-start="settings"]').click()
-    page.locator('[data-start-background]').uncheck()
-    assert page.evaluate('sceneryUserPaused && startScenery.classList.contains("scenery-paused")')
-    page.locator('[data-start-background]').check()
-    assert not page.evaluate('sceneryUserPaused')
+    assert page.locator('[data-start-background]').count()==0
+    assert page.evaluate('sceneryUserPaused && getComputedStyle(sceneryImage).animationName==="none"')
+    assert page.evaluate('START_SCENES.length')==4
     axe = os.environ.get("PIXXO_AXE_SCRIPT")
     if axe:
         page.add_script_tag(path=axe)
@@ -188,7 +187,8 @@ with sync_playwright() as p:
     results.append('Nachtnebel mit Dämmerung; Aufdeckungsalpha bleibt unverändert.')
     page.evaluate("startShow('settings')")
     page.set_viewport_size({'width':320,'height':568})
-    assert page.locator('[data-start="tutorial"]').is_visible()
+    assert page.locator('[data-start="tutorial"]').count()==0
+    assert page.locator('[data-start-preference=skipTutorials]').is_visible()
     assert page.locator('.start-back').inner_text() == 'Spiel fortsetzen'
     assert page.evaluate('startDialog.scrollHeight<=startDialog.clientHeight')
     page.set_viewport_size({'width':1440,'height':1000})

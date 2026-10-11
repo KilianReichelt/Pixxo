@@ -1,0 +1,15 @@
+{
+  "variants": 4,
+  "platform": "desktop only",
+  "viewportWidths": [
+    1280,
+    1520,
+    1920
+  ],
+  "textMinimumPx": 14,
+  "textResize": "200%",
+  "keyboard": true,
+  "axeViolations": 0,
+  "dayNight": true,
+  "runtimeErrors": []
+}
