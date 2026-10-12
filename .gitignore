@@ -1,13 +1,39 @@
-# Ignore local Pixxo archive created for backups or local transfers
-/Pixxo_lokal.zip
+# Only the playable GitHub Pages build is published.
+/*
+!/.gitignore
+!/.nojekyll
+!/index.html
+!/pixxo.html
+!/assets/
 
-# Ignore any other local zip archives (optional)
-# *.zip
-Pixxo_lokal.zip
+/assets/*
+!/assets/css/
+!/assets/js/
+!/assets/music/
+!/assets/sprites/
+!/assets/ui/
+!/assets/favicon.svg
+!/assets/pixxo-logo.svg
+!/assets/start-world.png
+!/assets/start-world-harbor.png
+!/assets/start-world-citizens.png
+!/assets/start-world-aristocrats.png
 
-# Uncompressed local audio masters; the game uses compressed/*.mp3 only.
-/assets/music/*.wav
-/Pixxo_lokal.neu.zip
+/assets/css/*
+!/assets/css/*.css
+/assets/js/*
+!/assets/js/*.js
+/assets/music/*
+!/assets/music/compressed/
+/assets/music/compressed/*
+!/assets/music/compressed/*.mp3
+/assets/sprites/*
+!/assets/sprites/sprite_data.js
+/assets/ui/*
+!/assets/ui/frame-cap-*.svg
 
-# Isolated browser test dependencies
-/pixxo_tests/.runtime/
+# Ignore local files even when created inside an included directory.
+.DS_Store
+Thumbs.db
+__pycache__/
+*.py[cod]
