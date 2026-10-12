@@ -8,7 +8,7 @@ for(const d of Object.values(B))if(d.kind==='prod')d.transportRange=36;
 const LUXURY_CHAINS=[
  {tier:1,good:'honig',name:'Honig',rate:.0125,bonus:1.2,steps:[['imkerei','Imkerei',{},'honig',45,12,'b_farm']]},
  {tier:1,good:'most',name:'Apfelmost',rate:.0125,bonus:1.8,steps:[['obsthof','Obsthof',{},'aepfel',30,10,'b_weingut'],['mosterei','Mosterei',{aepfel:1},'most',45,15,'b_kelterei']]},
- {tier:2,good:'seife',name:'Seife',rate:.01,bonus:2.2,steps:[['schweinehof','Schweinehof',{},'talg',30,15,'b_schaefer'],['seifensiederei','Seifensiederei',{blueten:1,gewuerz:1,glas:1},'seife',45,25,'b_brauerei']]},
+ {tier:2,good:'seife',name:'Seife',rate:.01,bonus:2.2,steps:[['schweinehof','Schweinehof',{},'talg',30,15,'b_schaefer'],['seifensiederei','Seifensiederei',{blueten:1,gewuerz:1,talg:1},'seife',45,25,'b_brauerei']]},
  {tier:2,good:'moebel',name:'Möbel',rate:.008,bonus:2.6,steps:[['tischlerei','Tischlerei',{bretter:1,werkzeug:.25},'moebel',45,30,'b_weberei']]},
  {tier:3,good:'parfuem',name:'Parfüm',rate:.006,bonus:3.4,steps:[['blumenhof','Blumenhof',{},'blueten',30,20,'b_hopfen'],['parfuemerie','Parfümerie',{blueten:1,most:1,glas:1},'parfuem',60,45,'b_kelterei']]},
  {tier:3,good:'schmuck',name:'Schmuck',rate:.005,bonus:3.8,steps:[['goldwaescherei','Goldwäscherei',{},'goldstaub',60,25,'b_mine'],['juwelier','Juwelier',{goldstaub:1,eisen:1},'schmuck',60,50,'b_schmiede']]}

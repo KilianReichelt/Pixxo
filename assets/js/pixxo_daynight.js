@@ -74,20 +74,25 @@ const dayRenderTop=renderTop;renderTop=function(...args){dayRenderTop(...args);l
 const NIGHT_WINDOWS=new Map();
 const NIGHT_WINDOW_STATES=new WeakMap();
 let NIGHT_GLOW=null;
+const NIGHT_BUILDING_SPRITES=new WeakMap();
+function nightBuildingSprite(name){
+ const source=HD_CATALOG.get(name)?.pixelSource||smallPixelSource(SP[name]);let sprite=NIGHT_BUILDING_SPRITES.get(source);if(sprite)return sprite;
+ sprite=document.createElement('canvas');sprite.width=source.width;sprite.height=source.height;const c=sprite.getContext('2d'),image=source.getContext('2d').getImageData(0,0,source.width,source.height),pixels=image.data;
+ for(let i=0;i<pixels.length;i+=4)if(pixels[i+3]){pixels[i]=Math.round(pixels[i]*.58);pixels[i+1]=Math.round(pixels[i+1]*.65);pixels[i+2]=Math.round(pixels[i+2]*.78);}
+ c.putImageData(image,0,0);NIGHT_BUILDING_SPRITES.set(source,sprite);return sprite;
+}
 function nightWindows(name){
  if(NIGHT_WINDOWS.get(name)?.sprite===SP[name])return NIGHT_WINDOWS.get(name);
- const sprite=SP[name],source=HD_CATALOG.get(name)?.pixelSource||smallPixelSource(sprite),w=source.width,h=source.height,seen=new Set(),components=[];
- const pixels=source._nightWindows?null:source.getContext('2d').getImageData(0,0,w,h).data;
- const warm=k=>{const i=k*4;return pixels[i+3]>200&&pixels[i+1]>pixels[i]*1.08&&pixels[i+2]>pixels[i]*1.12&&pixels[i+1]>45;};
- if(source._nightWindows){for(const p of source._nightWindows){const pane=[];for(let y=p.y;y<p.y+p.h;y++)for(let x=p.x;x<p.x+p.w;x++){if(p.cross&&(x===p.x+Math.floor(p.w/2)||y===p.y+Math.floor(p.h/2)))continue;if(x>=0&&y>=0&&x<w&&y<h)pane.push(y*w+x);}if(pane.length>=4)components.push({pixels:pane,x:p.x+p.w/2,y:p.y+p.h/2});}}
- else for(let y=Math.floor(h*.15);y<Math.floor(h*.92);y++)for(let x=1;x<w-1;x++){const start=y*w+x;if(seen.has(start)||!warm(start))continue;const queue=[start];seen.add(start);let minX=x,maxX=x,minY=y,maxY=y;for(let j=0;j<queue.length;j++){const k=queue[j],xx=k%w,yy=Math.floor(k/w);minX=Math.min(minX,xx);maxX=Math.max(maxX,xx);minY=Math.min(minY,yy);maxY=Math.max(maxY,yy);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=xx+dx,ny=yy+dy;if(nx<0||ny<0||nx>=w||ny>=h)continue;const n=ny*w+nx;if(warm(n)&&!seen.has(n)){seen.add(n);queue.push(n);}}}if(queue.length>=4&&queue.length<=120&&maxX-minX>=1&&maxY-minY>=1&&maxX-minX<=12&&maxY-minY<=14)components.push({pixels:queue,x:(minX+maxX+1)/2,y:(minY+maxY+1)/2});}
- const result={sprite,w,h,lights:components.slice(0,40)};NIGHT_WINDOWS.set(name,result);return result;
+ const sprite=SP[name],source=HD_CATALOG.get(name)?.pixelSource||smallPixelSource(sprite),w=source.width,h=source.height,components=[];
+ for(const p of source._nightWindows||[]){const pane=[];for(let y=p.y;y<p.y+p.h;y++)for(let x=p.x;x<p.x+p.w;x++){if(p.cross&&(x===p.x+Math.floor(p.w/2)||y===p.y+Math.floor(p.h/2)))continue;if(x>=0&&y>=0&&x<w&&y<h)pane.push(y*w+x);}if(pane.length>=4)components.push({pixels:pane,x:p.x+p.w/2,y:p.y+p.h/2});}
+ const result={sprite,w,h,lights:components};NIGHT_WINDOWS.set(name,result);return result;
 }
 function nightWindowState(windows,b){let states=NIGHT_WINDOW_STATES.get(windows);if(!states){states=new Map();NIGHT_WINDOW_STATES.set(windows,states);}const day=Math.floor((WORLD?.islands[b.island??activeIsland]?.time||G.time)/DAY_LENGTH_SECONDS),home=b.type==='haus';let selected=windows.lights.map((_,i)=>!home||hs(b.id+i*791,b.island||0,(WORLD?.rootSeed||G.seed)+day*37)>.4);if(home&&selected.length){if(!selected.some(Boolean))selected[b.id%selected.length]=true;if(selected.length>1&&selected.every(Boolean))selected[(b.id+1)%selected.length]=false;}const key=selected.map(v=>v?'1':'0').join('');if(states.has(key))return states.get(key);const mask=document.createElement('canvas');mask.width=windows.w;mask.height=windows.h;const c=mask.getContext('2d'),image=c.createImageData(windows.w,windows.h),lights=windows.lights.filter((_,i)=>selected[i]);for(const p of lights)for(const k of p.pixels){image.data.set([255,218,123,255],k*4);}c.putImageData(image,0,0);const state={mask,lights};if(states.size>=24)states.delete(states.keys().next().value);states.set(key,state);return state;}
 function nightGlowSprite(){if(NIGHT_GLOW)return NIGHT_GLOW;const a=document.createElement('canvas');a.width=a.height=40;const c=a.getContext('2d'),g=c.createRadialGradient(20,20,0,20,20,20);g.addColorStop(0,'rgba(255,194,75,.3)');g.addColorStop(1,'rgba(255,194,75,0)');c.fillStyle=g;c.fillRect(0,0,40,40);return NIGHT_GLOW=a;}
 function drawNight(ctx,x0,y0,x1,y1){const amount=nightAmount();if(amount<=0)return;ctx.save();ctx.fillStyle=`rgba(8,16,42,${amount*.58})`;ctx.fillRect(x0,y0,x1-x0,y1-y0);
  if(worldOverview()){ctx.restore();return;}
- for(const b of worldBuildings()){const d=B[b.type],lamp=['deko_laterne','deko_lampe'].includes(b.type);if(b.x*16+b.w*16+64<x0||b.x*16-64>x1||(b.y+b.h)*16<y0||b.y*16-128>y1||b.fire>0||(!lamp&&!d.nightLight&&!['home','prod','svc','wh','shipyard','monument'].includes(d.kind)))continue;const name=spName(b),s=SP[name],m=SPB[name];if(!s||!m)continue;const dx=b.x*16+b.w*8-s.width/2,dy=(b.y+b.h)*16-m.H;if(dx+s.width<x0||dx>x1||dy+m.H<y0||dy>y1)continue;const windows=lamp?null:nightWindows(name),state=windows?nightWindowState(windows,b):null,lights=lamp?[[dx+s.width*.5,dy+m.H*.27]]:state.lights.map(c=>[dx+c.x/windows.w*s.width,dy+c.y/windows.h*m.H]);
+ for(const b of worldBuildings()){const d=B[b.type],lamp=['deko_laterne','deko_lampe'].includes(b.type);if(b.x*16+b.w*16+64<x0||b.x*16-64>x1||(b.y+b.h)*16<y0||b.y*16-128>y1||b.fire>0||d.kind==='field')continue;const name=workshopSprite(b),s=SP[name],m=SPB[name];if(!s||!m)continue;const dx=b.x*16+b.w*8-s.width/2,dy=(b.y+b.h)*16-m.H;if(dx+s.width<x0||dx>x1||dy+m.H<y0||dy>y1)continue;const windows=lamp?null:nightWindows(name),state=windows?nightWindowState(windows,b):null,lights=lamp?[[dx+s.width*.5,dy+m.H*.27]]:state.lights.map(c=>[dx+c.x/windows.w*s.width,dy+c.y/windows.h*m.H]);
+   ctx.globalAlpha=amount;ctx.imageSmoothingEnabled=false;nativeDrawImage.call(ctx,nightBuildingSprite(name),dx,dy,s.width,m.H);
   ctx.globalAlpha=amount;for(const [x,y] of lights){const radius=lamp?18:9;nativeDrawImage.call(ctx,nightGlowSprite(),x-radius,y-radius,radius*2,radius*2);if(lamp){ctx.fillStyle='#ffe8a1';ctx.fillRect(Math.round(x)-1,Math.round(y)-1,2,3);}}
   if(state){ctx.globalAlpha=amount*(b.paused?.5:1);ctx.drawImage(state.mask,dx,dy,s.width,m.H);}ctx.globalAlpha=1;
  }ctx.restore();}

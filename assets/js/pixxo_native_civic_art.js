@@ -1,6 +1,6 @@
 /* Native 16 px/tile artwork. See SPRITE_STANDARDS.md before adding sprites. */
 const NATIVE_ART_RULES=Object.freeze({tile:16,houseWidth:48,houseHeight:48,iconWidth:16,iconHeight:16});
-const NATIVE_GOOD_IDS=['schnaps','haeute','leder','stiefel','wachs','kerzen',...CIVIC_GOODS.map(g=>g[0])];
+const NATIVE_GOOD_IDS=['schnaps','haeute','leder','stiefel','wachs','docht','kerzen',...CIVIC_GOODS.map(g=>g[0])];
 function nativeGoodArt(id){
  const a=document.createElement('canvas');a.width=16;a.height=16;const {r,p,ln}=civicPainter(a);
  const edge='#382e23',light='#f1d6a0';
@@ -9,6 +9,7 @@ function nativeGoodArt(id){
  else if(id==='leder'){p([[1,4],[11,1],[14,4],[14,11],[4,14],[1,11]],edge);p([[2,5],[11,2],[13,5],[4,8]],'#c18b55');p([[4,8],[13,5],[13,10],[4,13]],'#965e3a');r(2,6,2,5,'#6b402b');ln(5,9,11,7,'#d8aa70');ln(5,11,11,9,'#ad7a48');r(2,5,1,6,'#e0b984');r(11,3,1,2,'#74462e');}
  else if(id==='stiefel'){for(const [x,y] of [[1,1],[7,0]]){r(x,y,5,10,edge);r(x+1,y+1,3,7,'#8e6039');r(x+1,y+1,1,6,'#c89a62');r(x,y+1,5,1,'#dbbb81');r(x+1,y+8,6,3,'#805230');r(x+2,y+8,4,1,'#ad7c4b');r(x,y+11,8,2,edge);r(x+1,y+11,6,1,'#af9264');}}
  else if(id==='wachs'){p([[1,7],[6,3],[14,4],[15,10],[10,14],[2,13]],edge);p([[2,7],[6,4],[13,5],[9,9]],'#e5be5d');p([[2,8],[9,10],[9,13],[3,12]],'#bc873d');p([[10,10],[14,6],[14,10],[10,13]],'#d49f49');r(5,6,2,2,'#f4d780');r(9,5,3,1,'#f2d48a');r(4,9,1,2,'#dfae55');}
+ else if(id==='docht'){r(2,11,12,2,edge);r(3,11,10,1,'#b99a64');for(const [x,y] of [[3,4],[7,2],[11,5]]){r(x,y,2,8,edge);r(x+1,y+1,1,6,'#e9d7a6');r(x,y-1,2,1,'#e9d7a6');}r(3,13,10,1,'#73573a');}
  else if(id==='kerzen'){r(1,12,14,2,edge);r(2,12,12,1,'#b89960');for(const [x,y] of [[3,6],[7,3],[11,7]]){r(x-1,y,4,12-y,edge);r(x,y,2,11-y,'#eedaa4');r(x+1,y+1,1,10-y,'#bfad7a');r(x,y-2,1,2,'#5d422a');r(x,y-3,1,2,'#f2a448');r(x,y-3,1,1,'#ffe4a1');r(x-1,y+3,1,2,'#ead49b');}}
  else if(['sand','kalk','zement'].includes(id)){const tones=id==='sand'?['#c6a267','#efcd8d','#987648']:id==='kalk'?['#d9d7c1','#f0ead5','#9fa694']:['#9a9e8d','#c4c7b1','#707769'];p([[4,1],[11,1],[10,4],[13,7],[14,12],[11,14],[3,14],[1,11],[3,6],[5,4]],edge);p([[5,2],[10,2],[8,4],[12,7],[12,12],[10,13],[4,13],[3,10],[4,7],[6,4]],tones[0]);r(5,4,5,1,'#826448');r(4,8,1,3,tones[1]);r(10,8,1,4,tones[2]);r(6,8,4,3,'#e9dec2');r(7,9,2,1,tones[2]);}
  else if(id==='beton'){p([[1,5],[8,1],[14,4],[14,10],[7,14],[1,11]],edge);p([[2,5],[8,2],[13,5],[7,8]],'#c6c6b1');p([[2,6],[6,9],[6,12],[2,10]],'#969d8c');p([[7,9],[13,6],[13,10],[7,13]],'#727d72');r(3,7,1,1,'#d6d3ba');r(9,9,2,1,'#a8ad98');r(8,4,1,1,'#ebdfc3');}
@@ -93,11 +94,11 @@ for(const name of [...HD_CATALOG.keys()])if(name.startsWith('civic_')){HD_CATALO
 for(const type of CIVIC_ART_TYPES){const art=civicBuildingArt(type,0,CIVIC_PROJECTS[type]?0:null);publishPixel(typeSprite(type),art.low,art.w,art.h,art.meta);}
 const nativeHome=civicBuildingArt('haus4');publishPixel('b_haus4',nativeHome.low,nativeHome.w,nativeHome.h,nativeHome.meta);
 for(let tier=1;tier<=3;tier++){const source=HD_CATALOG.get('b_haus'+tier)?.pixelSource;if(source?.width===48&&source.height===63){source._nightWindows=[{x:11,y:36,w:5,h:6,cross:true},{x:31,y:36,w:5,h:6,cross:true}];if(tier>=2)source._nightWindows.push({x:11,y:24,w:5,h:5,cross:true},{x:31,y:24,w:5,h:5,cross:true});if(tier===3)source._nightWindows.push({x:22,y:19,w:4,h:3});}}
-for(const id of NATIVE_GOOD_IDS)publishPixel(id,nativeGoodArt(id),16,16);
-// Normalize remaining legacy goods once; all future registrations are checked.
-for(const good of GOODS){if(NATIVE_GOOD_IDS.includes(good.id))continue;const source=HD_CATALOG.get(good.id)?.pixelSource||SP[good.id];if(!source)continue;const low=document.createElement('canvas');low.width=16;low.height=16;const c=low.getContext('2d');c.imageSmoothingEnabled=false;nativeDrawImage.call(c,source,0,0,16,16);publishPixel(good.id,low,16,16);}
 const nativePublishPixel=publishPixel;
 publishPixel=function(name,low,w,h,meta){if(GN[name]&&(low.width>16||low.height>16||w>16||h>16))throw Error('Waren-Icon '+name+' überschreitet das verbindliche 16 × 16 Pixelraster.');return nativePublishPixel(name,low,w,h,meta);};
+for(const id of NATIVE_GOOD_IDS)publishPixel(id,nativeGoodArt(id),16,16);
+// Normalize remaining legacy goods once; all registrations are checked.
+for(const good of GOODS){if(NATIVE_GOOD_IDS.includes(good.id))continue;const source=HD_CATALOG.get(good.id)?.pixelSource||SP[good.id];if(!source)continue;const low=document.createElement('canvas');low.width=16;low.height=16;const c=low.getContext('2d');c.imageSmoothingEnabled=false;nativeDrawImage.call(c,source,0,0,16,16);publishPixel(good.id,low,16,16);}
 publishPixel('i_t4',nativeAristocratIcon(),16,16);
 const MUTED_GOOD_IDS=['tuch','hopfen','bier','trauben','gewuerz','aepfel','seife','blueten','parfuem','goldstaub','schmuck'];
 const MUTED_GOOD_ORIGINALS=new Map();

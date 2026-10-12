@@ -195,7 +195,7 @@ html,body{font-size:16px;line-height:1.5}button,input,select,textarea,.rate,.qch
 
 #sidebar{left:8px;top:50%;transform:translateY(-50%);width:60px;padding:6px;background-color:#2b2316;background-image:var(--t-panel);background-size:64px 64px;border:4px solid var(--edge);box-shadow:inset 2px 2px 0 #c9a443,inset -2px -2px 0 #4a3a12,0 0 0 3px #6b5636;overflow:visible}
 .sideicons{align-items:center}
-.sidepanel{left:64px;top:50%;transform:translateY(-50%);max-height:calc(100dvh - var(--topH) - var(--barH,86px) - 32px);width:min(276px,calc(100vw - 92px))}
+.sidepanel{left:64px;top:50%;transform:translateY(-50%);max-height:calc(100dvh - var(--topH) - var(--barH,86px) - 32px);width:350px;min-width:min(350px,calc(100vw - 92px));max-width:calc(100vw - 92px)}
 @media(max-width:760px){#sidebar{width:60px;top:50%}}
 #sidebar{width:64px;background-color:#4a3320;background-image:var(--t-wood);box-shadow:inset 2px 2px 0 #8a6330}.sidepanel{left:68px}@media(max-width:760px){#sidebar{width:64px}}
 #upgradeTip{position:fixed;z-index:35;max-width:300px;padding:8px;background:#21190f;border:2px solid #a88b58;pointer-events:none;font-size:16px}#upgradeTip .cost{display:flex;gap:8px;flex-wrap:wrap}#upgradeTip p{margin:4px 0 0}
@@ -230,7 +230,7 @@ html,body{font-size:16px;line-height:1.5}button,input,select,textarea,.rate,.qch
 
 <canvas id="cv" role="img" aria-label="Spielkarte. Ziehen verschiebt die Ansicht, Klicken wählt Gebäude, das Mausrad zoomt."></canvas>
 <div id="top"></div><div id="quest"></div>
-<div id="wins"></div><div id="toasts" role="status" aria-live="polite"></div><div id="hint"></div>
+<div id="wins"></div><div id="toasts" role="log" aria-live="polite" aria-relevant="additions" aria-label="Ereignisse"></div><div id="hint"></div>
 <div id="items"></div><div id="bar"></div><button id="barToggle" aria-label="Schiffe anzeigen" title="Zwischen Baukategorien und Schiffen wechseln"></button>
 <aside id="islandfacts" aria-label="Fruchtbarkeiten und Abbauplätze"></aside><div id="mmw"><canvas id="mm" width="112" height="112" role="img" aria-label="Minikarte der aktuellen Insel. Klicken oder ziehen verschiebt den Kartenausschnitt. Plus und Minus ändern den Minikartenzoom."></canvas></div><div class="maptools" aria-label="Minikartenzoom"><button data-minizoom="plus" aria-label="Minikarte vergrößern">+</button><button data-minizoom="minus" aria-label="Minikarte verkleinern">−</button></div>
 <script>
@@ -860,7 +860,7 @@ function limitBeaches(tiles,seed){const at=(x,y)=>x<0||y<0||x>=ISLAND_SIZE||y>=I
    ========================================================== */
 let G=null;
 let MSGHOOK=()=>{};
-const msg=(t,icon)=>MSGHOOK(t,icon);
+const msg=(t,icon,detail)=>MSGHOOK(t,icon,detail);
 function newGame(seed,mapStyle=1,shared=null){
  seed=seed||Math.floor(Math.random()*2147483646)+1;
  const m=shared||genMap(seed,mapStyle);
@@ -1037,7 +1037,7 @@ function grantStart(){
 function houseGoodSupplied(b,g){return !!b.conn&&!!b.cov.markt&&b.sat[g]===true}
 function nextTierReq(b){
  const nt=b.tier+1;if(nt>=TIERS.length)return null;const t=TIERS[nt],list=[];
- t.svc.forEach(s=>list.push({label:SVCN[s],ok:!!b.cov[s],icon:s==='markt'?'i_lager':'i_kreuz'}));
+ t.svc.filter(s=>s!=='gemeinschaft'||nt!==3).forEach(s=>list.push({label:SVCN[s],ok:!!b.cov[s],icon:s==='markt'?'i_lager':'i_kreuz'}));
  for(const g in t.goods)list.push({label:GN[g].n,ok:houseGoodSupplied(b,g),icon:g});
  list.push({label:'Straßenanschluss',ok:b.conn,icon:'i_road'});
  list.push({label:'Bewohner ≥ '+Math.ceil(TIERS[b.tier].cap*.75),ok:b.pop>=TIERS[b.tier].cap*.75,icon:'i_pop'});
@@ -1664,13 +1664,15 @@ mm.addEventListener('pointerdown',e=>{
 /* ---------- Tempo / Meldungen ---------- */
 const SPEEDS=[0,1,2,4];
 function setSpeed(s){G.speed=s;if(s>0)UI.lastSpeed=s;renderTop(true)}
-function toast(text,icon){
- const box=$('#toasts'),d=document.createElement('div');d.className='toast';d.innerHTML=(icon?ic(icon,1):'')+`<span>${esc(text)}</span>`;
- box.prepend(d);while(box.children.length>6)box.lastChild.remove();
+function toast(text,icon,detail){
+ const box=$('#toasts'),d=document.createElement(detail?.buildingId?'button':'div');d.className='toast';if(detail?.buildingId){d.type='button';d.dataset.eventBuilding=detail.buildingId;d.dataset.eventIsland=detail.island;d.setAttribute('aria-label',text+' Zum Gebäude springen.');}
+ const content=detail?.buildingName?'<strong>'+esc(detail.buildingName)+'</strong>'+esc(text.slice(detail.buildingName.length)):esc(text);
+ d.innerHTML=(icon?ic(icon,1):'')+`<span>${content}<time>${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}</time></span>`;
+ box.prepend(d);
  UI.unreadEvents=UI.sidebarTab==='events'?0:Math.min(box.children.length,(UI.unreadEvents||0)+1);updateEventBadge();
 }
 
-MSGHOOK=(t,i)=>{toast(t,i);UI.log.unshift({t:G.time,text:t,icon:i});if(UI.log.length>30)UI.log.pop()};
+MSGHOOK=(t,i,detail)=>{toast(t,i,detail);UI.log.unshift({t:G.time,systemTime:Date.now(),text:t,icon:i,...detail})};
 
 /* ---------- Kopfleiste ---------- */
 function renderTop(force){
@@ -1679,7 +1681,7 @@ function renderTop(force){
  html+=`<button class="chip pop" data-w="pop" aria-label="Bevölkerung öffnen">${ic('i_pop',2)}<span><b>${fmt(viewState?viewState.blds.reduce((n,b)=>n+(b.pop||0),0):0)}</b><span class="rate">${workforceTop(viewState)}</span></span></button><button class="navbtn worldname" data-w="island">${esc(islandName(view))}</button><div class="sp"></div>`;
  if(typeof knowledgeTopHTML==='function')html+=knowledgeTopHTML();
  const shownSpeed=G.speed||UI.lastSpeed||1,speedIndex=SPEEDS.indexOf(shownSpeed),speedName=['','Normal','Doppelte Geschwindigkeit','Vierfache Geschwindigkeit'][speedIndex],nextSpeed=G.speed===0?shownSpeed:shownSpeed===4?1:shownSpeed*2;
- html+=`<div class="speeds" aria-label="Spieltempo"><button class="tb ${G.speed===0?'on':''}" data-spd="${G.speed===0?shownSpeed:0}" aria-label="Pause" aria-pressed="${G.speed===0}" title="${G.speed===0?'Fortsetzen':'Pause'}">${ic('i_pause',2)}</button><button class="tb" data-spd="${nextSpeed}" aria-label="${speedName}" title="${speedName} · Klicken wechselt zwischen 1×, 2× und 4×">${ic(['','i_play','i_ff','i_fff'][speedIndex],2)}</button></div>`;
+ html+=`<div class="speeds" aria-label="Spieltempo"><button class="tb ${G.speed===0?'on':''}" data-spd="${G.speed===0?shownSpeed:0}" aria-label="Pause" aria-pressed="${G.speed===0}" title="${G.speed===0?'Fortsetzen':'Pause'}">${ic('i_pause',2)}</button><button class="tb ${G.speed>0?'on':''}" data-spd="${nextSpeed}" aria-pressed="${G.speed>0}" aria-label="${speedName}" title="${speedName} · Klicken wechselt zwischen 1×, 2× und 4×">${ic(['','i_play','i_ff','i_fff'][speedIndex],2)}</button></div>`;
  html+=[['fleet','Schiffe & Routen'],['store','Lager'],['buildings','Gebäude'],['menu','Menü']].map(([w,t])=>`<button class="navbtn ${WINS[w]?'on':''}" data-w="${w}">${t}</button>`).join('');
  html+=`<div id="goodsbar" aria-label="Warenbestand auf ${esc(viewMeta.name)}">${WORLD.pins.map(k=>`<button class="reschip" data-w="pins" aria-label="${GN[k].n}: ${Math.floor(viewState?.stock[k]||0)}. Warenleiste anpassen">${ic(k,1.5)}<b>${Math.floor(viewState?.stock[k]||0)}</b></button>`).join('')}<button class="reschip" data-w="pins" title="Warenleiste anpassen" aria-label="Warenleiste anpassen">+</button></div>`;
  renderIslandFacts();if(UI.barMode==='fleet')renderBar();
@@ -1992,7 +1994,7 @@ const SHIPS={schooner:{n:'Schoner',slots:2,speed:1,upk:15,cost:{gold:600,bretter
 let WORLD=null,activeIsland=0,routeEdit=null;
 B.hopfen.fertility='hopfen';B.weingut.fertility='trauben';
 B.gewuerzfarm={...B.farm,n:'Gewürzplantage',cost:{gold:300,bretter:15,werkzeug:4},cycle:120,out:{gewuerz:1},fertility:'gewuerz',upk:30,req:0,d:'Erntet Gewürze auf Inseln mit Gewürzfruchtbarkeit.'};
-B.werft={...B.fischer,n:'Segelschiffwerft',cat:'lager',w:3,h:3,kind:'shipyard',cost:{gold:500,bretter:20,stein:15},upk:25,req:0,d:'Baut Schoner und Klipper. Benötigt Straßenanschluss und eine freie Küste.'};
+B.werft={...B.fischer,n:'Segelschiffwerft',cat:'lager',w:3,h:3,kind:'shipyard',out:{},cost:{gold:500,bretter:20,stein:15},upk:25,req:0,d:'Baut Schoner und Klipper. Benötigt Straßenanschluss und eine freie Küste.'};
 
 function resetWorld(){freeNodeCache.clear();waterRoutes.clear();WORLD={rootSeed:G.seed,board:{tiles:G.tiles,fish:G.fish,occ:G.occ,road:G.road,byId:G.byId},islands:ISLANDS.map((m,i)=>i===0?G:null),pins:[...DEFAULT_PINS],fleet:[],routes:[],nextId:1,quests:G.quests,highestTier:Math.max(1,...G.blds.filter(b=>b.type==='haus').map(b=>b.tier))};activeIsland=0;}
 function islandMeta(){return ISLANDS[activeIsland]}
@@ -2260,14 +2262,14 @@ const workforceTutorial=tutorialHTML;tutorialHTML=function(){return workforceTut
 
 
 const sidebar=document.createElement('aside');sidebar.id='sidebar';sidebar.className='sidebar';sidebar.setAttribute('aria-label','Aufträge und Ereignisse');
-sidebar.innerHTML=`<nav class="sideicons" aria-label="Infoleiste"><button class="sidetab" data-side="quest" aria-label="Aufträge" aria-controls="side-quest" aria-expanded="false" title="Aufträge">${ic('i_quest',2)}</button><button class="sidetab" data-side="events" data-sidetab="events" aria-label="Ereignisse" aria-controls="side-events" aria-expanded="false" title="Ereignisse">${ic('i_alert',2)}<span class="side-event-count" aria-hidden="true" hidden></span></button></nav><div class="sidepanel" hidden><section id="side-quest" class="sidegroup" hidden><header><h2>Aufträge</h2><button class="sideclose" aria-label="Infoleiste schließen">×</button></header></section><section id="side-events" class="sidegroup" hidden><header><h2>Ereignisse</h2><button class="sideclose" aria-label="Infoleiste schließen">×</button></header></section></div>`;
+sidebar.innerHTML=`<nav class="sideicons" aria-label="Infoleiste"><button class="sidetab" data-side="quest" aria-label="Aufträge" aria-controls="side-quest" aria-expanded="false" title="Aufträge">${ic('i_quest',2)}</button><button class="sidetab" data-side="events" data-sidetab="events" aria-label="Ereignisse" aria-controls="side-events" aria-expanded="false" title="Ereignisse">${ic('i_alert',2)}<span class="side-event-count" aria-hidden="true" hidden></span></button></nav><div class="sidepanel" hidden><section id="side-quest" class="sidegroup" hidden><header><h2>Aufträge</h2><button class="sideclose" aria-label="Infoleiste schließen">×</button></header></section><section id="side-events" class="sidegroup" hidden><header><h2>Ereignisse</h2><button type="button" class="clear-events">Alle löschen</button><button class="sideclose" aria-label="Infoleiste schließen">×</button></header></section></div>`;
 document.body.append(sidebar);$('#side-quest').append($('#quest'));$('#side-events').append($('#toasts'));
 function updateEventBadge(){
  const button=$('[data-sidetab="events"]');if(!button)return;const count=UI.unreadEvents||0,badge=button.querySelector('.side-event-count');
  badge.textContent=String(count);badge.hidden=count===0;button.setAttribute('aria-label',count?'Ereignisse · '+count+' neue Ereignisse':'Ereignisse');button.title=count?'Ereignisse · '+count+' neue Ereignisse':'Ereignisse';
 }
 function toggleSidebar(category){UI.sidebarTab=UI.sidebarTab===category?null:category;if(UI.sidebarTab==='events'){UI.unreadEvents=0;updateEventBadge();}sidebar.querySelector('.sidepanel').hidden=!UI.sidebarTab;sidebar.querySelectorAll('[data-side]').forEach(btn=>{const on=btn.dataset.side===UI.sidebarTab;btn.setAttribute('aria-expanded',String(on));btn.classList.toggle('on',on)});$('#side-quest').hidden=UI.sidebarTab!=='quest';$('#side-events').hidden=UI.sidebarTab!=='events'}
-sidebar.addEventListener('click',e=>{const tab=e.target.closest('[data-side]');if(tab)toggleSidebar(tab.dataset.side);else if(e.target.closest('.sideclose'))toggleSidebar(UI.sidebarTab)});
+sidebar.addEventListener('click',e=>{const tab=e.target.closest('[data-side]');if(tab)toggleSidebar(tab.dataset.side);else if(e.target.closest('.clear-events')){UI.log=[];UI.unreadEvents=0;$('#toasts').replaceChildren();updateEventBadge();}else if(e.target.closest('[data-event-building]')){const button=e.target.closest('[data-event-building]'),island=Number(button.dataset.eventIsland),building=WORLD.islands[island]?.byId.get(Number(button.dataset.eventBuilding));if(building){if(island!==activeIsland)activateIsland(island);centerOn(cx(building),cy(building));selectB(building.id);toggleSidebar('events');}}else if(e.target.closest('.sideclose'))toggleSidebar(UI.sidebarTab)});
 
 for(let m=0;m<16;m++)mk('road'+m,16,16,s=>{
  const arms=U(R(3,3,10,10),m&1?R(3,0,10,4):()=>false,m&2?R(12,3,4,10):()=>false,m&4?R(3,12,10,4):()=>false,m&8?R(0,3,4,10):()=>false);
@@ -2366,7 +2368,7 @@ const audioUpgradeHouse=upgradeHouse;upgradeHouse=function(...args){const r=audi
 const audioUpgradePort=upgradePort;upgradePort=function(b){const level=b.tier,r=audioUpgradePort(b);if(b.tier!==level)soundEffect('upgrade');return r};
 const audioBuildShip=buildShip;buildShip=function(...args){const r=audioBuildShip(...args);soundEffect(r===true?'build':'error');return r};
 const audioSail=sailShip;sailShip=function(...args){const r=audioSail(...args);soundEffect(r===true?'ship':'error');return r};
-const audioMessages=MSGHOOK;MSGHOOK=function(t,i){audioMessages(t,i);if(typeof pixxoIsFireWarning==='function'&&pixxoIsFireWarning(t,i))soundEffect('danger');else if(/gelöscht|Auftrag.*erfüllt|Kontor gegründet/.test(t))soundEffect('success');else if(/Händler|Handelsschiff|gekauft|verkauft/.test(t))soundEffect('trade');else if(i==='i_alert')soundEffect('error')};
+const audioMessages=MSGHOOK;MSGHOOK=function(t,i,detail){audioMessages(t,i,detail);if(typeof pixxoIsFireWarning==='function'&&pixxoIsFireWarning(t,i))soundEffect('danger');else if(/gelöscht|Auftrag.*erfüllt|Kontor gegründet/.test(t))soundEffect('success');else if(/Händler|Handelsschiff|gekauft|verkauft/.test(t))soundEffect('trade');else if(i==='i_alert')soundEffect('error')};
 const audioMenu=menuHTML;menuHTML=function(){return '<section class="audio-settings"><div class="sect">Ton</div>'+AUDIO_CHANNELS.map(([key,name])=>`<label for="${key}-volume">${name} <output id="${key}-value">${Math.round(Sound.prefs[key]*100)} %</output></label><input id="${key}-volume" type="range" min="0" max="100" step="1" value="${Math.round(Sound.prefs[key]*100)}" data-audio="${key}">${audioMuteButton(key,name)}`).join('')+'</section>'+audioMenu()};
 document.addEventListener('input',e=>{const k=e.target.dataset.audio;if(!AUDIO_CHANNELS.some(([key])=>key===k))return;audioStart();Sound.prefs[k]=Number(e.target.value)/100;document.getElementById(k+'-value').textContent=e.target.value+' %';audioSave()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-audio-channel-mute]');if(!b)return;const key=b.dataset.audioChannelMute,channel=AUDIO_CHANNELS.find(([k])=>k===key);if(!channel)return;Sound.prefs.channelMuted[key]=!Sound.prefs.channelMuted[key];audioSave();for(const button of document.querySelectorAll('[data-audio-channel-mute="'+key+'"]')){const muted=audioChannelMuted(key),label=channel[1]+': '+(muted?'Aus – einschalten':'An – stummschalten');button.setAttribute('aria-pressed',String(muted));button.setAttribute('aria-label',label);button.title=label;button.textContent=muted?'Aus':'An';}});
@@ -2420,7 +2422,7 @@ for(let level=2;level<=4;level++)mkB('b_kontor'+level,3,3,14+(level-1)*4,s=>{
 
 
 /* Baustufen und Abrissbestätigung */
-BUILD_TIER.werft=2;B.werft.req=150;
+BUILD_TIER.werft=2;B.werft.req=50;
 function buildingUnlockText(type){const tier=BUILD_TIER[type]||1;if((WORLD?.highestTier||1)<tier)return 'Ab Stufe '+TIERS[tier].n;return B[type].req?'Ab '+B[type].req+' '+(tier>1?TIERS[tier].n:'Einwohnern'):'Noch nicht freigeschaltet'}
 const stageUnlocked=unlocked;unlocked=function(type){const tier=BUILD_TIER[type]||1;if((WORLD?.highestTier||1)<tier)return false;if(tier>1)return !!G.quests['u_'+type]||empireTier(tier)>=B[type].req;return stageUnlocked(type)};
 let pendingDemolition=null;

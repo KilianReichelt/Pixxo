@@ -2,8 +2,9 @@
 const productionPreview=document.createElement('aside');productionPreview.id='production-preview';productionPreview.hidden=true;productionPreview.tabIndex=0;productionPreview.setAttribute('role','region');productionPreview.setAttribute('aria-label','Produktionskette');document.body.append(productionPreview);
 let productionPreviewCard=null,productionPreviewTimer,productionPreviewContext='';
 function productionGraph(type){
- const recipes=Object.entries(B).filter(([id,d])=>d.out&&Object.keys(d.out).length&&!id.startsWith('deko_'));
- const current=new Set(Object.keys(B[type]?.out||{}));if(!current.size)return null;
+ const highest=WORLD?.highestTier||1;
+ const recipes=Object.entries(B).filter(([id,d])=>d.kind==='prod'&&d.out&&Object.keys(d.out).length&&buildingPopulationTier(id)<=highest);
+ const current=new Set(B[type]?.kind==='prod'&&buildingPopulationTier(type)<=highest?Object.keys(B[type].out||{}):[]);if(!current.size)return null;
  const goods=new Set(current),selected=new Set();
  // Follow the selected product to its consumers, then include their ingredients.
  let changed=true;while(changed){changed=false;for(const [id,d] of recipes)if(Object.keys(d.in||{}).some(g=>goods.has(g))||id===type){selected.add(id);for(const g of Object.keys(d.out))if(!goods.has(g)){goods.add(g);changed=true;}}}
@@ -17,7 +18,7 @@ function productionGraph(type){
 }
 function positionProductionPreview(){
  if(productionPreview.hidden)return;
- const tray=document.getElementById('items').getBoundingClientRect(),filter=document.getElementById('population-filters')?.getBoundingClientRect(),gap=8;
+ const decorative=productionPreviewCard?.matches('.deko-card'),tray=decorative?productionPreviewCard.getBoundingClientRect():document.getElementById('items').getBoundingClientRect(),filter=decorative?null:document.getElementById('population-filters')?.getBoundingClientRect(),gap=8;
  productionPreview.style.maxWidth=Math.max(0,innerWidth-16)+'px';
  const width=productionPreview.getBoundingClientRect().width;
  let left=filter?filter.right+gap:tray.left;
@@ -30,8 +31,8 @@ function positionProductionPreview(){
 }
 function hideProductionPreview(){clearTimeout(productionPreviewTimer);productionPreview.hidden=true;productionPreviewCard?.removeAttribute('aria-details');productionPreviewCard=null;}
 function showProductionPreview(card){
- clearTimeout(productionPreviewTimer);const graph=productionGraph(card.dataset.b);if(!graph){hideProductionPreview();return;}
- productionPreviewContext=activeIsland+':'+islandMeta().fert.join(',');
+ clearTimeout(productionPreviewTimer);const type=card.dataset.b,d=B[type],graph=productionGraph(type);productionPreviewContext=activeIsland+':'+islandMeta().fert.join(',')+':'+(WORLD?.highestTier||1);productionPreview.setAttribute('aria-label',graph?'Produktionskette':'Gebäudebeschreibung');if(!d){hideProductionPreview();return;}
+ if(!graph){productionPreviewCard?.removeAttribute('aria-details');productionPreviewCard=card;card.setAttribute('aria-details','production-preview');productionPreview.innerHTML='<strong id="production-node-name">'+esc(d.n)+'</strong><p class="production-description">'+esc(d.kind==='decor'?'Ein Stück Stadtleben: '+d.n+' schmückt deine Siedlung.':d.kind==='prod'?'Diese Produktionskette wird mit einer höheren Bevölkerungsstufe freigeschaltet.':d.d||'Dieses Gebäude ergänzt deine Siedlung.')+'</p>';productionPreview.hidden=false;positionProductionPreview();return;}
  productionPreviewCard?.removeAttribute('aria-details');productionPreviewCard=card;card.setAttribute('aria-details','production-preview');
  const incoming=new Map();for(const [input,output] of graph.edges){if(!incoming.has(output))incoming.set(output,[]);incoming.get(output).push(input);}
  const consumed=new Set(graph.edges.map(([input])=>input)),roots=graph.goods.filter(g=>!consumed.has(g));
@@ -61,7 +62,7 @@ function showProductionPreview(card){
  const nodeImages=nodes.map(p=>{const g=p.good,missing=graph.blocked.has(g),selected=graph.current.has(g);return '<g class="production-node" data-good="'+g+'" tabindex="0" role="img" aria-label="'+attr(GN[g].n+(missing?': Fruchtbarkeit fehlt':''))+'" transform="translate('+p.x+' '+p.y+')">'+(selected?'<circle r="25" fill="none" stroke="#ffe3a0" stroke-width="3"/>':'')+'<circle r="21" fill="#241b10" stroke="'+(missing?'#a69d8c':'#c8ae79')+'" stroke-width="2"/><image href="'+url(g)+'" x="-16" y="-16" width="32" height="32"'+(missing?' style="filter:grayscale(1);opacity:.5"':'')+'/>'+(missing?'<circle cx="17" cy="17" r="8" fill="#241b10"/><path d="M 13 13 L 21 21 M 21 13 L 13 21" stroke="#ff7161" stroke-width="3"/>':'')+'</g>';}).join('');
  const description=graph.edges.map(([a,b])=>GN[a].n+' → '+GN[b].n).join('; ')+'. '+[...graph.current].map(g=>'Ausgewählt: '+GN[g].n).join('. ')+'. '+[...graph.blocked].map(g=>GN[g].n+': Fruchtbarkeit fehlt').join('. ');
  productionPreview.innerHTML='<strong id="production-node-name" aria-live="polite">'+esc(B[card.dataset.b].n)+'</strong><div class="production-graph-scroll" tabindex="0" role="group" aria-label="Produktionskette verschieben"><svg xmlns="http://www.w3.org/2000/svg" width="'+width+'" height="'+height+'" role="group" aria-label="'+attr(description)+'"><defs><marker id="production-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="5" markerHeight="5" orient="auto"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#d2bd8a"/></marker></defs>'+lines+nodeImages+'</svg></div>';
- document.getElementById('production-node-name').style.width=Math.min(width,460)+'px';
+ document.getElementById('production-node-name').style.minWidth=Math.min(Math.max(width,220),460)+'px';
  productionPreview.hidden=false;positionProductionPreview();
 }
 function deferProductionPreviewHide(){clearTimeout(productionPreviewTimer);productionPreviewTimer=setTimeout(()=>{if(!productionPreview.matches(':hover')&&!productionPreview.contains(document.activeElement)&&!productionPreviewCard?.matches(':hover,:focus'))hideProductionPreview();},450);}
@@ -69,10 +70,11 @@ const productionTray=document.getElementById('items');
 productionTray.addEventListener('pointerover',e=>{const card=e.target.closest('[data-b]');if(card&&card!==productionPreviewCard)showProductionPreview(card);});
 productionTray.addEventListener('focusin',e=>{const card=e.target.closest('[data-b]');if(card)showProductionPreview(card);});
 productionTray.addEventListener('pointerleave',deferProductionPreviewHide);productionTray.addEventListener('focusout',deferProductionPreviewHide);
+const decorationTray=document.getElementById('bar');decorationTray.addEventListener('pointerover',e=>{const card=e.target.closest('.deko-card[data-b]');if(card&&card!==productionPreviewCard)showProductionPreview(card);});decorationTray.addEventListener('focusin',e=>{const card=e.target.closest('.deko-card[data-b]');if(card)showProductionPreview(card);});decorationTray.addEventListener('pointerleave',deferProductionPreviewHide);decorationTray.addEventListener('focusout',deferProductionPreviewHide);
 productionPreview.addEventListener('pointerenter',()=>clearTimeout(productionPreviewTimer));productionPreview.addEventListener('pointerleave',deferProductionPreviewHide);productionPreview.addEventListener('focusout',deferProductionPreviewHide);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!productionPreview.hidden){hideProductionPreview();}});
 addEventListener('resize',positionProductionPreview);
-const previewRenderItems=renderItems;renderItems=function(...args){const result=previewRenderItems(...args);if(productionPreviewCard){if(!UI.cat||!productionPreviewCard.isConnected||productionPreviewCard.hidden)hideProductionPreview();else if(productionPreviewContext!==activeIsland+':'+islandMeta().fert.join(','))showProductionPreview(productionPreviewCard);else positionProductionPreview();}return result;};
+const previewRenderItems=renderItems;renderItems=function(...args){const result=previewRenderItems(...args);if(productionPreviewCard){if((!UI.cat&&!productionPreviewCard.matches('.deko-card'))||!productionPreviewCard.isConnected||productionPreviewCard.hidden)hideProductionPreview();else if(productionPreviewContext!==activeIsland+':'+islandMeta().fert.join(',')+':'+(WORLD?.highestTier||1))showProductionPreview(productionPreviewCard);else positionProductionPreview();}return result;};
 
 function productionNodeName(node){if(!node)return;clearTimeout(productionPreviewTimer);const good=node.dataset.good;document.getElementById('production-node-name').textContent=GN[good].n;positionProductionPreview();}
 productionPreview.addEventListener('pointerover',e=>productionNodeName(e.target.closest('[data-good]')));

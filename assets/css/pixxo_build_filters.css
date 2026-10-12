@@ -35,4 +35,5 @@
 .production-node{cursor:inherit}
 .production-node:focus-visible{outline:none}
 .production-node:focus-visible>circle:first-of-type{stroke:#ffe3a0;stroke-width:4}
-#production-node-name{max-width:min(460px,calc(100vw - 36px));overflow-wrap:anywhere}
+#production-node-name{width:max-content;min-width:220px;max-width:none;white-space:nowrap}
+#production-preview .production-description{margin:6px 0 2px;max-width:400px;line-height:1.5}

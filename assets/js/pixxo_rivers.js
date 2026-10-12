@@ -117,7 +117,7 @@ function riverPlanDetails(plan){
   if(!span||span.cells.length!==end-i+2||span.cells.some((c,j)=>c!==path[i-1+j]))return {spans,cost,changes:[],kind,valid:false};spans.push(span);i=end-1;
  }
  if(mode.includes('bridge')&&!spans.length)return {spans,cost,changes:[],kind,valid:false};
- for(const k of new Set(path)){if(G.road[k]>=kind)continue;changes.add(k);if(isRiver(k))add(G.road[k]?{gold:6,stein:3}:kind===2?{gold:10,holz:3,stein:3}:{gold:4,holz:3});else add(G.road[k]?{gold:4,stein:1}:kind===2?{gold:ROAD_COST+4,stein:1}:{gold:ROAD_COST});}
+ for(const k of new Set(path)){if(G.road[k]>=kind)continue;changes.add(k);if(isRiver(k))add(G.road[k]?{gold:6,stein:3}:kind===2?{gold:10,holz:3,stein:3}:{gold:4,bretter:3});else add(G.road[k]?{gold:4,stein:1}:kind===2?{gold:ROAD_COST+4,stein:1}:{gold:ROAD_COST});}
  return {spans,cost,changes:[...changes],kind,valid:true};
 }
 function updateRiverPlanSummary(){let el=document.getElementById('road-plan-summary');const plan=constructionPlan?.tool==='road'?constructionPlan:null;

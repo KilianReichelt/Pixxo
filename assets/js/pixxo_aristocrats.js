@@ -32,8 +32,8 @@ Object.assign(B,{
  gemeinschaftshaus:{n:'Gemeinschaftshaus',cat:'wohnen',kind:'svc',svc:'gemeinschaft',r:32,w:4,h:4,cost:{gold:1800,bretter:22,ziegel:18,werkzeug:6},upk:35,req:0,d:'Erfüllt das Wohnbedürfnis Gemeinschaft für Patrizier und Aristokraten.'}
 });
 Object.assign(SVCN,{brunnen:'Brunnen',garten:'Garten',gemeinschaft:'Gemeinschaft'});
-// Available before the first patrician upgrade, whose next-tier requirements include this service.
-for(const [id,tier] of [['brunnen',1],['garten',2],['gemeinschaftshaus',2]]){BUILD_TIER[id]=tier;BUILD_SIZES[id]={w:B[id].w,h:B[id].h};BASE_GEOMETRY[id]={w:B[id].w,h:B[id].h};}
+// Community starts with patricians; the first upgrade does not require it.
+for(const [id,tier] of [['brunnen',1],['garten',2],['gemeinschaftshaus',3]]){BUILD_TIER[id]=tier;BUILD_SIZES[id]={w:B[id].w,h:B[id].h};BASE_GEOMETRY[id]={w:B[id].w,h:B[id].h};}
 TIERS[3].svc.push('gemeinschaft');
 TIERS.push({id:4,n:'Aristokraten',cap:22,tax:8,goods:{...TIERS[3].goods,feine_kleidung:.012,geschirr:.01,buecher:.012},svc:['markt','kirche','gemeinschaft'],luxury:{parfuem:.006,schmuck:.005,moebel:.006},icon:'i_t4'});
 HN[4]='Aristokratenhaus';

@@ -1,24 +1,26 @@
 /* Pixxo: Versorgung, Notfälle, Darlehen und neue Bauobjekte. */
 let PIXXO_TERRAIN_VERSION=3;
-const PIXXO_GOODS=[['kartoffeln','Kartoffeln',12],['schnaps','Schnaps',30],['haeute','Häute',14],['leder','Leder',25],['stiefel','Lederstiefel',50],['wachs','Wachs',18],['kerzen','Kerzen',45]];
+const PIXXO_GOODS=[['kartoffeln','Kartoffeln',12],['schnaps','Schnaps',30],['haeute','Häute',14],['leder','Leder',25],['stiefel','Lederstiefel',50],['wachs','Wachs',18],['docht','Docht',18],['kerzen','Kerzen',45]];
 for(const [id,n,v] of PIXXO_GOODS){const good={id,n,v};GOODS.push(good);GN[id]=good;}
 const PIXXO_CHAINS=[
- ['kartoffelhof','Kartoffelhof',1,{},'kartoffeln',45,12,200],
- ['brennerei','Brennerei',1,{kartoffeln:1},'schnaps',60,18,300],
+ ['kartoffelhof','Kartoffelhof',1,{},'kartoffeln',30,12,200],
+ ['brennerei','Brennerei',1,{kartoffeln:1},'schnaps',30,18,300],
  ['rinderhof','Rinderhof',2,{},'haeute',60,20,450],
  ['gerberei','Gerberei',2,{haeute:1},'leder',45,25,600],
  ['schuster','Schuster',2,{leder:1},'stiefel',60,30,700],
- ['kerzenzieherei','Kerzenzieherei',3,{wachs:1,tuch:1},'kerzen',60,35,1000]
+ ['dochtdreherei','Dochtdreherei',2,{wolle:1},'docht',30,18,400],
+ ['kerzenzieherei','Kerzenzieherei',2,{wachs:1,docht:1},'kerzen',60,35,1000]
 ];
 for(const [id,n,tier,input,good,cycle,upk,gold] of PIXXO_CHAINS){
  B[id]={n,cat:Object.keys(input).length?'veredel':'roh',kind:'prod',w:3,h:3,cost:{gold,bretter:4+tier*2,...(tier>1?{stein:6+tier*2}:{})},upk,cycle,in:input,out:{[good]:1},transportRange:36,req:0,workforce:{tier:Math.max(1,tier-1),count:tier===1?3:4},d:`Produziert ${GN[good].n}. Verbinde den Betrieb über Straßen mit einem Lager oder Abnehmer.`};
  BASE_GEOMETRY[id]={w:2,h:2,range:24};BUILD_SIZES[id]={w:3,h:3};BUILD_TIER[id]=Math.max(1,tier-1);
 }
+BUILD_TIER.dochtdreherei=2;B.dochtdreherei.h=2;BUILD_SIZES.dochtdreherei.h=2;B.dochtdreherei.workforce={tier:2,count:4};BUILD_TIER.kerzenzieherei=2;B.kerzenzieherei.workforce={tier:2,count:4};
 FIELD_RULES.kartoffelhof={type:'acker',count:16};B.kartoffelhof.fieldRule=FIELD_RULES.kartoffelhof;
 FIELD_RULES.rinderhof={type:'gehege',count:3};B.rinderhof.fieldRule=FIELD_RULES.rinderhof;
 FIELD_CROP_SPRITES.kartoffelhof='acker_kartoffeln';
 B.imkerei.out.wachs=1;B.imkerei.d='Gewinnt Honig und Wachs.';
-TIERS[1].goods.schnaps=.018;TIERS[2].goods.stiefel=.015;TIERS[3].goods.kerzen=.012;
+TIERS[1].goods.schnaps=.018;TIERS[2].goods.stiefel=.015;TIERS[2].goods.kerzen=.012;TIERS[3].goods.kerzen=.012;
 for(const [g,rate] of Object.entries(TIERS[2].goods))TIERS[2].goods[g]=rate*.5;
 const HOUSE_FLAVOR=Object.freeze({
  1:'Einfache Siedler mit bescheidenen Häusern. Sie arbeiten hart und freuen sich über ein warmes Feuer.',
@@ -67,7 +69,7 @@ function pixxoProductionStatus(b){
 function buildingWindowStatus(b){
  const d=def(b);let text=b.fire>0?'In Flammen':b.paused?'Pausiert':d.kind==='prod'?pixxoProductionStatus(b):b.status||'In Betrieb';
  if(!b.fire&&!b.paused&&d.kind==='prod'&&text==='Produziert'&&b.status)text=b.status;
- if(!b.fire&&!b.paused&&d.transportRange&&!warehouseTarget(b))text='Kein Lager in Reichweite';
+ if(!b.fire&&!b.paused&&d.transportRange&&!warehouseTarget(b)&&!(d.kind==='prod'&&productionLinked(b)))text='Kein Lager in Reichweite';
  return {text,error:b.fire>0||(!b.paused&&(/fehlt|fehlen|^Kein|^Keine|außerhalb|Wartet|voll|Unzufrieden|Verelendet/.test(text)||d.kind==='prod'&&!text.startsWith('Produziert')))};
 }
 for(const [type,d] of Object.entries(B))if((BUILD_TIER[type]||d.workforce?.tier||1)>=2){
@@ -136,19 +138,21 @@ const pixxoEnvFor=envFor;envFor=function(type,x,y){const result=pixxoEnvFor(type
 
 /* Brände: ein Wagen je Wache, Straßenfahrt, Ausbreitung und geschützter Löscheinsatz. */
 function pixxoFireProtected(b){return G.blds.some(station=>station.type==='feuer'&&station.conn&&!station.paused&&station.fire<=0&&Math.hypot(cx(station)-cx(b),cy(station)-cy(b))<=def(station).r&&deliveryPath(station,b)?.length);}
-function pixxoWarnUnprotectedFire(b){if(b.fireWarningRaised||pixxoFireProtected(b))return;b.fireWarningRaised=true;msg('Brand ohne Feuerwehr in Reichweite: '+bname(b)+'. Verbinde eine nahe Feuerwehr über Straßen mit dem Gebäude.','i_alert');}
-function pixxoIgnite(b){if(!b||b.fire>0||['wh','field','ruin','decor'].includes(B[b.type].kind))return false;b.fire=60;b.extinguish=0;b.fireWarningRaised=false;G.dirty=true;pixxoWarnUnprotectedFire(b);return true;}
+function pixxoWarnUnprotectedFire(b){if(b.fireWarningRaised||pixxoFireProtected(b))return;b.fireWarningRaised=true;const name=bname(b);msg(name+' brennt und es ist keine Feuerwehr in der Nähe!','i_alert',{buildingId:b.id,island:b.island??activeIsland,buildingName:name});}
+function pixxoIgnite(b){if(!b||b.fire>0||B[b.type].cat==='dienst'||['wh','field','ruin','decor','svc'].includes(B[b.type].kind))return false;b.fire=60;b.extinguish=0;b.fireWarningRaised=false;G.dirty=true;pixxoWarnUnprotectedFire(b);return true;}
 function pixxoEngineArrived(b){return (G.fireEngines||[]).some(e=>e.phase!=='return'&&e.target===b.id&&e.t>=e.path.length-1&&pixxoValidEngine(e));}
 function pixxoValidEngine(e){const station=G.byId.get(e.station),target=G.byId.get(e.target);if(!station||!station.conn||station.paused||station.fire>0||!e.path.length||e.path.some(k=>!G.road[k]))return false;
  if(e.phase==='return')return ringCells(station).some(([x,y])=>INMAP(x,y)&&IDX(x,y)===e.path[e.path.length-1]);
- return target&&target.fire>0&&ringCells(station).some(([x,y])=>INMAP(x,y)&&IDX(x,y)===e.path[0])&&ringCells(target).some(([x,y])=>INMAP(x,y)&&IDX(x,y)===e.path[e.path.length-1])&&Math.hypot(cx(station)-cx(target),cy(station)-cy(target))<=def(station).r;
+ return target&&target.fire>0&&(e.phase==='service'||ringCells(station).some(([x,y])=>INMAP(x,y)&&IDX(x,y)===e.path[0]))&&ringCells(target).some(([x,y])=>INMAP(x,y)&&IDX(x,y)===e.path[e.path.length-1])&&Math.hypot(cx(station)-cx(target),cy(station)-cy(target))<=def(station).r;
 }
-function pixxoReturnEngine(e){e.path=e.path.slice(0,Math.min(e.path.length,Math.ceil(e.t)+1)).reverse();e.t=0;e.phase='return';}
+function pixxoEngineRoadPath(start,target){const ends=new Set(ringCells(target).filter(([x,y])=>INMAP(x,y)&&G.road[IDX(x,y)]).map(([x,y])=>IDX(x,y))),queue=[start],previous=new Map([[start,-1]]);for(let i=0;i<queue.length;i++){const cell=queue[i];if(ends.has(cell)){const path=[];for(let k=cell;k>=0;k=previous.get(k))path.push(k);return path.reverse();}for(const next of roadNeighbours(cell))if(!previous.has(next)){previous.set(next,cell);queue.push(next);}}return null;}
+function pixxoReturnEngine(e){const station=G.byId.get(e.station),start=e.path[Math.min(e.path.length-1,Math.floor(e.t))];e.path=station&&pixxoEngineRoadPath(start,station)||e.path.slice(0,Math.min(e.path.length,Math.ceil(e.t)+1)).reverse();e.t=0;e.phase='return';}
+function pixxoDispatchNextFire(e){const station=G.byId.get(e.station),start=e.path.at(-1);if(!station)return false;const targets=G.blds.filter(b=>b.fire>0&&!G.fireEngines.some(other=>other!==e&&other.phase!=='return'&&other.target===b.id)&&Math.hypot(cx(station)-cx(b),cy(station)-cy(b))<=def(station).r).sort((a,b)=>a.fire-b.fire);for(const target of targets){const path=pixxoEngineRoadPath(start,target);if(path?.length){e.target=target.id;e.path=path;e.t=0;e.phase='service';return true;}}return false;}
 function pixxoFireStep(dt){
- for(const b of G.blds)if(B[b.type].kind==='field')b.fire=0;
+ for(const b of G.blds)if(B[b.type].cat==='dienst'||['field','svc'].includes(B[b.type].kind))b.fire=0;
  for(const e of G.fireEngines||[])if(e.phase!=='return'&&G.byId.get(e.target)?.fire<=0)pixxoReturnEngine(e);
  G.fireEngines=(G.fireEngines||[]).filter(e=>pixxoValidEngine(e)&&!(e.phase==='return'&&e.t>=e.path.length-1));G.nextFire-=dt;
- if(G.nextFire<=0){G.nextFire=420+Math.random()*300;const candidates=G.blds.filter(b=>!['wh','field','ruin','decor'].includes(B[b.type].kind)&&b.fire<=0);if(candidates.length>10&&totalPop()>=40)pixxoIgnite(candidates[Math.floor(Math.random()*candidates.length)]);}
+ if(G.nextFire<=0){G.nextFire=420+Math.random()*300;const candidates=G.blds.filter(b=>B[b.type].cat!=='dienst'&&!['wh','field','ruin','decor','svc'].includes(B[b.type].kind)&&b.fire<=0);if(candidates.length>10&&totalPop()>=40)pixxoIgnite(candidates[Math.floor(Math.random()*candidates.length)]);}
  const burning=G.blds.filter(b=>b.fire>0&&B[b.type].kind!=='field');
  for(const station of G.blds.filter(b=>b.type==='feuer'&&b.conn&&!b.paused&&b.fire<=0)){
   if(G.fireEngines.some(e=>e.station===station.id))continue;
@@ -158,15 +162,15 @@ function pixxoFireStep(dt){
  for(const e of G.fireEngines)e.t=Math.min(e.path.length-1,e.t+dt*2.4);
  for(const b of burning){
   pixxoWarnUnprotectedFire(b);
-  if(pixxoEngineArrived(b)){b.extinguish=Math.min(1,(b.extinguish||0)+dt/12);b.status='Wird gelöscht';if(b.extinguish>=1){for(const e of G.fireEngines.filter(e=>e.phase!=='return'&&e.target===b.id))pixxoReturnEngine(e);b.fire=0;b.extinguish=0;G.dirty=true;msg('Der Brand in '+bname(b)+' wurde gelöscht.','i_kreuz');}continue;}
-  const neighbors=G.blds.filter(n=>n!==b&&n.fire<=0&&!['wh','field','ruin','decor'].includes(B[n.type].kind)&&Math.hypot(Math.max(0,n.x-b.x-b.w,b.x-n.x-n.w),Math.max(0,n.y-b.y-b.h,b.y-n.y-n.h))<=1.5);
+  if(pixxoEngineArrived(b)){b.extinguish=Math.min(1,(b.extinguish||0)+dt/12);b.status='Wird gelöscht';if(b.extinguish>=1){b.fire=0;b.extinguish=0;G.dirty=true;for(const e of G.fireEngines.filter(e=>e.phase!=='return'&&e.target===b.id))if(!pixxoDispatchNextFire(e))pixxoReturnEngine(e);msg('Der Brand in '+bname(b)+' wurde gelöscht.','i_kreuz');}continue;}
+  const neighbors=G.blds.filter(n=>n!==b&&n.fire<=0&&B[n.type].cat!=='dienst'&&!['wh','field','ruin','decor','svc'].includes(B[n.type].kind)&&Math.hypot(Math.max(0,n.x-b.x-b.w,b.x-n.x-n.w),Math.max(0,n.y-b.y-b.h,b.y-n.y-n.h))<=1.5);
   for(const neighbor of neighbors)if(Math.random()<1-Math.exp(-.004*dt))pixxoIgnite(neighbor);
   b.fire-=dt;if(b.fire<=0){msg(bname(b)+' ist niedergebrannt. Baue die Ruine wieder auf.','i_alert');burnBuilding(b);}
  }
  G.fireEngines=G.fireEngines.filter(pixxoValidEngine);
 }
 const pixxoDrawWarnings=drawBuildingWarnings;drawBuildingWarnings=function(ctx,...args){pixxoDrawWarnings(ctx,...args);
- for(const g of WORLD.islands.filter(Boolean))for(const e of g.fireEngines||[]){const i=Math.min(e.path.length-1,Math.floor(e.t)),a=e.path[i],b=e.path[Math.min(i+1,e.path.length-1)],f=e.t-i,x=((a%MAPW)+(b%MAPW-a%MAPW)*f+.5)*16,y=(Math.floor(a/MAPW)+(Math.floor(b/MAPW)-Math.floor(a/MAPW))*f+.5)*16;ctx.drawImage(SP.pixxo_loeschwagen,x-8,y-9,16,16);}
+ for(const g of WORLD.islands.filter(Boolean))for(const e of g.fireEngines||[]){const i=Math.min(e.path.length-1,Math.floor(e.t)),a=e.path[i],b=e.path[Math.min(i+1,e.path.length-1)],f=e.t-i,x=((a%MAPW)+(b%MAPW-a%MAPW)*f+.5)*16,y=(Math.floor(a/MAPW)+(Math.floor(b/MAPW)-Math.floor(a/MAPW))*f+.5)*16;const previous=a===b&&i>0?e.path[i-1]:a,dx=Math.sign(b%MAPW-previous%MAPW),dy=Math.sign(Math.floor(b/MAPW)-Math.floor(previous/MAPW)),direction=(dy<0?'n':dy>0?'s':'')+(dx<0?'w':dx>0?'e':'')||'e';ctx.drawImage(SP['pixxo_loeschwagen_'+direction],x-8,y-9,16,16);}
  for(const b of worldBuildings())if(b.fire>0&&b.extinguish>0){const x=cx(b)*16-16,y=b.y*16-18;ctx.fillStyle='#231b13';ctx.fillRect(x-1,y-1,34,6);ctx.fillStyle='#617052';ctx.fillRect(x,y,32,4);ctx.fillStyle='#78bd69';ctx.fillRect(x,y,32*b.extinguish,4);}
 };
 
@@ -180,16 +184,14 @@ const pixxoFinHTML=finHTML;finHTML=function(){const loan=WORLD.loan;return pixxo
 const pixxoEconomy=economy;economy=function(){const e=pixxoEconomy(),payment=WORLD?.loan?.rate||0;return {...e,upk:e.upk+payment,net:e.net-payment};};
 const pixxoWinAct=winAct;winAct=function(id,ds){if(ds.act==='loan-borrow')pixxoBorrow(Number(ds.amount));else if(ds.act==='loan-repay')pixxoRepay();else pixxoWinAct(id,ds);if(ds.act==='pause'||ds.act.startsWith('loan-')){const held=UI.holdUI;UI.holdUI=false;for(const w of Object.values(WINS)){w.hold=false;w.last=null;refreshWin(w);}renderTop(true);UI.holdUI=held;}};
 
-/* Hinweise enthalten ausschließlich ungeschützte Brände, einmal je Brand. */
-function pixxoIsFireWarning(text,icon){return icon==='i_alert'&&typeof text==='string'&&text.startsWith('Brand ohne Feuerwehr in Reichweite: ');}
-const pixxoToast=toast;toast=function(text,icon){if(pixxoIsFireWarning(text,icon))pixxoToast(text,icon);};
-const pixxoMessageHook=MSGHOOK;MSGHOOK=function(text,icon){if(pixxoIsFireWarning(text,icon))pixxoMessageHook(text,icon);};
+/* Ungeschützte Brände lösen genau eine Warnung und einen Alarm je Brand aus. */
+function pixxoIsFireWarning(text,icon){return icon==='i_alert'&&typeof text==='string'&&text.endsWith(' brennt und es ist keine Feuerwehr in der Nähe!');}
 const questButton=sidebar.querySelector('[data-side="quest"]');questButton.insertAdjacentHTML('beforeend','<span class="side-event-count" aria-hidden="true" hidden></span>');
 function pixxoQuestBadge(){if(!WORLD)return;const seen=new Set(WORLD.questSeen||[]),current=activeQuest(),notifications=[...QUESTS.filter(q=>G.quests[q.id]).map(q=>'done:'+q.id),...(current?['new:'+current.id]:[])],unread=notifications.filter(key=>!seen.has(key));
  if(UI.sidebarTab==='quest'){WORLD.questSeen=[...new Set([...seen,...notifications])];unread.length=0;}
  const badge=questButton.querySelector('.side-event-count');badge.textContent=String(unread.length);badge.hidden=!unread.length;questButton.setAttribute('aria-label',unread.length?'Aufträge · '+unread.length+' neue Meldungen':'Aufträge');
 }
-const pixxoToggleSidebar=toggleSidebar;toggleSidebar=function(...args){const read=UI.sidebarTab==='events';pixxoToggleSidebar(...args);if(read&&UI.sidebarTab!=='events'){$('#toasts').replaceChildren();UI.log=[];UI.unreadEvents=0;updateEventBadge();}pixxoQuestBadge();};
+const pixxoToggleSidebar=toggleSidebar;toggleSidebar=function(...args){pixxoToggleSidebar(...args);pixxoQuestBadge();};
 const pixxoOpenQuest=openWin_quest;openWin_quest=function(){pixxoOpenQuest();WORLD.questSeen=[...QUESTS.filter(q=>G.quests[q.id]).map(q=>'done:'+q.id),...(activeQuest()?['new:'+activeQuest().id]:[])];pixxoQuestBadge();};
 // Zwei übereinanderliegende Icon-Schalter für Schiffe und Dekoration.
 const barModes=document.createElement('div');barModes.id='barModes';
@@ -198,7 +200,7 @@ document.body.append(barModes);barModes.append(dekoToggle,$('#barToggle'));
 const pixxoRenderBar=renderBar;renderBar=function(){
  $('#bar').classList.toggle('deko-mode',UI.barMode==='deko');
  if(UI.barMode==='deko'){
-  UI.cat=null;renderItems(true);const el=$('#bar'),h=PIXXO_DECOR.map(([id,n,w,h])=>{const type='deko_'+id,d=B[type];return `<button class="cb shiptile deko-card ${UI.tool==='build'&&UI.type===type?'on':''}" data-deko-build="${type}" title="${attr(n)} · ${w} × ${h}"><img class="px" alt="" src="${url(typeSprite(type))}" style="height:40px;width:auto"><span>${esc(n)}</span><span class="cost">${costHTML(d.cost)}</span></button>`;}).join('');if(el._last!==h){const scroll=el.querySelector('.deko-viewport')?.scrollLeft||0;el.innerHTML=`<button type="button" class="item-scroll" data-deko-scroll="left" aria-label="Vorherige Dekorationen anzeigen" aria-controls="deko-viewport" hidden>←</button><div id="deko-viewport" class="deko-viewport" role="group" aria-label="Dekorationen" tabindex="0"><div class="deko-track">${h}</div></div><button type="button" class="item-scroll" data-deko-scroll="right" aria-label="Weitere Dekorationen anzeigen" aria-controls="deko-viewport" hidden>→</button>`;el.querySelector('.deko-viewport').scrollLeft=scroll;el._last=h;el._fleetLast=null;}updateDekoNavigation();
+  UI.cat=null;renderItems(true);const el=$('#bar'),h=PIXXO_DECOR.map(([id,n,w,h])=>{const type='deko_'+id,d=B[type];return `<button class="cb shiptile deko-card ${UI.tool==='build'&&UI.type===type?'on':''}" data-deko-build="${type}" data-b="${type}" title="${attr(n)} · ${w} × ${h}"><img class="px" alt="" src="${url(typeSprite(type))}" style="height:40px;width:auto"><span>${esc(n)}</span><span class="cost">${costHTML(d.cost)}</span></button>`;}).join('');if(el._last!==h){const scroll=el.querySelector('.deko-viewport')?.scrollLeft||0;el.innerHTML=`<button type="button" class="item-scroll" data-deko-scroll="left" aria-label="Vorherige Dekorationen anzeigen" aria-controls="deko-viewport" hidden>←</button><div id="deko-viewport" class="deko-viewport" role="group" aria-label="Dekorationen" tabindex="0"><div class="deko-track">${h}</div></div><button type="button" class="item-scroll" data-deko-scroll="right" aria-label="Weitere Dekorationen anzeigen" aria-controls="deko-viewport" hidden>→</button>`;el.querySelector('.deko-viewport').scrollLeft=scroll;el._last=h;el._fleetLast=null;}updateDekoNavigation();
   $('#barToggle').innerHTML=ic('i_ship',1.5);$('#barToggle').setAttribute('aria-label','Schiffe anzeigen');$('#barToggle').setAttribute('aria-pressed','false');
  }else pixxoRenderBar();
  dekoToggle.classList.toggle('on',UI.barMode==='deko');dekoToggle.setAttribute('aria-pressed',String(UI.barMode==='deko'));dekoToggle.setAttribute('aria-label',UI.barMode==='deko'?'Baukategorien anzeigen':'Dekoration anzeigen');
@@ -279,12 +281,14 @@ const pixxoLoadGame=loadGame;loadGame=function(...args){pixxoReceiveSaveHash();c
 const pixxoStartNew=startNew;startNew=function(...args){PIXXO_TERRAIN_VERSION=3;const result=pixxoStartNew(...args);if(!G.deposits.some(n=>n.type==='steinbruch'))throw new Error('Startinsel ohne Steinabbauplatz');pixxoQuestBadge();return result;};
 
 /* Bestehende Palette und native 16 Pixel je Kachel. */
-function pixxoNativeArt(type,tier=1,frame=0){const alias=IMPORTED_BUILD_NAMES[type],id=Array.isArray(alias)?alias[tier-1]:alias||type,entry=IMPORTED_ENTRIES.get(id);if(!entry)return null;const d=B[type],extra=d.kind==='decor'?12:Math.max(12,Math.round(d.h*5));return {low:importedPixels(entry,frame,buildingRequiresBricks(type,tier)),w:d.w*16,h:d.h*16+extra,meta:{tw:d.w,th:d.h,ex:extra,hub:null,smoke:null}};}
+function pixxoNativeArt(type,tier=1,frame=0){if(type==='dochtdreherei'){const d=B[type],w=48,h=44,low=document.createElement('canvas'),c=low.getContext('2d');low.width=w;low.height=h;low._nightWindows=[{x:9,y:25,w:5,h:6,cross:true},{x:34,y:25,w:5,h:6,cross:true}];const r=(x,y,a,b,color)=>{c.fillStyle=color;c.fillRect(x,y,a,b);};r(2,39,44,4,'#615840');r(4,18,40,23,'#48382d');r(5,19,38,21,'#c1a77b');r(8,22,32,2,'#ead2a1');for(let i=0;i<5;i++)r(4+i*2,16-i*3,40-i*4,3,'#453c3c');r(6,15,36,3,'#776457');r(17,29,13,12,'#483629');r(19,31,9,10,'#94704c');r(9,25,5,6,'#456778');r(34,25,5,6,'#456778');for(const x of [11,36]){r(x,25,1,6,'#d9c49a');r(x-2,28,5,1,'#d9c49a');}r(22,24,4,5,'#4b382b');r(23,24,2,3,'#e9d7a6');r(15,41,18,2,'#876644');return {low,w,h,meta:{tw:d.w,th:d.h,ex:12,hub:null,smoke:null}};}const alias=IMPORTED_BUILD_NAMES[type],id=Array.isArray(alias)?alias[tier-1]:alias||type,entry=IMPORTED_ENTRIES.get(id);if(!entry)return null;const d=B[type],extra=d.kind==='decor'?12:Math.max(12,Math.round(d.h*5));return {low:importedPixels(entry,frame,buildingRequiresBricks(type,tier)),w:d.w*16,h:d.h*16+extra,meta:{tw:d.w,th:d.h,ex:extra,hub:null,smoke:null}};}
 const pixxoImportedBuilding=importedBuilding;importedBuilding=function(type,tier=1,frame=0){return type.startsWith('deko_')||PIXXO_CHAINS.some(c=>c[0]===type)?pixxoNativeArt(type,tier,frame):pixxoImportedBuilding(type,tier,frame);};
 installNativeBuildings();
 publishPixel('pixxo_deko',importedPixels(IMPORTED_ENTRIES.get('pixxo_deko')),16,16);dekoToggle.innerHTML=ic('pixxo_deko',1.5);
 for(const [id] of PIXXO_GOODS){const entry=IMPORTED_ENTRIES.get('icon_'+id);if(entry)publishPixel(id,importedPixels(entry),16,16);}
 const engineEntry=IMPORTED_ENTRIES.get('pixxo_loeschwagen');publishPixel('pixxo_loeschwagen',importedPixels(engineEntry),16,16);
+const diagonalEngine=document.createElement('canvas');diagonalEngine.width=diagonalEngine.height=16;{const c=diagonalEngine.getContext('2d');c.imageSmoothingEnabled=false;c.translate(8,8);c.rotate(-Math.PI/4);nativeDrawImage.call(c,SP.pixxo_loeschwagen,-8,-8);}
+for(const direction of ['e','se','s','sw','w','nw','n','ne']){const source=SP.pixxo_loeschwagen,canvas=document.createElement('canvas');canvas.width=canvas.height=16;const c=canvas.getContext('2d');c.imageSmoothingEnabled=false;if(direction==='e')nativeDrawImage.call(c,source,0,0);else if(direction==='w'){c.translate(16,0);c.scale(-1,1);nativeDrawImage.call(c,source,0,0);}else if(direction.length===2){if(direction.includes('w')){c.translate(16,0);c.scale(-1,1);}if(direction.includes('s')){c.translate(0,16);c.scale(1,-1);}nativeDrawImage.call(c,diagonalEngine,0,0);}else{const front=direction==='s',r=(x,y,w,h,color)=>{c.fillStyle=color;c.fillRect(x,y,w,h);};r(2,5,2,8,'#2e2924');r(12,5,2,8,'#2e2924');r(3,2,10,12,'#422f27');r(4,3,8,10,'#a96f51');r(4,front?3:11,8,2,'#d9b986');r(5,front?5:3,6,3,'#d9c698');r(6,front?6:4,4,1,'#776b50');r(5,front?9:7,6,2,'#704b38');r(6,front?10:8,4,1,'#c7ad7d');r(4,front?12:2,8,1,'#d4b47d');}publishPixel('pixxo_loeschwagen_'+direction,canvas,16,16);}
 function pixxoMiningSprite(b){
  const island=WORLD?.islands[b.island]||G,node=island.deposits.find(n=>n.type===b.type&&n.x===b.x&&n.y===b.y);if(!node?.inMountain)return null;
  const frame=workshopRunning(b)&&!WORK_ART.reduced.matches?Math.floor(G.time*4+b.id)%4:0,side=node.anchor?.side||'south',key='b_'+b.type+'_berg_'+side+'_'+b.w+'x'+b.h+'_'+frame;
