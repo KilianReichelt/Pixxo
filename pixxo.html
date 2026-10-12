@@ -1245,6 +1245,7 @@ const typeSprite=(t,tier=1)=>t==='haus'?'b_haus'+tier:t==='kontor'&&tier>1?'b_ko
 let spName=b=>typeSprite(b.type,b.tier);
 const costHTML=c=>Object.keys(c).map(k=>{const have=k==='gold'?G.gold:G.stock[k];return `<span class="cc ${have<c[k]?'lack':''}" aria-label="${fmt(c[k])} ${k==='gold'?'Gold':GN[k]?.n||k}" title="${k==='gold'?'Gold':GN[k]?.n||k}">${ic(k,1)}${fmt(c[k])}</span>`}).join('')||'<span class="cc">kostenlos</span>';
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function pixxoGoldRate(value){return `<span class="gold-rate">${ic('gold',1)}${esc(value)} Gold / Min.</span>`;}
 
 function setTex(){
  const st=document.documentElement.style,u=c=>`url(${c.toDataURL()})`;
