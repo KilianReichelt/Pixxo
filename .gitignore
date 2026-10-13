@@ -29,6 +29,13 @@
 !/assets/music/compressed/*.mp3
 /assets/sprites/*
 !/assets/sprites/sprite_data.js
+!/assets/sprites/structures/
+/assets/sprites/structures/*
+!/assets/sprites/structures/piers/
+/assets/sprites/structures/piers/*
+!/assets/sprites/structures/piers/16x16/
+/assets/sprites/structures/piers/16x16/*
+!/assets/sprites/structures/piers/16x16/pier_*.png
 /assets/ui/*
 !/assets/ui/frame-cap-*.svg
 

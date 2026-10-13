@@ -142,13 +142,14 @@ init=function(){
 };
 function startPlay(fresh=false){
  if(!StartScreen.ready)return;startClose();musicUnlock();audioStart();
+ const wasStarted=StartScreen.started;
  try{
-  if(!StartScreen.started){if(fresh)localStorage.removeItem(SAVEKEY);StartScreen.started=true;startOriginalInit();}
+  if(!StartScreen.started){if(fresh){try{localStorage.removeItem(SAVEKEY);}catch{}}StartScreen.started=true;startOriginalInit();}
   else if(fresh){musicQueue=musicShuffle(musicIndex);musicNext();UI.unreadEvents=0;$('#toasts').replaceChildren();updateEventBadge();startNew();}
   else if(WORLD.tutorial?.version===2&&!WORLD.tutorial.done&&!WORLD.tutorial.dismissed){if(StartPrefs.skipTutorials)WORLD.tutorial.dismissed=true;else openTutorial();}
   if(StartPrefs.skipTutorials&&!tutorialPanel.hidden)tutorialFinish();
   if(!StartScreen.loading){if(!tutorialPanel.hidden)tutorialPanel.querySelector('[data-tour="next"]')?.focus();else cv.focus();}
- }catch(error){startShow();const p=document.createElement('p');p.setAttribute('role','alert');p.textContent='Die Partie konnte nicht gestartet werden. '+error.message;startDialog.querySelector('.start-card').append(p);console.error(error);}
+ }catch(error){if(!wasStarted)StartScreen.started=false;startShow();const p=document.createElement('p');p.setAttribute('role','alert');p.textContent='Die Partie konnte nicht gestartet werden. '+error.message;startDialog.querySelector('.start-card').append(p);console.error(error);}
 }
 function startContinue(){
  if(!StartScreen.ready||StartScreen.loading)return;StartScreen.loading=true;startClose();

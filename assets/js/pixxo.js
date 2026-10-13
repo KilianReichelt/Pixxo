@@ -1,3 +1,10 @@
+/* Goldstaub stammt künftig aus seltenen Bergvorkommen; Altbetriebe bleiben ladbar. */
+B.goldmine={...B.goldwaescherei,n:'Goldmine',in:{},out:{goldstaub:1},d:'Fördert Goldstaub für Schmuck an einem seltenen festen Goldvorkommen. Ab Patriziern verfügbar.'};
+LUXURY_CHAINS.find(c=>c.good==='schmuck').steps[0][0]='goldmine';LUXURY_CHAINS.find(c=>c.good==='schmuck').steps[0][1]='Goldmine';
+BUILD_TIER.goldmine=3;BUILD_SIZES.goldmine={...BUILD_SIZES.goldwaescherei};BASE_GEOMETRY.goldmine={...BASE_GEOMETRY.goldwaescherei};
+SP.b_goldmine=SP.b_goldwaescherei;SPB.b_goldmine=SPB.b_goldwaescherei;IMPORTED_BUILD_NAMES.goldmine='goldwaescherei';
+const goldBuildingRelevant=buildingRelevant;buildingRelevant=function(type){return type!=='goldwaescherei'&&goldBuildingRelevant(type);};
+function pixxoGoldIsland(seed,island=activeIsland){return hs(island,17,seed-island*913+731)<.25;}
 /* Pixxo: Versorgung, Notfälle, Darlehen und neue Bauobjekte. */
 let PIXXO_TERRAIN_VERSION=3;
 const PIXXO_GOODS=[['kartoffeln','Kartoffeln',12],['schnaps','Schnaps',30],['haeute','Häute',14],['leder','Leder',25],['stiefel','Lederstiefel',50],['wachs','Wachs',18],['docht','Docht',18],['kerzen','Kerzen',45]];
@@ -104,7 +111,7 @@ function pixxoCoastSide(x,y,w,h){
  const ranked=sides.map(([side,cells])=>({side,count:cells.filter(([a,b])=>INMAP(a,b)&&G.tiles[IDX(a,b)]<=T.SHAL).length})).sort((a,b)=>b.count-a.count);
  return ranked[0].count>=2?ranked[0].side:null;
 }
-function pixxoMountainSite(type,x,y){return ['mine','steinbruch'].includes(type)&&G.deposits.some(n=>n.type===type&&n.x===x&&n.y===y&&n.inMountain&&!n.legacy);}
+function pixxoMountainSite(type,x,y){return ['mine','steinbruch','goldmine'].includes(type)&&G.deposits.some(n=>n.type===type&&n.x===x&&n.y===y&&n.inMountain&&!n.legacy);}
 function pixxoReservedLand(type,x,y,w,h){
  const cells=footprintCells(x,y,w,h),nodes=G.deposits||[];
  for(const n of nodes){const d=B[n.type];if(n.type===type&&n.x===x&&n.y===y)continue;
@@ -113,10 +120,10 @@ function pixxoReservedLand(type,x,y,w,h){
  if(B[type].place!=='coast'&&cells.some(([a,b])=>INMAP(a,b)&&G.tiles[IDX(a,b)]===T.SAND))return 'Kann nicht auf Sand gebaut werden.';
  return null;
 }
-const pixxoCanPlace=canPlace;canPlace=function(type,x,y){const size=buildingSize(type,UI.tool==='build'&&UI.type===type?UI.rotation||0:0),why=pixxoReservedLand(type,x,y,size.w,size.h);return why?{ok:false,why}:pixxoCanPlace(type,x,y);};
+const pixxoCanPlace=canPlace;canPlace=function(type,x,y){if(type==='goldwaescherei')return {ok:false,why:'Baue eine Goldmine an einem Goldvorkommen.'};const size=buildingSize(type,UI.tool==='build'&&UI.type===type?UI.rotation||0:0),why=pixxoReservedLand(type,x,y,size.w,size.h);return why?{ok:false,why}:pixxoCanPlace(type,x,y);};
 const pixxoCanMove=canMoveBuilding;canMoveBuilding=function(b,x,y){if(!b)return pixxoCanMove(b,x,y);const size=buildingSize(b.type,UI.tool==='move'&&UI.moveId===b.id?UI.rotation||0:b.rotation||0),why=pixxoReservedLand(b.type,x,y,size.w,size.h);return why?{ok:false,why}:pixxoCanMove(b,x,y);};
 const pixxoPlaceRoad=placeRoad;placeRoad=function(x,y){if((G.deposits||[]).some(n=>{const d=B[n.type];return x>=n.x&&x<n.x+d.w&&y>=n.y&&y<n.y+d.h;}))return false;return pixxoPlaceRoad(x,y);};
-const pixxoTool=setTool;setTool=function(t,type){pixxoTool(t,type);if(['mine','steinbruch','lehmgrube'].includes(type))UI.rotation=0;};
+const pixxoTool=setTool;setTool=function(t,type){pixxoTool(t,type);if(['mine','steinbruch','goldmine','lehmgrube'].includes(type))UI.rotation=0;};
 
 /* Jeder Waldtile liefert insgesamt höchstens einen Ressourcenpunkt. */
 function pixxoAssignTrees(){
@@ -250,8 +257,8 @@ function pixxoDepositAnchor(x,y,w,h,side){
 const pixxoCreateDeposits=createDeposits;createDeposits=function(tiles,seed){
  if(PIXXO_TERRAIN_VERSION<3)return pixxoCreateDeposits(tiles,seed);
  const profile=ISLANDS[activeIsland],nodes=[],rock=(x,y)=>INMAP(x,y)&&[T.ROCK,T.ORE].includes(tiles[IDX(x,y)]),land=(x,y)=>INMAP(x,y)&&[T.GRASS,T.FOREST].includes(tiles[IDX(x,y)]);
- for(const [type,max] of [['steinbruch',Math.max(1,Math.floor(profile.size*5))],['mine',Math.floor(profile.ore*2)]]){
-  const {w,h}=B[type],candidates=[];
+ for(const [type,max] of [['steinbruch',2*Math.max(1,Math.floor(profile.size*5))],['mine',2*Math.floor(profile.ore*2)],['goldmine',pixxoGoldIsland(seed)?2:0]]){
+  if(!max)continue;const {w,h}=B[type],candidates=[];
   for(let y=profile.oy+3;y<profile.oy+ISLAND_SIZE-h-3;y++)for(let x=profile.ox+3;x<profile.ox+ISLAND_SIZE-w-3;x++){
    if(!footprintCells(x,y,w,h).every(([a,b])=>rock(a,b)&&islandAt(a,b)===activeIsland))continue;
    if(type==='mine'&&!footprintCells(x,y,w,h).some(([a,b])=>tiles[IDX(a,b)]===T.ORE))continue;
@@ -265,13 +272,13 @@ const pixxoCreateDeposits=createDeposits;createDeposits=function(tiles,seed){
 const pixxoUnpackIsland=unpackIsland;unpackIsland=function(o,...args){const g=pixxoUnpackIsland(o,...args);
  // Belegte und gespeicherte Bergplätze behalten bei neuen Konturen ihre Koordinaten.
  if(PIXXO_TERRAIN_VERSION>=3){
-  const saved=(o.deposits||[]).filter(n=>['mine','steinbruch'].includes(n.type)&&n.inMountain);
+  const saved=(o.deposits||[]).filter(n=>['mine','steinbruch','goldmine'].includes(n.type)&&n.inMountain);
   for(const n of saved){const d=B[n.type],side=n.anchor?.side||'south';n.anchor=pixxoDepositAnchor(n.x,n.y,d.w,d.h,side);
    for(const [x,y] of footprintCells(n.x,n.y,d.w,d.h))if(INMAP(x,y)){g.tiles[IDX(x,y)]=n.type==='mine'?T.ORE:T.ROCK;mountainMassifs[IDX(x,y)]=1;}
    const access=side==='north'?footprintCells(n.x,n.y-1,d.w,1):side==='south'?footprintCells(n.x,n.y+d.h,d.w,1):side==='west'?footprintCells(n.x-1,n.y,1,d.h):footprintCells(n.x+d.w,n.y,1,d.h);
    for(const [x,y] of access)if(INMAP(x,y)&&[T.ROCK,T.ORE].includes(g.tiles[IDX(x,y)])){g.tiles[IDX(x,y)]=T.GRASS;mountainMassifs[IDX(x,y)]=0;}
   }
-  if(saved.length)g.deposits=[...g.deposits.filter(n=>!['mine','steinbruch'].includes(n.type)),...saved];
+  if(saved.length)g.deposits=[...saved,...g.deposits.filter(n=>!['mine','steinbruch','goldmine'].includes(n.type)||!saved.some(s=>Math.hypot(s.x-n.x,s.y-n.y)<8)&&footprintCells(n.x,n.y,B[n.type].w,B[n.type].h).every(([x,y])=>!g.occ[IDX(x,y)]&&!g.road[IDX(x,y)]))];
   for(const k of o.roads||[])if([T.ROCK,T.ORE].includes(g.tiles[k]))g.tiles[k]=T.GRASS;
  }
  g.fireEngines=(o.fireEngines||[]).filter(e=>Array.isArray(e.path)&&Number.isFinite(e.t));for(const good of PIXXO_GOODS)g.stock[good[0]]??=0;return g;};
@@ -295,16 +302,17 @@ function pixxoMiningSprite(b){
  if(!HD_CATALOG.has(key)){const extra=12;publishPixel(key,miningEntranceArt(b,side,frame),b.w*16,b.h*16+extra,{tw:b.w,th:b.h,ex:extra,hub:null,smoke:null});}return key;
 }
 function miningEntranceArt(b,side,frame){
- const source=importedPixels(IMPORTED_ENTRIES.get(b.type+'_berg_'+side),0),low=document.createElement('canvas');low.width=b.w*16;low.height=b.h*16+12;
+ const source=importedPixels(IMPORTED_ENTRIES.get((b.type==='goldmine'?'mine':b.type)+'_berg_'+side),0),low=document.createElement('canvas');low.width=b.w*16;low.height=b.h*16+12;
  const c=low.getContext('2d');c.imageSmoothingEnabled=false;nativeDrawImage.call(c,source,0,0,low.width,low.height);
  const image=c.getImageData(0,0,low.width,low.height);for(let i=0;i<image.data.length;i+=4){const r=image.data[i],g=image.data[i+1],v=image.data[i+2];if(image.data[i+3]&&(r>g*1.12&&g>v*1.1||r+g+v<150)){const tone=hs(i%low.width,Math.floor(i/low.width),57)>.5?116:104;image.data.set([tone,tone+5,tone+12,255],i);}}c.putImageData(image,0,0);
  const portal=document.createElement('canvas');portal.width=18;portal.height=26;const g=portal.getContext('2d'),r=(color,x,y,w,h)=>{g.fillStyle=color;g.fillRect(x,y,w,h);};
  r('#49494c',1,3,16,20);r('#333236',3,5,12,17);r('#181e21',5,7,8,14);r('#242a2c',6,8,6,12);
  for(const x of [2,14]){r('#4e3728',x,3,2,19);r('#99733f',x,4,1,17);for(const y of [5,10,16])r('#d5b378',x,y,1,1);}
  r('#4c382a',2,2,14,3);r('#ba9358',3,2,12,1);r('#836039',3,4,12,1);r('#b1a27b',1,22,16,2);
+ const resourceTone=b.type==='goldmine'?'#e0ac35':b.type==='mine'?'#ac6841':'#a7adae';r('#2d2925',5,0,8,3);r(resourceTone,7,0,4,2);r(resourceTone,6,1,6,1);
  for(const x of [6,11]){r('#3b4245',x,17,2,9);r('#a4a9a1',x,17,1,9);}for(const y of [19,22,25])r('#745d40',5,y,8,1);
  r('#483a2d',15,9,3,5);r('#efba62',16,10,1,2);r('#ffe2a0',16,10,1,1);
- if(frame>0){const y=18+[0,1,2,1][frame%4];r('#3b3830',5,y+4,8,2);r('#57402e',4,y,10,4);r('#a28250',5,y,8,1);r(b.type==='mine'?'#a26c4c':'#9aa1a2',6,y-2,5,2);r('#d1c4a1',7,y-2,2,1);}
+ if(frame>0){const y=18+[0,1,2,1][frame%4];r('#3b3830',5,y+4,8,2);r('#57402e',4,y,10,4);r('#a28250',5,y,8,1);r(b.type==='goldmine'?'#e0ac35':b.type==='mine'?'#a26c4c':'#9aa1a2',6,y-2,5,2);r('#d1c4a1',7,y-2,2,1);}
  const turn={south:0,west:1,north:2,east:3}[side]||0,rotated=document.createElement('canvas');rotated.width=turn%2?26:18;rotated.height=turn%2?18:26;const out=rotated.getContext('2d');out.imageSmoothingEnabled=false;out.translate(rotated.width/2,rotated.height/2);out.rotate(turn*Math.PI/2);out.drawImage(portal,-9,-13);
  const x=side==='west'?0:side==='east'?low.width-rotated.width:Math.floor((low.width-rotated.width)/2),y=side==='north'?12:side==='south'?low.height-rotated.height:12+Math.floor((b.h*16-rotated.height)/2);c.drawImage(rotated,x,y);return low;
 }
@@ -315,16 +323,40 @@ for(let frame=0;frame<5;frame++)for(const [side,turn] of [['left',1],['right',3]
  const ww=turn%2?12:16,hh=turn%2?16:12;nativeDrawImage.call(out,rotated,Math.floor((16-ww)/2),Math.floor((16-hh)/2),ww,hh);publishPixel('stollen_'+side+frame,low,16,16);
 }
 function pixxoCattleSprite(b){if(b.type!=='gehege')return null;const g=WORLD.islands[b.island]||G,owner=g.byId.get(b.fieldOwner);return livestockEnclosureSprite(b,enclosureAnimal(owner));}
-const pixxoWorkshopSprite=workshopSprite;workshopSprite=function(b){if(pixxoCattleSprite(b))return pixxoCattleSprite(b);return ['mine','steinbruch'].includes(b.type)?pixxoMiningSprite(b)||pixxoWorkshopSprite(b):pixxoWorkshopSprite(b);};
-const pixxoSpName=spName;spName=function(b){if(b.type==='werft')return shipyardSprite(b);if(pixxoCattleSprite(b))return pixxoCattleSprite(b);return ['mine','steinbruch'].includes(b.type)?pixxoMiningSprite(b)||pixxoSpName(b):pixxoSpName(b);};
+const pixxoWorkshopSprite=workshopSprite;workshopSprite=function(b){if(pixxoCattleSprite(b))return pixxoCattleSprite(b);return ['mine','steinbruch','goldmine'].includes(b.type)?pixxoMiningSprite(b)||pixxoWorkshopSprite(b):pixxoWorkshopSprite(b);};
+const pixxoSpName=spName;spName=function(b){if(b.type==='werft')return shipyardSprite(b);if(pixxoCattleSprite(b))return pixxoCattleSprite(b);return ['mine','steinbruch','goldmine'].includes(b.type)?pixxoMiningSprite(b)||pixxoSpName(b):pixxoSpName(b);};
 const pixxoBubbleFor=bubbleFor;bubbleFor=function(b){return B[b.type].kind==='decor'?null:pixxoBubbleFor(b);};
+const PIXXO_PIER_IMAGES={};
+for(const direction of ['north','east','south','west'])for(const role of ['start','middle','end']){
+ const image=new Image();image.src='assets/sprites/structures/piers/16x16/pier_'+direction+'_'+role+'.png';
+ image.addEventListener('load',()=>{if(G)G.dirty=true;});PIXXO_PIER_IMAGES[direction+'_'+role]=image;
+}
+function pixxoPierCells(b,side){
+ const step={north:[0,-1],east:[1,0],south:[0,1],west:[-1,0]}[side];
+ const across=side==='north'||side==='south'?b.w:b.h,choices=[];
+ for(let offset=0;offset<across;offset++){
+  const x=side==='west'?b.x-1:side==='east'?b.x+b.w:b.x+offset;
+  const y=side==='north'?b.y-1:side==='south'?b.y+b.h:b.y+offset;
+  const cells=[];
+  for(let length=0;length<3;length++){
+   const px=x+step[0]*length,py=y+step[1]*length;
+   if(!INMAP(px,py)||G.tiles[IDX(px,py)]>T.SHAL)break;
+   cells.push([px,py]);
+  }
+  if(cells.length)choices.push({cells,offset});
+ }
+ choices.sort((a,b)=>b.cells.length-a.cells.length||Math.abs(a.offset-(across-1)/2)-Math.abs(b.offset-(across-1)/2));
+ return choices[0]?.cells||[];
+}
 const pixxoDrawBld=drawBld;drawBld=function(ctx,b){
  pixxoDrawBld(ctx,b);if(B[b.type].place!=='coast')return;
  const side=pixxoCoastSide(b.x,b.y,b.w,b.h);if(!side)return;
- ctx.save();const horizontal=side==='north'||side==='south',x=horizontal?cx(b)*16-7:(side==='west'?b.x*16-12:(b.x+b.w)*16),y=horizontal?(side==='north'?b.y*16-12:(b.y+b.h)*16):cy(b)*16-7;
- ctx.fillStyle='#493326';ctx.fillRect(x+1,y+1,horizontal?14:12,horizontal?12:14);ctx.fillStyle='#a88753';ctx.fillRect(x,y,horizontal?14:12,horizontal?12:14);
- ctx.fillStyle='#6d4c32';for(let i=2;i<12;i+=3)ctx.fillRect(x+(horizontal?0:i),y+(horizontal?i:0),horizontal?14:1,horizontal?1:14);
- ctx.fillStyle='#d0af73';ctx.fillRect(x,y,horizontal?14:1,horizontal?1:14);ctx.restore();
+ const cells=pixxoPierCells(b,side);
+ for(let i=0;i<cells.length;i++){
+  const role=i===cells.length-1?'end':i===0?'start':'middle';
+  const image=PIXXO_PIER_IMAGES[side+'_'+role];if(!image.complete||!image.naturalWidth)continue;
+  ctx.drawImage(image,cells[i][0]*16,cells[i][1]*16,16,16);
+ }
 };
 // Start- und Reload-Ladebildschirm erst nach dem ersten gezeichneten Frame ausblenden.
 document.querySelector('#pixxo-loading progress').setAttribute('aria-label','Ladefortschritt');

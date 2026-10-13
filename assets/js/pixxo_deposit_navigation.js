@@ -1,5 +1,5 @@
 /* Ressourcenicons führen ohne Platzliste zu freien und bebauten Vorkommen. */
-const DEPOSIT_RESOURCE_ICONS=[['mine','erz','Eisenerz'],['steinbruch','stein','Stein'],['lehmgrube','lehm','Lehm']];
+const DEPOSIT_RESOURCE_ICONS=[['mine','erz','Eisenerz'],['goldmine','goldstaub','Gold'],['steinbruch','stein','Stein'],['lehmgrube','lehm','Lehm']];
 const DEPOSIT_FOCUS_POSITIONS=new Map();
 function islandDepositNodes(island,type){const g=WORLD.islands[island];return (g?.deposits||unsettledDeposits(island)).filter(n=>n.type===type&&(!n.legacy||g?.blds.some(b=>b.type===type&&b.x===n.x&&b.y===n.y)));}
 function freeDepositNodes(island,type){

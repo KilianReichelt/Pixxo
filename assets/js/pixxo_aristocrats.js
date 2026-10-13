@@ -40,7 +40,7 @@ HN[4]='Aristokratenhaus';
 UPG[4]={gold:1100,bretter:24,ziegel:24,beton:20,glas:12,werkzeug:10};
 pixxoRefreshHouseCapacities();
 // Retain definitions and save data until grand projects are ready for release.
-const CIVIC_PROJECTS_ENABLED=false;
+let CIVIC_PROJECTS_ENABLED=false;
 const CIVIC_PROJECTS={
  rathaus:{n:'Großes Rathaus',tier:3,w:8,h:8,upk:100,effects:{tax:.1,upkeep:-.1},description:'+10 % Steuereinnahmen · −10 % Gebäudeunterhalt auf dieser Insel',stages:[
   {n:'Fundament',seconds:180,workers:40,cost:{gold:4000,stein:120,ziegel:80,bretter:60,werkzeug:20}},

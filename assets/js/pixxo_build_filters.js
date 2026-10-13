@@ -13,7 +13,7 @@ const populationRenderItems=renderItems;renderItems=function(...args){
  }
  const focused=document.activeElement?.dataset?.populationFilter;populationRenderItems(...args);
  if(!UI.cat){document.getElementById('population-filters')?.remove();box.style.removeProperty('--population-min-width');return;}
- const cards=[...box.querySelectorAll('.bi[data-b]')].sort((a,b)=>buildingPopulationTier(a.dataset.b)-buildingPopulationTier(b.dataset.b)),track=box.querySelector('.items-track'),tiers=new Set(cards.map(c=>buildingPopulationTier(c.dataset.b))),highest=WORLD?.highestTier||1;
+ const cards=[...box.querySelectorAll('.bi[data-b]')].sort((a,b)=>Number(!unlocked(a.dataset.b))-Number(!unlocked(b.dataset.b))||buildingPopulationTier(a.dataset.b)-buildingPopulationTier(b.dataset.b)),track=box.querySelector('.items-track'),tiers=new Set(cards.map(c=>buildingPopulationTier(c.dataset.b))),highest=WORLD?.highestTier||1;
  for(const [index,card] of cards.entries())if(track.children[index]!==card)track.insertBefore(card,track.children[index]||null);
  // Measure the whole category before hiding cards: filters must not change
  // the tray height when their buildings have different cost/name row heights.
@@ -25,16 +25,16 @@ const populationRenderItems=renderItems;renderItems=function(...args){
   box.style.setProperty('--population-track-height',Math.ceil(Math.max(...cards.map(card=>card.getBoundingClientRect().height))+padding)+'px');
   box._populationHeightKey=heightKey;box._populationHeightCard=cards[0];
  }
- const categoryChanged=UI.populationCategory!==UI.cat;if(categoryChanged){UI.populationCategory=UI.cat;UI.populationFilter=0;}
- const enabled=highest>=2&&tiers.size>1;
+ const categoryChanged=UI.populationCategory!==UI.cat;if(categoryChanged){UI.populationCategory=UI.cat;UI.populationFilter=0;UI.buildingSearch='';}
+ const enabled=highest>=2;
  if(!enabled||!tiers.has(UI.populationFilter))UI.populationFilter=0;
- for(const card of cards){const tier=buildingPopulationTier(card.dataset.b);card.dataset.popTier=tier;card.hidden=!!UI.populationFilter&&tier!==UI.populationFilter;
+ for(const card of cards){const tier=buildingPopulationTier(card.dataset.b);card.dataset.popTier=tier;const query=(UI.buildingSearch||'').toLocaleLowerCase('de-DE').trim(),d=B[card.dataset.b],text=[d.n,...Object.keys(d.out||{}).map(g=>GN[g]?.n||g)].join(' ').toLocaleLowerCase('de-DE');card.hidden=!!UI.populationFilter&&tier!==UI.populationFilter||!!query&&!text.includes(query);
   card.querySelector('.population-badge')?.remove();const suffix=' · '+TIERS[tier].n,label=card.getAttribute('aria-label')||'';if(!label.includes(suffix))card.setAttribute('aria-label',label+suffix);card.removeAttribute('title');
  }
  let filter=document.getElementById('population-filters');if(enabled){if(!filter){filter=document.createElement('div');filter.id='population-filters';filter.setAttribute('role','group');filter.setAttribute('aria-label','Gebäude nach Bevölkerungsstufe filtern');filter.tabIndex=0;box.before(filter);}
-  const selected=UI.populationFilter||0,html=[[0,'Alle'],...TIERS.filter(t=>t&&t.id<=highest&&tiers.has(t.id)).map(t=>[t.id,t.n])].map(([tier,label])=>`<button type="button" data-population-filter="${tier}" data-pop-tier="${tier}" aria-controls="items-viewport" aria-pressed="${selected===tier}">${label}</button>`).join('');
-  if(filter.innerHTML!==html){filter.innerHTML=html;if(focused!==undefined)filter.querySelector(`[data-population-filter="${focused}"]`)?.focus({preventScroll:true});}
-  box.style.setProperty('--population-min-width',Math.ceil([...filter.children].reduce((n,b)=>n+b.getBoundingClientRect().width,0)+Math.max(0,filter.children.length-1)*8+16)+'px');
+  const selected=UI.populationFilter||0,html=[[0,'Alle'],...TIERS.filter(t=>t&&t.id<=highest&&tiers.has(t.id)).map(t=>[t.id,t.n])].map(([tier,label])=>`<button type="button" data-population-filter="${tier}" data-pop-tier="${tier}" aria-controls="items-viewport" aria-pressed="${selected===tier}">${label}</button>`).join('')+'<div class="building-search-row"><label class="building-search"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16"><circle cx="6" cy="6" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="m9 9 5 5" stroke="currentColor" stroke-width="2"/></svg><span class="sr-only">Gebäudesuche nach Name oder produzierter Ware</span><input id="building-search" type="search" placeholder="Gebäudesuche" autocomplete="off" aria-controls="items-viewport"></label></div>';
+  if(filter._last!==html){filter._last=html;filter.innerHTML=html;filter.querySelector('input').value=UI.buildingSearch||'';if(focused!==undefined)filter.querySelector(`[data-population-filter="${focused}"]`)?.focus({preventScroll:true});}
+  box.style.setProperty('--population-min-width',Math.ceil([...filter.querySelectorAll('button')].reduce((n,b)=>n+b.getBoundingClientRect().width,0)+Math.max(0,filter.querySelectorAll('button').length-1)*8+16)+'px');
   const rect=box.getBoundingClientRect();filter.style.left=rect.left+'px';filter.style.bottom=innerHeight-rect.top-2+'px';filter.style.maxWidth=rect.width+'px';
  }else {filter?.remove();box.style.removeProperty('--population-min-width');}
  box.querySelector('.population-empty')?.remove();updateItemNavigation();
@@ -45,3 +45,5 @@ $('#items').addEventListener('click',e=>{const button=e.target.closest('[data-ro
 const populationSetTool=setTool;setTool=function(t,...args){if(t==='road')UI.cat='roads';else if(UI.cat==='roads')UI.cat=null;const result=populationSetTool(t,...args);updateRiverPlanSummary();return result;};
 const populationRenderBar=renderBar;renderBar=function(...args){const r=populationRenderBar(...args);$('#bar [data-tool="road"]')?.classList.toggle('on',UI.cat==='roads');return r;};
 addEventListener('resize',()=>{if(G)renderItems(true);});
+
+document.addEventListener('input',e=>{if(e.target.id!=='building-search')return;UI.buildingSearch=e.target.value;renderItems(true);});
