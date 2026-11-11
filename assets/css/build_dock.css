@@ -1,0 +1,563 @@
+/* Compact desktop dock following the supplied Anno-style control layout. */
+body #bar.integrated-dock {
+    left: 50%;
+    right: auto;
+    bottom: 8px;
+    transform: translateX(-50%);
+    width: min(1100px, calc(100vw - 360px));
+    max-width: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 0;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+    border: 1px solid #806343;
+    background: var(--game-surface-dark);
+    box-sizing: border-box;
+    z-index: 24
+}
+
+#bar .dock-tabs {
+    display: flex;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 30px;
+    gap: 0;
+    background: var(--game-surface-dark);
+    border: 1px solid #806343;
+    border-bottom: 0
+}
+
+#bar .dock-tabs button {
+    width: 124px;
+    padding: 3px 12px;
+    border: 0;
+    border-right: 1px solid #594735;
+    background: var(--game-surface-dark);
+    color: #d3c5a8;
+    font: inherit;
+    white-space: nowrap
+}
+
+#bar .dock-tabs button:last-child {
+    border-right: 0
+}
+
+#bar .dock-tabs button[aria-selected=true] {
+    background: #413527;
+    color: #fff;
+    box-shadow: inset 0 2px #c8ae79
+}
+
+#bar .dock-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    padding: 0 38px;
+    border-bottom: 1px solid #594735
+}
+
+#bar .dock-tools {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    min-width: 150px;
+}
+
+#bar .dock-tool {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 30px;
+    
+    
+    border: 0;
+    border-right: 1px solid #594735;
+    background: transparent;
+    padding: 3px;
+    color: #d3c5a8
+}
+
+#bar .dock-tool img {
+    width: 20px !important;
+    height: 20px !important;
+    
+    max-height: none !important
+}
+
+#bar .dock-tool.on {
+    background: #4a3a26;
+    box-shadow: inset 0 -2px #c8ae79
+}
+
+#bar .dock-tool:hover {
+    background: #3c3023
+}
+
+#bar .dock-toolbar .building-search {
+    max-width: 150px;
+    height: 26px;
+    box-sizing: border-box
+}
+
+#bar #building-search {
+    min-height: 0;
+    height: 24px;
+    width: 190px;
+    padding: 3px;
+    background: transparent;
+    border: 0;
+    color: #fff;
+    font: inherit
+}
+
+#bar .dock-content {
+    display: grid;
+    min-width: 0
+}
+
+#bar .dock-content[hidden],
+#bar .dock-filters[hidden],
+#bar .building-search[hidden] {
+    display: none !important
+}
+
+body #bar #items {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    max-height: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    gap: 0;
+    overflow: hidden;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    box-sizing: border-box;
+    --population-track-height: auto
+}
+
+#bar #items .items-viewport {
+    min-width: 0;
+    flex: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0;
+    margin: 0
+}
+
+#bar #items .items-track {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+    height: auto !important;
+    min-height: 0;
+    justify-content: flex-start
+}
+
+#bar #items .bi {
+    display: flex;
+    flex: 0 0 72px !important;
+    width: 72px !important;
+    
+    
+    height: 68px !important;
+    max-height: 68px !important;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+    padding: 6px !important;
+    gap: 0;
+    border: 0;
+    border-right: 1px solid #594735;
+    background: #292219;
+    box-shadow: none;
+    border-radius: 0;
+    position: relative
+}
+
+#bar #items .bi:hover {
+    background: #443526
+}
+
+#bar #items .bi.on {
+    background: #4d3d2a;
+    box-shadow: inset 0 -2px #d5ba80
+}
+
+#bar #items .bi img.px {
+    width: 40px !important;
+    height: 44px !important;
+    
+    max-height: 44px !important;
+    max-width: 54px !important;
+    object-fit: contain;
+    image-rendering: pixelated
+}
+
+#bar #items .product-card img.px {
+    /* width: 32px !important;
+    height: 32px !important;
+    max-height: 32px !important */
+}
+
+#bar #items .bi b,
+#bar #items .bi .cost,
+#bar #items .bi .sz {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap
+}
+
+#bar #items .item-scroll {
+    position: static;
+    width: 26px;
+    
+    border: 0;
+    background: var(--game-surface-dark);
+    color: #d3c5a8;
+    padding: 0;
+    box-shadow: none
+}
+
+#bar #items .item-scroll[hidden] {
+    display: none !important
+}
+
+.dock-empty {
+    margin: 0;
+    padding: 16px;
+    color: #d3c5a8
+}
+
+body #bar #population-filters {
+    position: static !important;
+    left: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    max-width: none !important;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+    border: 0;
+    border-top: 1px solid #594735;
+    background: var(--game-surface-dark);
+    box-sizing: border-box;
+    box-shadow: none
+}
+
+#bar #population-filters button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    
+    padding: 3px 24px;
+    border: 0;
+    border-right: 1px solid #594735;
+    background: transparent;
+    color: #fff !important;
+    border-radius: 0
+}
+
+#bar #population-filters button[aria-pressed=true] {
+    background: #44382a;
+    box-shadow: inset 0 -2px #c8ae79
+}
+
+#bar #population-filters img {
+    width: 20px;
+    height: 20px;
+    image-rendering: pixelated
+}
+
+body #bar #production-overview {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100%;
+    max-width: 100% !important;
+    max-height: 300px;
+    box-sizing: border-box;
+    padding: 8px 34px 8px 12px;
+    border: 0 !important;
+    border-top: 1px solid #594735 !important;
+    background: #241d15 !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    overflow: auto
+}
+
+#bar #production-overview strong {
+    text-align: center
+}
+
+#bar #production-overview .production-graph-scroll {
+    max-width: 100%;
+    display: flex;
+    justify-content: center
+}
+
+#bar #production-overview .production-close {
+    width: 24px;
+    height: 24px;
+    
+    
+    background: transparent;
+    border: 0;
+    color: #d3c5a8
+}
+
+#bar #production-overview[hidden] {
+    display: none !important
+}
+
+#bar button:focus-visible,
+#bar .items-viewport:focus-visible,
+#bar input:focus-visible {
+    outline: none !important;
+    outline-offset: 0
+}
+
+body #hint,
+body.items #hint {
+    bottom: calc(var(--dock-height, 136px) + 64px) !important
+}
+
+#barToggle,
+#dekoToggle {
+    display: none !important
+}
+
+#bar .activity {
+    right: -6px;
+    bottom: -6px;
+    padding: 0;
+    border: 0;
+    background: var(--game-surface-dark)
+}
+
+#bar .activity img {
+    width: 16px !important;
+    height: 16px !important
+}
+
+/* Product clicks open an independent window above the stable dock. */
+body #production-overview {
+    position: fixed !important;
+    width: max-content;
+    max-width: 700px;
+    max-height: calc(100vh - 220px);
+    z-index: 30;
+    padding: 18px;
+    box-sizing: border-box
+}
+
+body #production-overview .production-graph-scroll {
+    max-width: 100%;
+    overflow: auto
+}
+
+body #production-overview .production-close {
+    width: 26px;
+    height: 26px;
+    
+    }
+
+body #production-overview[hidden] {
+    display: none !important
+}
+
+/* Center short lists; an overflowing track keeps both ends reachable. */
+#bar #items .items-track {
+    width: max-content;
+    min-width: 100%;
+    box-sizing: border-box;
+    justify-content: center
+}
+
+.dock-city-level {
+    padding: 0 8px;
+    color: #d3c5a8;
+    white-space: nowrap;
+    margin: auto;
+}
+
+/* Reset the old absolute arrow offset in the integrated row. */
+#bar #items .item-scroll {
+    top: auto;
+    bottom: auto;
+    left: auto;
+    right: auto;
+    transform: none;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    
+    margin: 0px 8px;
+    line-height: 1
+}
+
+body #production-building-preview {
+    position: fixed;
+    z-index: 31;
+    width: 340px;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 12px;
+    overflow: auto;
+    font-family: inherit
+}
+
+body #production-building-preview[hidden] {
+    display: none !important
+}
+
+#production-building-preview .preview-building-header {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start
+}
+
+#production-building-preview .preview-building-sprite {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    flex: none
+}
+
+#production-building-preview p {
+    margin: 4px 0 8px
+}
+
+#production-building-preview h3 {
+    margin: 8px 0 4px;
+    color: var(--gold);
+    font-size: inherit
+}
+
+#production-building-preview dl {
+    margin: 10px 0 0
+}
+
+#production-building-preview dl>div {
+    padding: 5px 0;
+    border-top: 1px solid #594735
+}
+
+#production-building-preview dt {
+    color: var(--gold)
+}
+
+#production-building-preview dd {
+    margin: 0
+}
+
+#production-building-preview .preview-good {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-right: 8px
+}
+
+#production-building-preview .preview-building-cost {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px
+}
+
+/* Einzelbetriebe direkt bauen; mehrteilige Ketten erhalten eine ruhige Eckmarkierung. */
+#bar #items .product-card .production-chain-marker {
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    color: #edce8c;
+    font: inherit;
+    line-height: 1;
+    pointer-events: none
+}
+
+body #production-building-preview {
+    overflow-x: hidden;
+    scrollbar-width: none !important
+}
+
+body #production-building-preview::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0
+}
+
+#production-building-preview .preview-building-header>div {
+    min-width: 0;
+    overflow-wrap: anywhere
+}
+
+body #production-overview.single-production-node {
+    max-width: none
+}
+
+body #production-overview.single-production-node #production-node-name {
+    min-width: 0;
+    padding-right: 0;
+    white-space: nowrap;
+    text-align: center
+}
+
+body #production-overview.single-production-node .production-graph-scroll {
+    max-width: none;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+/* Titel und Schließen teilen sich eine Zeile innerhalb des Eckabstands. */
+body #production-overview .production-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: -18px -18px 12px;
+    padding: 8px 18px;
+    background: var(--game-surface-header);
+    color: var(--game-text-header)
+}
+
+body #production-overview .production-header .production-node-name {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    white-space: nowrap
+}
+
+body #production-overview .production-header .production-close {
+    position: static;
+    inset: auto;
+    flex: 0 0 26px;
+    margin: 0;
+    color: #f3e6c8
+}

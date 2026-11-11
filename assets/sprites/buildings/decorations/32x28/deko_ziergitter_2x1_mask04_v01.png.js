@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("deko_ziergitter_2x1_mask04","iVBORw0KGgoAAAANSUhEUgAAACAAAAAcCAYAAAAAwr0iAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAA6UlEQVR4nGNgGAWjYBSMglEwCoYyCHBz+IvEZaSbxf///wdbJiYsguwAJro5wMnG8g+I9naxH5gQ4GZn++RsY/Hbx9kG7BC6hwAfC9NvSW72P77Otn+F2Vn+SHJz/NKQlUB2DG2BtJjIX0lhwT9WpkZ/pEWE/koIC/2VFRWhnwMGDVBWVgIlQkYTQz3kxEg/oKioALb47JYpA+MATk72vwICnH6nts0fGAcoK4FDgPHsysaBcYCSkiLI4tfHlzX+GxAHqKhAEuH+xS0DEwLCwsJ/jRkYuA6t7BqoKFD4mxQT9vfIhnlkOwAA1JZCT5IrIdMAAAAASUVORK5CYII=");

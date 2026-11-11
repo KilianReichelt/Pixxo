@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("wildlife_fish_w_night","iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAzklEQVR4nGNgGAU4gYicxX8lw/D/InKW/yWUnf7DxRXs4Gy8ICxj4v/QjEn/veO7/1v6Vv+X1Q74r2KWQJxmEBBTsP2vZhbzX8Us9r+4sguSC2xwGyKhbP8fpFFQ2ox4m2DAI7Lxf0jaxP+uEc3/7YNq/qtZJP4XkrH4L4bPRnQgrmDzX9e5+L+CQRhck6i8LZgNchkDOUDDIvG/vlPufyXTWLABQqR4T0jW+n9I6oT/4RkT/7uEN/yXVPX6LyxrTbpLxJUc/ovKk6FxaAAAdrJJSVAbxyAAAAAASUVORK5CYII=");

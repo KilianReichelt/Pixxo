@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("wildlife_gull_s_night","iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAA50lEQVR4nNWRT0vCcACGvee5g3QQT0qiYHhIoey3tdXYkLEhBhmCrIt/KcXY7sbC7UP4KeqS85M9YfQB5u9k7/154H3fTOaoo9kvqO0xUnBD7eH0Q5z+B1f64DBJsXJDrenQGUR0vZiLZodSVUknuVQeEdYItT3DjxL8eIcwRwhzkk7QuntGs1/x5hv8aEsQ7/AWGxQrpUCzp9y7y1/QXycEf5KWMUy/Q6kqmK8+CeJ9hYTF+xfFijhsyJPsKcvwm7f1ltxZWe5K16hzK0w5eB9Xz2Nc5+QEPfscVy/w9NCga0lW+B/5AS+MbPkmDfFgAAAAAElFTkSuQmCC");

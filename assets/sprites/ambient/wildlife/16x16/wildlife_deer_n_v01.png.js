@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("wildlife_deer_n","iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAA9ElEQVR4nGNgoBXQkeT7D2Ori3HB2USB2gSP/015cXBNW6ZV/ffWlyLekDBr9f/nFtf8rzdX+F9rofD/5PyK/3bq4qS5Qpmf5X+esfz/cmOZ/w5yvKRpBgEVUfb/2QYy/3MMZEjXDAIpBtL/Z3to/p/kqPrfXIKTdEOy9WX/z/PR/T/bW/d/vokCaQYo8TL+73ZU/b8owPD/ggCD/73OGqQZoMrL+L/TXu1/j5P6/x5H9f8dDiQaAAKtdir/j83K/z+vOvp/kjYJaQAGsgzk/lvL8v0P0pQkLxYU+Fn+S3Ez/1cSZCPPAEUBtv/ygizkaaYrAAChlVc+6OJRNgAAAABJRU5ErkJggg==");

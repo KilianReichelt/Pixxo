@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("world_tree0_young_night","iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAPoAAAD6AG1e1JrAAABBklEQVR4nGNgoDlQMvlLjjZGEBGz4/5fZD7pQFrvL4O+JVkugAAO4b/CQlJ/GThESDTEIfzkpHP3//ad2P+XQcecPBdopkf9YbN1/MvALviXQc3kL7+LG3EGzbz6Dq5QTUn9LwOfNIkukNerYBBR+csgoflXPiroL4OY6l8GDfO/Yl7uf5lsXYg3TL8g6S8Dh9BfEVAgwqJRzwa/AR3nH//vP3MYrEEnK+GvblbUXyZjK7BriLOWW0yPQUjxH4OBzV8GY9u/oGgEYz2Lvwwiyn8ZeIgLD2YozWiorvFXWFDqL4OOxV8Gfeu/DMIKT0hKlZ7Wln+Tw8MoSIkMDAwigpKUGUAIAADHJlPxm7UYZgAAAABJRU5ErkJggg==");

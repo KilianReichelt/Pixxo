@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("wildlife_fish_w","iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAA1klEQVR4nGNgGAU4gaqhw3/HwIz/qoZO/3Utff/DxNVMPOBsvGDxqo3/F6za9L93zsr/2fVT/5u7x/93jigmTjMIaJq4/3ePyPvvHFnwX9syAK5R1cQNtyG6Vl7/NU3d/yvq2hFvEwx0TJr7f/6Kjf+bJy74X94+/b9HTMl/JT3H/5qmrsQbpm3q9j80r/u/jV8aXJO6sTuYDXIZAznAO6bkf0Ruy3/H8AKwAUqkeE9J3+X/vGUb/i9ZvfF/Y9+c//q24f9VDFxId4m2hfd/dWMyNA4NAAAFiFe92ccezQAAAABJRU5ErkJggg==");

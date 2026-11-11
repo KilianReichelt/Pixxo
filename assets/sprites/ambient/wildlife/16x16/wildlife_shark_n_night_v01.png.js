@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("wildlife_shark_n_night","iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAX0lEQVR4nGNgGAW0BeLS2v8lpLX/k22AlVPsfwU1CwoMcIn7b2gZ8F9BzYo0Q8zCe/5Lyhn8t3dP+W9kFfRfjFxvGFoG/TeyDPpvHlhNugEWYe1wTeZhHeSHwyhgIAgANh8dQtRKWbMAAAAASUVORK5CYII=");

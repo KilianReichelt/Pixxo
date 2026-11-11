@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("pier_north_middle","iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAbklEQVR4nGNggAILTfn/lWHm/08vzv6/riUAK4520gWrAallQAcW1DQg2kkXq2aCBsQ4aBKFCbrgxEJMTNsweLC78j8IExsGMPVwA9wNFP+DMLFhAFOPYUAlkWFA0IB1BMIAwwAQGOnpAAQGLAwAq1alUiamquwAAAAASUVORK5CYII=");

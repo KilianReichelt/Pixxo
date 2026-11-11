@@ -1,0 +1,23 @@
+#population-filters{flex-wrap:wrap}.building-search-row{display:flex;flex-basis:100%;min-width:0}.building-search{display:flex;max-width:300px;box-sizing:border-box;align-items:center;gap:6px;flex-basis:100%;height:25px;padding:0 0 0 7px;background:#2a1d10;border:1px solid var(--ui-accent-brass);border-radius:3px}.building-search input{width:100%;height:23px;box-sizing:border-box;padding:3px;border:0;background:transparent;color:inherit;font:inherit;outline-offset:0}#store-goods-table th button{background:transparent;color:inherit;font:inherit;border:0;padding:4px;cursor:pointer}#store-goods-table th button:focus-visible{outline:2px solid #f0ce82;outline-offset:2px}.building-search:focus-within,.building-search:focus-visible,.building-search:active,.building-search input:focus-visible,.building-search input:active{outline:1px solid var(--ui-accent-brass);outline-offset:0}
+
+.save-slots{display:grid;gap:12px}.save-slot{display:grid;gap:6px;text-align:left;}.identity-choices{display:flex;gap:8px;margin-bottom:16px}.identity-choices [aria-pressed=true]{outline:2px solid #f0ce82;outline-offset:2px}.color-choice{}.color-choice span{display:inline-block;width:22px;height:22px;background:var(--owner-color);vertical-align:middle}.owner-identity{display:inline-flex;align-items:center;gap:8px;margin-right:12px}.owner-identity img{background-color:var(--owner-color);padding:3px}
+.diplomacy-player{padding:12px 0;border-bottom:1px solid #746951}.diplomacy-player .kv{gap:12px}
+.player-name{display:grid;gap:6px;margin-bottom:16px}.player-name input{width:300px;max-width:100%;box-sizing:border-box;font:inherit}
+
+#island-owner-identity{position:fixed;z-index:19;transform:translateX(-50%);text-align:center;pointer-events:none}
+#island-owner-identity[hidden]{display:none}
+#island-owner-identity .owner-identity{display:inline-flex;flex-direction:rwo;align-items:center;justify-content:center;gap:8px;margin:0;width:70%;box-sizing:border-box;padding:5px 10px;border:2px solid #806343;background:var(--ui-surface)}
+#island-owner-identity .owner-identity b{max-width:100%;overflow-wrap:anywhere;text-align:center}
+#islandfacts{padding-top:8px;text-align:center}
+#islandfacts .factsummary{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;text-align:center}
+#islandfacts .factsummary strong{width:100%;text-align:center}
+#islandfacts:not(.settled-facts) .deposit-jump{justify-content:center;text-align:center}
+
+.owner-identity img{width:24px!important;height:24px!important;box-sizing:border-box;object-fit:contain;image-rendering:pixelated}
+
+#game-start .btn.primary,#game-tour .btn.primary{text-shadow:none!important}
+
+/* Shared text tooltips stay above dialogs and retain the project's typography. */
+#game-tooltip{position:fixed;z-index:10000;max-width:min(340px,calc(100vw - 16px));box-sizing:border-box;padding:6px 9px;border:1px solid var(--ui-accent-brass);background:#21190ff5;color:#ffeac5;font-family:inherit;font-size:14px;line-height:1.5;white-space:pre-line;overflow-wrap:anywhere;box-shadow:2px 2px 0 #0d080380;pointer-events:none}
+#game-tooltip[hidden]{display:none}
+.need-unlock-tooltip{display:none!important}

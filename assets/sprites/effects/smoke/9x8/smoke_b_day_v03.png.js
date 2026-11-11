@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("fx_chimney_smoke_b","iVBORw0KGgoAAAANSUhEUgAAAEgAAAAICAYAAABatbkrAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAxUlEQVR4nGNgGAWjgO4gJTbiPyE15XnpeNXkpyf9v3R0G0FzCIHs5DiCZvS01FBsD0kgNiyIvhYSAKf2bSbonvnTpwwqNzPcOnfw/4VDW/A66tIRylMQDJw7iN+uq8e2/V82bxrl9j24eopwbEwjHBsZCTEE1SREhhJUc+/y0f+psZF41U3saCFoTmZiLEE1VYU5hAMwOYZw+ULPsmzQgaTYKIKOTokKJ6imNC+TiBQURlDN9N5WgmpmTuwjqGZKTwdZkQEAGB1V3YBHTGEAAAAASUVORK5CYII=");

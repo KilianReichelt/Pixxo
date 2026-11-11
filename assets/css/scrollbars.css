@@ -1,0 +1,22 @@
+/* The DOM rails take precedence over browser-native scrollbar rendering. */
+body .game-scroll-surface{scrollbar-width:none!important;scrollbar-gutter:auto!important}
+body .game-scroll-surface::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+body .game-scroll-surface.game-scroll-y{padding-right:calc(var(--game-scroll-pad-right,0px) + 14px)!important}
+body .game-scroll-surface.game-scroll-x{padding-bottom:calc(var(--game-scroll-pad-bottom,0px) + 24px)!important}
+body .game-scrollbar{position:fixed;box-sizing:border-box;background:transparent;border:0;padding:2px;box-shadow:none;user-select:none;touch-action:none}
+body .game-scrollbar::before{content:'';position:absolute;box-sizing:border-box;background:var(--ui-surface);border:2px solid #0d0803;box-shadow:inset 1px 1px 0 #6a4c24}
+body .game-scrollbar.vertical::before{right:0;top:0;width:14px;height:100%}
+body .game-scrollbar.horizontal::before{left:0;bottom:0;height:14px;width:100%}
+body .game-scrollbar[hidden]{display:none!important}
+body .game-scrollbar.vertical{width:24px}
+body .game-scrollbar.horizontal{height:24px}
+body .game-scrollbar .game-scroll-thumb{position:absolute;left:0;top:0;min-width:10px;min-height:10px;margin:0;padding:0;border:2px solid #21190f;border-radius:0;background:#b99a61;box-shadow:inset 2px 2px 0 #f3e6c8,inset -2px -2px 0 #6a4c24;clip-path:none;touch-action:none}
+body .game-scrollbar.vertical .game-scroll-thumb{left:12px;top:2px;width:10px;min-height:32px}
+body .game-scrollbar.horizontal .game-scroll-thumb{left:2px;top:12px;height:10px;min-width:32px}
+body .game-scrollbar .game-scroll-thumb::after{content:'';position:absolute;inset:-7px}
+body .game-scrollbar .game-scroll-thumb:hover,body .game-scrollbar .game-scroll-thumb:active{background:#e8cb85}
+body .game-scrollbar .game-scroll-thumb:focus-visible{outline:2px solid #fff0cb;outline-offset:-4px}
+@media(forced-colors:active){body .game-scrollbar{background:Canvas;border-color:CanvasText;box-shadow:none}body .game-scrollbar .game-scroll-thumb{background:ButtonText;border-color:Canvas;box-shadow:none}}
+
+#goodsbar{overflow-y:hidden!important}
+#top:has(#goodsbar.game-scroll-x) #goodsbar{height:58px;min-height:58px;max-height:58px}

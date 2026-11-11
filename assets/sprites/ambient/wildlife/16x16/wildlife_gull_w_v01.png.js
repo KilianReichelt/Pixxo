@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("wildlife_gull_w","iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAA+ElEQVR4nGNgGAUYYO3aNf/7J0/5v27tmv8MpILywpz/Fy/d/P/y1fv/Dx+9+F9VUU28IUsqZf+fnKr2Py4+6f/Tp6//P3n66n9+ftH/4ODQ/96+PsQbNH367P+Pn7z8v2nTzv9z5y79P2v24v+zZi/97+bmSZwh06fN/v/w4cv/MTFx//v6pv2fMXPR/56eqf/Lyqr/V1TW/a+pacBv0MyZM//v2nng//0Hz/8/efryf1Bg0P+Y6Jj/8fGJ/93d3Ij3yqoVG/6fv3Dt/+kzl/8nJaSSFiPP7x75v6tLD6xpSbn2/+U1qqQZcOfy8f8XtrSTng6GJgAALkiLFo4vkoIAAAAASUVORK5CYII=");

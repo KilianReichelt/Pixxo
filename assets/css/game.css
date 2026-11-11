@@ -1,0 +1,72 @@
+#game-loading{position:fixed;inset:0;z-index:100000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;background:#281d16;color:#e8cb85;opacity:1;transition:opacity .4s ease;pointer-events:all;margin:0;padding:0;border:0;width:auto;height:auto;max-width:none;max-height:none;box-sizing:border-box}
+#game-loading.loaded{opacity:0;pointer-events:none}
+.game-logo{width:min(360px,65vw);height:auto;image-rendering:pixelated;filter:drop-shadow(0 5px 0 #17110d)}
+#game-loading progress{appearance:none;box-sizing:border-box;width:min(300px,60vw);height:16px;padding:0;border:3px solid #6c4d32;background:#17110d;border-radius:0;box-shadow:none;overflow:hidden}
+#game-loading progress::-webkit-progress-bar{background:#17110d}
+#game-loading progress::-webkit-progress-value{background:#bd9656}
+#game-loading progress::-moz-progress-bar{background:#bd9656}
+#game-loading p{margin:0;font:14px monospace;letter-spacing:1px}
+@media(prefers-reduced-motion:reduce){#game-loading{transition:none}}
+
+#barModes{position:fixed;z-index:21;left:calc(var(--barW,800px) + 16px);bottom:8px;width:44px;height:var(--barH,80px);display:flex;flex-direction:column;gap:6px}#barModes #dekoToggle{position:static;inset:auto;flex:1 1 0;width:44px;height:0;min-height:0;min-width:44px;padding:0;display:flex;align-items:center;justify-content:center;border:2px solid #806343;background:var(--ui-surface);color:var(--ink)}
+#barModes #barToggle{position:static;inset:auto;flex:1 1 0;width:44px;height:0;padding:0;display:flex;align-items:center;justify-content:center;border:2px solid #806343;background:var(--ui-surface);color:var(--ink)}
+#barModes button.on{border-color:#e8cb85;background:#4a3320}
+#barModes button:focus-visible{outline:2px solid #e8cb85;outline-offset:2px}
+@media(max-width:760px){#barModes{bottom:6px}}
+
+#bar .deko-card{display:grid;grid-template-columns:40px minmax(0,1fr);grid-template-rows:1fr 1fr;column-gap:6px;row-gap:0;text-align:left;align-items:center}
+#bar .deko-card img{grid-row:1 / 3;max-width:40px;object-fit:contain}
+#bar .deko-card span{font-size:14px!important;line-height:1.15!important;white-space:normal}
+#bar .deko-card .cost{display:flex;align-items:center;gap:4px}
+
+/* Native Scrollleisten: kantige Pixelkanten statt eigener Scroll-Widgets. */
+:root{--scroll-track:#21190f;--scroll-thumb:#b99a61;--scroll-thumb-hover:#e8cb85}
+*::-webkit-scrollbar{width:22px;height:22px}
+*::-webkit-scrollbar-track,*::-webkit-scrollbar-corner{background:var(--scroll-track);border:2px solid #0d0803;border-radius:0}
+*::-webkit-scrollbar-thumb{background:var(--scroll-thumb);border:2px solid var(--scroll-track);border-radius:0;box-shadow:inset 2px 2px 0 #f3e6c8,inset -2px -2px 0 #6a4c24;min-height:32px;min-width:32px}
+*::-webkit-scrollbar-thumb:hover,*::-webkit-scrollbar-thumb:active{background:var(--scroll-thumb-hover)}
+@supports selector(::-webkit-scrollbar){*{scrollbar-width:auto!important;scrollbar-color:auto!important}}
+@supports not selector(::-webkit-scrollbar){*{scrollbar-color:var(--scroll-thumb) var(--scroll-track);scrollbar-width:auto}}
+@media(forced-colors:active){*{scrollbar-color:auto}*::-webkit-scrollbar-track,*::-webkit-scrollbar-corner{background:Canvas;border-color:CanvasText}*::-webkit-scrollbar-thumb{background:ButtonText;border-color:Canvas;box-shadow:none}}
+
+/* Dekoration bleibt in der Leiste; Navigation wie bei den Gebäuden. */
+#bar.deko-mode{overflow:hidden!important;gap:0}
+#bar .deko-viewport{flex:1 1 0;min-width:0;height:66px;overflow:hidden;scrollbar-width:none;overscroll-behavior:contain}
+#bar .deko-track{display:flex;align-items:stretch;gap:5px;width:max-content;height:66px}
+#bar .deko-card{box-sizing:border-box;flex:0 0 180px;width:180px;overflow:hidden}
+#bar .deko-card span{overflow-wrap:anywhere}
+#bar.deko-mode.has-deko-overflow{padding-left:60px;padding-right:60px}
+#bar .item-scroll[data-deko-scroll="left"]{left:8px}
+#bar .item-scroll[data-deko-scroll="right"]{right:8px}
+@media(max-width:600px){
+ #bar.deko-mode{width:calc(100vw - 72px);max-width:calc(100vw - 72px);bottom:calc(var(--mm) + 84px)}
+ body:has(#bar.deko-mode) #barModes{bottom:calc(var(--mm) + 84px)}
+}
+
+/* House needs use two columns only when there are at least six entries. */
+.needgroup .needs:has(>.nd:nth-child(6)){grid-template-columns:repeat(2,minmax(0,1fr));column-gap:12px}
+.needgroup .needs>.nd{min-width:0;overflow-wrap:anywhere}
+.needgroup .needs>.nd>.ic{flex-shrink:0}
+
+.needgroup .need-residents{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.needgroup .needs>.nd{flex-wrap:wrap}
+
+.gold-rate{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+
+.needgroup .needs>.nd:has(>.need-residents){display:grid;grid-template-columns:auto minmax(0,1fr) max-content;align-items:center;column-gap:6px}
+.needgroup .needs>.nd:has(>.need-residents):has(>.ic){grid-template-columns:16px auto minmax(0,1fr) max-content}
+.needgroup .need-name{min-width:0;overflow-wrap:anywhere}
+.needgroup .need-residents{justify-self:end}
+
+body.game-paused,body.game-paused *,body.game-paused *::before,body.game-paused *::after{animation-play-state:paused!important}
+
+/* Persistent event list and reachable fire notices. */
+.sidegroup .clear-events{padding:2px 5px;border:1px solid #b3a789;background:#302719;color:#ffeac5;font:inherit;font-size:14px;cursor:pointer}
+.sidegroup .clear-events:focus-visible,#sidebar .toast[data-event-building]:focus-visible{outline:3px solid #ffe3a0;outline-offset:2px}
+#sidebar .toast{font-size:14px}
+#sidebar .toast[data-event-building]{font-family:inherit;font-size:14px;line-height:inherit;color:inherit;cursor:pointer;min-height:44px}
+#sidebar .toast strong{color:var(--gold);font-size:1rem;font-weight:700}
+#sidebar .toast time{display:block;color:#d5c6a9;font-size:14px;margin-top:3px}
+
+
+

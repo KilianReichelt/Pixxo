@@ -1,0 +1,20 @@
+/* Einheitliche GUI-Rahmen: 13px; große Fenster oben konkav, unten rund. */
+:root{--game-frame-line:#b3a789;--game-frame-corner:var(--ui-corner-window);--game-surface-header:var(--ui-surface-header);--game-text-header:var(--ui-text-header)}
+body [data-window-contour]{border:0 solid transparent!important;border-radius:0!important;box-shadow:none!important;background-clip:padding-box}
+body :is(.win,.sidegroup,.start-card,.save-feedback,#game-tour,#trade-route-dialog,.new-game-dialog,.clock-popup,#production-overview,#production-building-preview)[data-window-contour]{background-color:var(--ui-surface)!important;background-image:none!important}
+body [data-window-contour="round"]{border-radius:var(--game-frame-corner)!important}
+/* Überstehende Reiter und Popups dürfen nicht mit dem Leistenrahmen abgeschnitten werden. */
+body [data-contour-overflow="visible"]{clip-path:none!important;overflow:visible;background:none!important;isolation:isolate}
+body [data-contour-overflow="visible"]::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:var(--contour-surface-background);background-image:var(--contour-surface-image,none);clip-path:var(--contour-surface-path)}
+body :is(input,select,textarea,progress,meter,img,canvas)[data-control-contour]{border:1px solid var(--game-frame-line)!important;border-radius:min(var(--game-frame-corner),25%)!important;box-shadow:inset 0 0 0 2px #f1d89e14}
+.window-contour{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:8;overflow:hidden}
+.window-contour path{fill:none;stroke-width:1;vector-effect:non-scaling-stroke}
+.window-contour-line{stroke:var(--game-frame-line)}.window-contour-shimmer{stroke:#f1d89e;opacity:.16}
+body :is(.on,[aria-selected="true"],[aria-pressed="true"])[data-window-contour]>.window-contour .window-contour-line{stroke:#ffe3a0;stroke-width:2}
+body .wt{border-bottom:0;box-shadow:none}
+@media(forced-colors:active){.window-contour-line,.window-contour-shimmer{stroke:CanvasText;opacity:1}}
+
+/* Approved brass edge: shared geometry, one stroke, no inset shimmer. */
+:root{--game-frame-brass:var(--ui-accent-brass)}
+body :is(#top,#bar)>.window-contour>.window-contour-line{stroke-width:1}
+body :is(#top,#bar)>.window-contour>.window-contour-shimmer{display:none}

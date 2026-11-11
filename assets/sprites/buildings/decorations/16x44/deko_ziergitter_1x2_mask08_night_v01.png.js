@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("deko_ziergitter_1x2_mask08_night","iVBORw0KGgoAAAANSUhEUgAAABAAAAAsCAYAAABsSzi3AAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAr0lEQVR4nGNgGAWjYBSMguEDOAUk94NoZR27PzAxAVG53wwMDHA+QWBsH/hHWc8RWQMjFBMP1AzdMAzAIoYVMIIIFnZeDAOwiGECXUufvwwMDExKWogwwCaG0wA2DqE/qvpOv9UMnP/gE8MJ5PWjfknpRP5QM3L5q2Sa/kPZqvQ7NjEBETnshjGzc/9iYef9oWXu84eNk+8nEwv3L2xiDKycvwi6ZhSMglEwChgoAADQkDsSa0AbAAAAAABJRU5ErkJggg==");

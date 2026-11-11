@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("transition_grass_sand_ne_mask","iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAPoAAAD6AG1e1JrAAAAdElEQVR4nO2SQQqAMAwE9/+fjgSJLOJBD2YC7UAPBcFhtooXSPrvxAdQAen8FC1QjBJI2gUcpECBTZCMmcDBBDShgGiBYs03MKpAghZwRggkmICDFyiQAqIFCv/xdY9G7pO0C7gIMsHjmwgYbYHYE8BoeYEDisCUFZ6Jn+UAAAAASUVORK5CYII=");

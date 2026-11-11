@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("world_tree_birch_young_night","iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAA+klEQVR4nGNgoCWI2T7jL6OW/j+yNC/+8O0vt4PDX4OStL8ka67fv5+FUVn7r1Rc9F8mI/O/DDLqIENYiDZAo6rsr4C//18GbtG/rCZWf0W9fP6ymVgT7xLDury/jIqaf3mc3Ul3PgxIRYf/ZVA3/6tu4PqHgRTgtaDtr3ln6V8eZzew7TUzNoPpjOpphF3DqGv+R7Uo4y+fs8tfBhlVsAZRGZ0/zDrGJHhFzVhEPS8JrEFIHGIIg4rOX35QoKroEmmQsYURiDr34guqBjEF0gJ18YFrcA3alXl/GSSVSAtQc4dw0jSgg/k7z/51DC4hPy3wCsqTr5lYAABG31ZWjq0oSwAAAABJRU5ErkJggg==");

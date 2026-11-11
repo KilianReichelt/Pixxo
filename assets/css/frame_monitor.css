@@ -1,0 +1,2 @@
+#frame-monitor{position:fixed;right:12px;top:105px;z-index:32000;max-width:460px;padding:12px 16px;border:1px solid var(--game-frame-brass);border-radius:6px;background:var(--ui-surface,#2a1d10);color:var(--ui-text,#f0dfb5);font-size:14px;line-height:1.5;pointer-events:auto}
+#frame-monitor[hidden]{display:none}#frame-monitor pre{font:inherit;white-space:pre-wrap;margin:8px 0}#frame-monitor p{margin:8px 0;max-width:420px}#frame-monitor button{font:inherit}

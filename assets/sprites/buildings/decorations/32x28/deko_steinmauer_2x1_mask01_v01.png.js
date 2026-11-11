@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("deko_steinmauer_2x1_mask01","iVBORw0KGgoAAAANSUhEUgAAACAAAAAcCAYAAAAAwr0iAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAA70lEQVR4nGNgGAWjYBSMglEwCsgDjB8f7v978eDKv7uW9/6d3FL4l4GewNqc4+/M5ry/bYUJf+c0Z/+tSI/4O7EqlX6OMNeW/+tgovY30MXsr7mu8l9LfdW/FkYM9HNAVpjrXwsjpr8upmp/axI9/4rwM/5dN7mMfg6oSA36O7k28++FbZP+HFzc8OfTnT1/V/Tk0s8Bc5rS/8b62P4tjvf/mxHm8FdeivmvBB87/RxQneT99/GxeX83tEb8XdoQ/jcnwvnvotpo+jnASp7vp62y0C8GBgam1zd3/j27Y8ZfJVX2P3RzwCgYBaNgWAEAIQJjMqjclGAAAAAASUVORK5CYII=");

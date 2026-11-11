@@ -1,0 +1,175 @@
+:root{--game-surface-dark:var(--ui-surface-dark)}
+
+/* Desktop-Revision: elementabhängige Konturen und ruhige Bediengruppen. */
+html,body{font-size:14px!important}
+body [data-window-contour="round6"]{border-radius:6px!important}
+/* Compact window content and controls; fixed top/dock buttons retain their profiles. */
+body :is(.win,.start-card,#game-start,#session-menu) :is(.px.big,.tag,.tn):not(#top *):not(#bar *),
+body :is(button,.btn,[role="button"],[role="tooltip"],.trade-tooltip,.need-unlock-tooltip,#house-supply-popup):not(#top *):not(#bar *):not(.deposit-jump){border-radius:var(--ui-radius-control,6px)!important}
+/* Rounded controls keep their light rim without clipping focus or child content. */
+body :is(button,.btn,[role="button"],[role="tooltip"],.trade-tooltip,.need-unlock-tooltip,#house-supply-popup){clip-path:none!important}
+/* Use the existing hand cursor for every actionable surface and its contents. */
+body :is(button,input[type="button"],input[type="submit"],input[type="reset"],input[type="image"],input[type="color"],input[type="file"],.btn,.bi,[role="button"],[role="tab"],a[href],summary,select,[data-act],[data-w],[data-house-good]):not(:disabled):not([aria-disabled="true"]),
+body :is(button,input[type="button"],input[type="submit"],input[type="reset"],input[type="image"],input[type="color"],input[type="file"],.btn,.bi,[role="button"],[role="tab"],a[href],summary,select,[data-act],[data-w],[data-house-good]):not(:disabled):not([aria-disabled="true"]) *{cursor:var(--game-pointer-cursor)!important}
+body :is(button,input,.btn,.bi,[role="button"],[role="tab"]):is(:disabled,[aria-disabled="true"]),
+body :is(button,input,.btn,.bi,[role="button"],[role="tab"]):is(:disabled,[aria-disabled="true"]) *{cursor:var(--game-default-cursor)!important}
+#top,#bar{background-image:none!important;--contour-surface-image:none!important}
+#top::before,#bar::before{background-image:none!important}
+body #top{height:56px;min-height:56px;padding:0 12px;gap:12px;flex-wrap:nowrap;align-items:stretch;background-color:var(--ui-surface-raised)}
+#top>.sp{display:none}
+#top .top-group{display:flex;align-items:stretch;gap:0;height:100%;min-height:0;flex:0 0 auto}
+#top .top-economy,#top .top-location{order:0}#top>.top-goods{order:1;flex:1 1 360px;min-width:0;max-width:none;width:auto;height:100%;min-height:0;padding:0;gap:0}
+#top .top-knowledge{order:2}#top .top-speed{order:3;gap:0}#top .top-navigation{order:4}
+body #top button{border:0!important;border-right:1px solid #806b4b!important;border-radius:0!important;clip-path:none!important;box-shadow:none!important;height:100%!important;max-height:none!important;margin:0;background-image:none!important;display:flex;align-items:center;justify-content:center;padding:4px 10px;}
+#top .top-group>button:last-of-type{border-right:0!important}
+#top button>.window-contour{display:none!important}
+#top button:hover{background-color:#5b472e}#top button.on{background-color:#665132}
+#top .worldname{display:flex;flex-direction:column;gap:2px;white-space:nowrap;font-size:14px!important}
+#top .island-owner-line{display:flex;align-items:center;justify-content:center;gap:6px;color:#dccba8;font-size:14px}
+#top .island-owner-line img{width:20px!important;height:20px!important}
+#top .top-speed button{width:38px}#top .top-navigation button{padding-inline:12px}
+#island-owner-identity{display:none!important}
+body #mmw{padding:0}body #mm{border-radius:0 0 13px 13px}
+body #islandfacts{padding:0;margin:0}
+body .wt{padding:8px 18px;min-height:0}
+body .wx{width:26px;height:26px;}
+body #bar #items .bi,body .building-search,body #bar #items .item-scroll,body #desktop-controls{border-radius:6px}
+body #items-viewport{mask-image:linear-gradient(to right,transparent,#000 var(--items-fade-left,0px),#000 calc(100% - var(--items-fade-right,0px)),transparent);-webkit-mask-image:linear-gradient(to right,transparent,#000 var(--items-fade-left,0px),#000 calc(100% - var(--items-fade-right,0px)),transparent)}
+#bar .dock-tabs{border-radius:13px 13px 0 0;overflow:hidden}
+#bar .dock-filters{display:flex;justify-content:center}
+body #bar #population-filters{position:relative!important;width:auto;max-width:100%!important;margin:0 auto;flex:0 1 auto;border-radius:0 0 13px 13px;background:var(--game-surface-dark)}
+body #bar #population-filters button{min-height:36px;}
+body #production-overview{display:flex;flex-direction:column}
+body #production-overview .production-header{margin-bottom:0;flex:none}
+body #production-overview .production-graph-scroll,body #production-overview.single-production-node .production-graph-scroll{display:flex;align-items:center;justify-content:safe center;flex:1 1 auto;min-height:112px;max-width:calc(100% + 36px);width:calc(100% + 36px);box-sizing:border-box;margin:0 -18px -18px;padding:18px;overflow:auto}
+body #production-overview .production-graph-scroll>svg{flex-shrink:0;display:block}
+body #production-overview.flavor-production{max-width:340px}
+body #production-overview.flavor-production .production-description{white-space:normal;overflow-wrap:anywhere;max-width:100%;margin:14px 0 0}
+.pins-filters{display:flex;gap:6px;margin-bottom:12px}.pins-filters .btn{flex:1;}.pinlist .btn{display:flex;align-items:center;gap:10px;text-align:left}.pin-state{margin-left:auto}.pins-count{margin:8px 0}
+#game-start:has(.save-slots) .start-card{width:580px;max-width:100%}
+#game-start .save-slots{gap:12px}#game-start .save-slot{padding:14px 18px;gap:8px;background:#332619;text-align:left}
+.save-slot-number{color:#c1ac82;font-size:14px}.save-slot-main{display:flex;align-items:center;gap:14px;width:100%}.save-slot-portrait{display:grid;place-items:center;flex:none;width:60px;height:60px;background:var(--owner-color,#543f28);border:1px solid #b3a789;border-radius:6px}.save-slot-portrait img{width:48px!important;height:48px!important;object-fit:contain}.save-slot-player{display:grid;gap:3px;min-width:0}.save-slot-player strong{font-size:18px!important}.save-slot-status{color:#f0c24a}.save-slot-stats{display:flex;gap:8px 16px;flex-wrap:wrap}.save-slot-meta{color:var(--ui-text-muted);font-size:14px}.save-slot-overwrite{color:#efb7a1;font-size:14px}
+
+body #top>#goodsbar{height:100%!important;min-height:0!important;align-items:stretch;gap:0;padding:0}
+
+/* Approved16October: preserve the complete dock geometry; simplify only its cards. */
+body #bar .building-search{border-radius:6px!important}
+body #bar .building-search input{border-radius:6px!important}
+body #bar .building-search input[data-control-contour]{border:0!important;box-shadow:none!important}
+body #bar #items .bi{background:transparent;border-right:1px solid #4d3d27!important}
+body #bar #items .bi:last-child{border-right:0!important}
+body #bar #items .bi>.window-contour{display:none}
+body #bar #items .dock-card{background:var(--game-surface-dark)}
+body #bar #items .bi:hover{background:#443526}
+body #bar #items .bi.on{background:#4d3d2a;box-shadow:inset 0 -2px #d5ba80!important}
+body #bar #items .product-card img.px{width:32px!important;height:32px!important;max-height:32px!important}
+
+/* Small resource slots and event tabs: native rounded rims, no clipping of badges. */
+:root{--game-frame-corner-small:var(--ui-radius-small)}
+body #islandfacts .factsummary{display:flex;flex-direction:column;align-items:stretch;gap:7px;padding:8px}
+body #islandfacts .factsummary .fact-row{display:flex;flex-wrap:nowrap;align-items:center;justify-content:center;gap:4px;}
+body #islandfacts .factsummary .fact-fertilities+.fact-deposits{padding-top:7px;border-top:1px solid #b69a654d}
+body #islandfacts .factsummary .factitem,body .sidetab{border-radius:var(--game-frame-corner-small);clip-path:none;overflow:visible;box-shadow:inset 0 0 0 2px #f1d89e14}
+body #islandfacts .factsummary .deposit-jump{border-radius:var(--game-frame-corner-small);clip-path:none;overflow:visible}
+
+/* Shared window heads: the production preview defines the light surface. */
+body :is(.wt,.sidepanel header,#game-tour .tour-header,.trade-route-heading,.trade-map-heading,.clock-heading,.preview-building-header,.new-game-dialog>h2){background:var(--game-surface-header);color:var(--game-text-header);background-image:none;text-shadow:none;box-shadow:none;border:0;gap:12px;padding:8px 18px;box-sizing:border-box;flex-shrink:0}
+body :is(.wt,.sidepanel header,.trade-route-heading,.trade-map-heading) :is(h1,h2,h3,.house-taxes){color:inherit;text-shadow:none}
+body .wt{margin:0}
+body .sidepanel .sidegroup{padding:18px}
+body .sidepanel header{margin:-18px -18px 18px;display:flex;align-items:center;justify-content:space-between}
+body .sidepanel header h2{flex:1;min-width:0;margin:0;padding:0;border:0}
+body .sidepanel .sideclose{flex:0 0 26px;width:26px;height:26px;padding:0;border-radius:50%;background:#6b352d;color:#f3e6c8;line-height:1;font-weight:600}
+body .sidepanel .clear-events{flex:0 0 auto;color:#f3e6c8}
+body .wt .wx{color:#f3e6c8}
+body .trade-route-heading{margin:-20px -20px 16px}
+body .trade-map-heading{margin:0}
+body #game-tour .tour-header{margin:-16px -16px 0}
+body #clock-popup .clock-heading{margin:-14px -14px 14px}
+body #production-building-preview .preview-building-header{margin:-12px -12px 12px}
+body .new-game-dialog>h2{margin:-20px -20px 12px}
+
+/* Sidebar: plain surface and compact rounded corners. */
+body #sidebar,body .sidebar{background-image:none!important;--contour-surface-image:none!important}
+body #sidebar::before,body .sidebar::before{background-image:none!important}
+
+/* Event sentences flow inline instead of splitting text nodes into flex columns. */
+body #side-events #toasts .toast{display:block;line-height:1.5;overflow-wrap:break-word}
+body #side-events #toasts .event-target{display:inline;width:auto;height:auto;padding:0;white-space:normal;line-height:inherit;vertical-align:baseline}
+
+/* October19: separate desktop header panels, with the requested inward corners. */
+body #top{height:auto;min-height:0;left:0;right:0;top:0;padding:0;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:start;gap:clamp(8px,1.25vw,24px);pointer-events:none;background:none!important;border:0!important;box-shadow:none!important;clip-path:none!important;box-sizing:border-box;max-width:100%}
+body #top::before,body #top>.window-contour{display:none!important}
+body #top{row-gap:0}
+body #top .top-panel{position:relative;pointer-events:auto;background:var(--ui-surface-raised);min-height:38px;display:flex;align-items:stretch;gap:12px;padding:0 13px;grid-row:1}
+body #top .top-panel-left{grid-column:1;padding-left:13px;justify-self:start}
+body #top .top-panel-center{grid-column:2;justify-self:center;display:flex;flex-direction:column;align-items:center;gap:0;padding:0 13px;width:min(100%,660px);min-width:0;box-sizing:border-box;overflow:hidden}
+body #top .top-panel-right{grid-column:3;padding-right:13px;justify-self:end}
+body #top .top-panel>.top-group{height:38px;min-width:0;order:0}
+body #top .top-panel-center>#goodsbar{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));width:100%;min-width:0;max-width:none;height:38px;flex:0 0 38px;padding:0;gap:0;order:0;overflow:hidden}
+body #top .top-panel-center>#goodsbar .reschip{flex:1 1 0;min-width:0;padding:4px clamp(1px,.3vw,6px);gap:4px;overflow:hidden}
+body #top .top-panel-center>#goodsbar .reschip b{min-width:0;overflow:hidden;text-overflow:ellipsis}
+body #top .top-location .island-location-line,body #top .top-location .island-owner-line{max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis}
+body #top>.top-location{grid-column:2;grid-row:2;justify-self:center;height:auto;width:max-content;max-width:100%;min-width:0;order:0;justify-content:center;pointer-events:auto;position:relative;background:var(--ui-surface-raised);padding:0 13px}
+body #top .top-location .worldname{height:auto!important;min-height:34px;flex-direction:column;gap:0;width:max-content;max-width:100%;min-width:0;padding:4px 8px 9px;position:relative}
+body #top .top-location .island-owner-line{font-size:14px}
+body #top .speeds button{width:auto;padding-inline:5px;display:inline-flex;align-items:center;justify-content:center;gap:0}
+body #top .speeds img{width:20px!important;height:20px!important}
+body #top .speed-glyph{position:relative;display:inline-block;overflow:hidden;flex:none}
+body #top .speed-glyph img{position:absolute;max-width:none}
+body #top .navbtn[data-clock-toggle]{width:96px;flex:0 0 96px;padding-inline:12px;gap:6px}
+body #top .top-panel .window-contour-shimmer{display:none}
+body #top .top-location .window-contour-shimmer{display:none}
+body #top .top-panel .window-contour-line{stroke-width:1}
+body #top .top-navigation{gap:0}
+body #top .top-navigation button{padding-inline:8px;width:44px;flex:0 0 44px}
+body #top .top-navigation .navigation-gear{font-size:24px;line-height:1}
+body #top .chip{position:relative}
+body #top :is(.navbtn,.chip,.reschip){background-color:transparent!important;background-image:none!important}
+body #top :is(.navbtn,.chip,.reschip):hover{background-color:var(--ui-hover)!important}
+body #top :is(.navbtn,.chip,.reschip).on{background-color:var(--ui-selection)!important}
+.city-stage-progress{position:absolute;bottom:2px;left:18px;right:18px;height:3px;background:linear-gradient(to right,var(--ui-accent-brass) var(--stage-progress,0%),var(--ui-surface-dark) var(--stage-progress,0%));pointer-events:none}
+body #top .loan-progress{position:absolute;top:calc(100% + 4px);left:var(--loan-center);transform:translateX(-50%);width:var(--loan-width);height:7px;box-sizing:border-box;border:1px solid var(--game-frame-brass);border-radius:3px;background:linear-gradient(to right,var(--ui-success) var(--loan-progress,0%),var(--ui-surface-dark) var(--loan-progress,0%));cursor:var(--game-pointer-cursor);pointer-events:auto}
+.loan-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}.loan-options button{display:flex;flex-direction:column;gap:4px}
+/* Native compact rims remain identical before and after live window refreshes. */
+body :is(button,.btn,[role="button"]):not(#top *):not(#bar *):not(#islandfacts *):not(.sidetab):not(.deposit-jump){border:0;border-radius:6px;clip-path:none}
+body :is(img.px.big,img.pix.big,.tag,.tn){border-radius:6px!important}
+body .pb{border:1px solid var(--game-frame-line);border-radius:6px;overflow:hidden}
+body #bar .dock-tool.planning-toggle.on{background:var(--game-planning-active,#355d32)!important;color:#ecf8df}
+body :is([role="tooltip"],.trade-tooltip,.need-unlock-tooltip,#house-supply-popup){clip-path:none!important;mask:none!important;border:1px solid var(--game-frame-line)!important;box-shadow:none!important;border-radius:6px!important}
+body :is([role="tooltip"],.trade-tooltip,.need-unlock-tooltip,#house-supply-popup)>.window-contour,
+body :is([role="tooltip"],.trade-tooltip,.need-unlock-tooltip,#house-supply-popup)::before,
+body :is([role="tooltip"],.trade-tooltip,.need-unlock-tooltip,#house-supply-popup)::after{display:none!important}
+.win [data-act="move"]{display:none!important}
+
+/* House actions reserve their full sticky height, including the secondary row. */
+.house-management .house-sticky-actions{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:6px;align-items:stretch;z-index:10}
+.house-management .house-sticky-actions>[data-act="downgrade"]{grid-column:1 / -1;grid-row:2;order:2}
+.house-management .house-sticky-actions:not(:has(>[data-act="up"]))>[data-act="demo"]{grid-column:1 / -1}
+/* Empty fleet keeps the same card and filter space as the other dock tabs. */
+body #bar .dock-content:not([hidden]){min-height:68px}
+body #bar.integrated-dock[data-mode="fleet"]:not(:has(.dock-content[hidden])){min-height:var(--dock-expanded-height,140px)}
+/* Supplied Ko-fi reference, unchanged; crop its blank margins in layout only. */
+body #game-start>.donation-button{position:fixed;right:24px;bottom:24px;z-index:4;display:block;width:312px;height:52px;max-width:none;min-height:0;margin:0;padding:0;overflow:hidden;border:0!important;border-radius:8px;background:#24acd1;box-shadow:none;line-height:0;text-decoration:none;cursor:pointer;isolation:isolate}
+body #game-start>.donation-button>img{position:absolute;left:-81px;top:-211px;width:474px;height:474px;max-width:none;margin:0;pointer-events:none}
+body #game-start>.donation-button:disabled{opacity:1;cursor:default}
+body #game-start>.donation-button:hover:not(:disabled){filter:brightness(1.06)}
+body #game-start>.donation-button:focus-visible{outline:2px solid #fff;outline-offset:4px}
+body #game-start>.donation-button::before,body #game-start>.donation-button::after{display:none}
+/* One introductory dialog; the world remains paused and inert behind it. */
+body #game-tour {
+ left:50%; top:50%; right:auto; bottom:auto;
+ transform:translate(-50%,-50%);
+ width:600px; max-width:calc(100vw - 64px);
+ max-height:calc(100vh - 64px);
+ padding:24px; gap:12px; z-index:1101;
+}
+body #game-tour .tour-header { margin:-24px -24px 0; padding:8px 18px; }
+body #game-tour h2 { margin:0; }
+body #game-tour #tour-content { overflow:auto; }
+body #game-tour .tour-actions { justify-content:center; margin-top:4px; }
+body #tour-shade { z-index:1100; background:rgba(6,11,11,.76); pointer-events:auto; }
+
+/* Keep every identity choice inside the card; portraits continue on new rows. */
+body #game-start .identity-choices { flex-wrap:wrap; min-width:0; max-width:100%; }
+body #game-start .identity-choices>.btn { flex:0 0 auto; max-width:100%; box-sizing:border-box; }

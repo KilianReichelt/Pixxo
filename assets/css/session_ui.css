@@ -1,0 +1,29 @@
+#session-menu{padding:0;border:0;background:transparent;color:inherit;width:min(660px,calc(100vw - 80px));max-height:calc(100vh - 100px);overflow:visible}#session-menu::backdrop{background:#000a}body #session-menu .win{position:relative!important;inset:auto!important;width:100%;max-width:none;max-height:calc(100vh - 100px);margin:0;transform:none}.session-menu-tabs{display:flex;gap:6px;flex-wrap:wrap}.session-menu-tabs .btn{flex:1}.session-menu-tabs [aria-pressed=true]{background:#65502e;box-shadow:inset 0 -2px #e2c78d}.session-menu-body{padding-top:16px;min-height:140px}body #top>#goodsbar{display:grid;grid-template-columns:repeat(6,minmax(100px,1fr));max-width:780px}body #top #goodsbar .reschip{width:100%;gap:6px;box-sizing:border-box;white-space:nowrap}body #top #goodsbar .reschip b{font-variant-numeric:tabular-nums}body #top #goodsbar .reschip img{flex-shrink:0}
+
+.event-target{display:inline;padding:0;border:0;background:transparent;color:var(--ui-warning);font:inherit;text-decoration:underline;cursor:pointer}.event-target:hover{color:#ffe3a0}
+
+.electric-cycle>span:last-child{color:var(--ui-electric)}.electric-progress>i{background:var(--ui-electric)!important}
+
+.founding-action{display:flex;justify-content:center;margin:18px 0}.founding-action .btn{display:flex;flex-direction:column;align-items:center;gap:8px}
+
+body .win.cable-window{width:860px}.cable-layout{display:grid;grid-template-columns:300px 1fr;gap:18px}.cable-layout label{display:grid;gap:8px;margin-bottom:12px}.cable-layout .worldmap{position:relative}.cable-map-island{position:absolute;padding:3px;background:var(--ui-surface);color:var(--ui-text);font-size:14px}
+
+.island-location-line{display:flex;align-items:center;gap:8px}.island-city-stage{color:var(--ui-warning);font-weight:700}
+/* The energy overview uses the same round recipe nodes as the build dock. */
+.energy-node-track{display:flex;align-items:flex-start;justify-content:center;gap:18px;flex-wrap:wrap}
+.energy-node-group h3{text-align:center}
+.energy-node{display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;background:none;border:0;color:inherit;cursor:pointer;font:inherit}
+.energy-node-circle{display:grid;place-items:center;width:44px;height:44px;border:2px solid var(--ui-accent-brass);border-radius:50%;background:var(--ui-surface-dark)}
+.energy-node-circle img{width:32px!important;height:32px!important;max-width:32px;max-height:32px;object-fit:contain;image-rendering:pixelated}
+.energy-node:hover .energy-node-circle,.energy-node:focus-visible .energy-node-circle{border-color:#ffe3a0;background:var(--ui-hover);box-shadow:0 0 0 2px #ffe3a0}
+body #production-overview.energy-production{width:420px;overflow:hidden}
+body #production-overview.energy-production .energy-graph-scroll{max-height:360px;flex:1 1 auto;min-height:0}
+.energy-graph-scroll{overflow:auto;flex:1 1 auto;min-height:0}
+.energy-graph{position:relative;margin:0 auto}
+.energy-graph>svg{position:absolute;inset:0;pointer-events:none}
+.energy-graph .energy-node{position:absolute;padding:0}
+.energy-graph .energy-node>span:not(.energy-node-circle){background:var(--ui-surface);line-height:1.2}
+.energy-producer-name{color:var(--ui-text-muted);width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.energy-chain-section{padding:6px 0 0;border-top:1px solid var(--ui-accent-brass)}
+.energy-chain-section:first-child{border-top:0;padding-top:0}
+.energy-chain-section h3{margin:8px 0 4px;color:var(--ui-warning)}

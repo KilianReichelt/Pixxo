@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("wildlife_goat_s_night","iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAA50lEQVR4nGNgGNTAyS3mv4t30n+yNCfn9v7PqZj9P7t89v/4rE7SDAmNKYNorpj9P6dizv/0wsn//cMKiDfENyTnf2p+//+c8jlgA2LSmv97BmYSb4C5dcB/E0N7sObcyrn/jY0d/hubeRBvgJ6B839bG5//maXT/hfULf2vpW35X0pajXgDNPXs/2tqW/w3Mff8r6Cg/V9Z3ey/urYN8QaIS6n+d3KLBTs/t3Lefw1SNMOAkaXP/9yKOf8zS2f+l1XQJ90Aa8cwcFQmZHX9t7AJIt0ABUXD//JKBv9FRBX+y5PjgqEDANFhaX2JtiGOAAAAAElFTkSuQmCC");

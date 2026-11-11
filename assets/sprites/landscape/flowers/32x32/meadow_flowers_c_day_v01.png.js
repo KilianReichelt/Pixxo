@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("world_meadow_flowers_c","iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAuklEQVR4nGNgGAWjgP6AkWFkOiJ0FRuJOv4PbFDZJH36iE/+98+Pf2jqANts7g8yoQxCuOSdSzi+49P///8Ah6B1OeOzgNJzR7BI0dVhjFR0wP+Bz78OueKLkbhUdxAjRYaGruJksLfnINIemgAmqhkeGhrKzEBFkDbTmPX//8FRBwwX8J+B0T9HxHagnTFCwONXX35TkC2xVUqEc8Pe/atiGagPGCkuVExCM9Tp5YBhAxhHrM9HwdABABlwJ9bEHYDDAAAAAElFTkSuQmCC");

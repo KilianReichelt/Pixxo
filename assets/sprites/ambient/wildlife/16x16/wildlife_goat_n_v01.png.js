@@ -1,0 +1,2 @@
+/* Generated individual PNG byte transport for file://. */
+window.ApprovedArtLoader.receive("wildlife_goat_n","iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAPoAAAD6AG1e1JrAAAA/0lEQVR4nGNgoCXISYr7Hxse/J8szVVZCf+P7t/x/9LZE/8LEyNINyQhMvz/msVz/y+bPfW/n7c7aQZUFuX/j4sK+z9rcu//JfOn/Xd2sP5fV1ZImiG7Nqz4f/Lgnv8nDu35v2XNMtI0T+lu+3/y4K7/Jw/tBRuwc+Pq/xM6G4k3ZNak3v+nDu8FGwDCh/Zs+79k1mTiDchOiPt/dN+O/ycP7fl/6tC+/ycO7P4fEeRHvAFxYcH/1yye/X/etEn/y/Oz/29Ztfi/q5M9aeHQ1Vjzv6Ox5n9ZUc7/lupy0tNBXkbyfyd7u/9qSkr/VZWVSTdAW1Pzv5SUNHnJeGgBALrwi6/tqXJeAAAAAElFTkSuQmCC");
