@@ -517,7 +517,7 @@ root.RoadImageSampler={create};
 /* Shared approved adapter: art/workbench/meadow-layer.js */
 /* Independent world decoration. No terrain RGB, map mutation or saved entities. */
 const WORLD_MEADOW=(()=>{
- const bucketSize=128,limit=256,buckets=new Map(),chunks=new Map(),stamps=new Map(),chunkLimit=512;let seed=1,images=[],density=()=>0,revision='',board=null;
+ const bucketSize=128,limit=256,buckets=new Map(),chunks=new Map(),stamps=new Map(),chunkLimit=512;let seed=1,images=[],density=()=>0,revision='',board=null,emptyChunkCanvas=null;
  const hash=(x,y,s)=>{let h=Math.imul(x|0,374761393)^Math.imul(y|0,668265263)^Math.imul(s|0,2147483647);h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967296;};
  // Derive a separate flower-only mask from existing art at load time. This
  // preserves actual painted pixels, excludes green ground and writes no files.
@@ -544,13 +544,15 @@ const WORLD_MEADOW=(()=>{
   let cached=chunks.get(key);if(cached?.signature===signature){chunks.delete(key);chunks.set(key,cached);return cached.canvas;}
   // A warm cache hit needs no per-cell coordinate arrays or clipping geometry.
   const cells=[];for(let i=0;i<64;i++)if(signature[i]==='1')cells.push([i%8*16,Math.floor(i/8)*16]);
-  const canvas=document.createElement('canvas');canvas.width=128;canvas.height=128;canvas._meadowEmpty=cells.length===0;
+  const canvas=cells.length?document.createElement('canvas'):(emptyChunkCanvas||(emptyChunkCanvas=document.createElement('canvas')));if(cells.length||!canvas.width){canvas.width=128;canvas.height=128;}canvas._meadowEmpty=cells.length===0;
   if(cells.length){const c=canvas.getContext('2d');c.imageSmoothingEnabled=false;c.save();c.beginPath();for(const [x,y]of cells)c.rect(x,y,16,16);c.clip();for(const p of placements(x0,y0,x0+128,y0+128))c.drawImage(stamp(p),p.x-Math.floor(p.size/2)-x0,p.y-Math.floor(p.size/2)-y0);c.restore();}
   chunks.set(key,{signature,canvas});while(chunks.size>chunkLimit)chunks.delete(chunks.keys().next().value);return canvas;
  }
  function draw(ctx,x0,y0,x1,y1,map,types){if(!images.length||(x1-x0)*(y1-y0)>6000000)return 0;if(board!==map.tiles){board=map.tiles;chunks.clear();}ctx.save();ctx.imageSmoothingEnabled=false;ctx.beginPath();ctx.rect(x0,y0,x1-x0,y1-y0);ctx.clip();let count=0;for(let by=Math.floor(y0/128);by<Math.ceil(y1/128);by++)for(let bx=Math.floor(x0/128);bx<Math.ceil(x1/128);bx++){const image=chunk(bx,by,map,types);if(!image._meadowEmpty||ctx.globalCompositeOperation!=='source-over')ctx.drawImage(image,bx*128,by*128);count++;}ctx.restore();return count;}
  return{configure,draw,placements,allowed,bucketSize,cacheSize:()=>buckets.size,chunkCacheSize:()=>chunks.size,clear:()=>{buckets.clear();chunks.clear();},flowerMask};
 })();
+
+if(typeof window!=='undefined')window.GameMeadow=WORLD_MEADOW;
 
 /* Shared approved adapter: art/workbench/meadow-preview.js */
 /* Isolated review integration. Load AFTER meadow_layer.js and game scripts. */
